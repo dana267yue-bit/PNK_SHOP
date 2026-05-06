@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container spad">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="mb-4">បញ្ចូលអត្ថបទ Blog ថ្មី</h3>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="site-btn">រក្សាទុក Blog</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

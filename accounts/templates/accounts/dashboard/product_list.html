@@ -1,0 +1,215 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %} 
+{% load static %} 
+
+{% block dashboard_content %}
+<div class="container-fluid py-2">
+  <!-- Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex align-items-center justify-content-between bg-white p-3 shadow-sm" style="border-radius: 15px">
+        <div class="d-flex align-items-center">
+          <a href="{% url 'ProductsManagementActions' %}" class="btn btn-light rounded-circle mr-3 shadow-sm border">
+            <i class="fas fa-arrow-left text-muted"></i>
+          </a>
+          <div>
+            <h4 class="font-weight-bold mb-0" style="font-family: 'Kantumruy Pro', sans-serif">គ្រប់គ្រងបញ្ជីទូរស័ព្ទ</h4>
+            <small class="text-muted">បង្ហាញទិន្នន័យទូរស័ព្ទទាំងអស់ក្នុងហាង</small>
+          </div>
+        </div>
+        <a href="{% url 'add_product' %}" class="btn btn-success px-4 shadow-sm" style="border-radius: 10px; font-weight: 600">
+          <i class="fas fa-plus-circle mr-2"></i> បន្ថែមថ្មី
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert Messages -->
+  {% if messages %}
+  <div id="alert-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 mb-4" role="alert" style="border-radius: 12px">
+      <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} mr-2"></i>
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Table Section -->
+  <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden">
+    <div class="card-header bg-white border-0 py-3">
+      <div class="row align-items-center">
+        <div class="col">
+          <h6 class="text-uppercase text-muted ls-1 mb-1">បញ្ជីទិន្នន័យ</h6>
+        </div>
+        <div class="col text-right">
+          <div class="position-relative d-inline-block" style="width: 250px">
+            <input type="text" id="productSearch" class="form-control form-control-sm border-light shadow-none" placeholder="ស្វែងរក..." style="border-radius: 20px; padding-left: 35px; background: #f8f9fa;" />
+            <i class="fas fa-search position-absolute text-muted" style="left: 12px; top: 10px"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table align-items-center table-flush mb-0">
+        <thead class="thead-light">
+          <tr>
+            <th class="border-0 px-4">ល.រ</th>
+            <th class="border-0">រូបភាព</th>
+            <th class="border-0">ឈ្មោះម៉ូដែល</th>
+            <th class="border-0">ម៉ាក</th>
+            <th class="border-0">តម្លៃលក់</th>
+            <th class="border-0 text-center">ស្តុក</th>
+            <th class="border-0 text-center">សកម្មភាព</th>
+          </tr>
+        </thead>
+        <tbody id="productTable">
+          {% for product in products %}
+          <tr class="hover-row">
+            <td class="px-4 font-weight-bold text-muted">{{ forloop.counter }}</td>
+            <td>
+              {% if product.image %}
+                <img src="{{ product.image.url }}" class="rounded shadow-sm border" style="width: 45px; height: 45px; object-fit: cover" />
+              {% else %}
+                <div class="bg-light rounded border text-center" style="width: 45px; height: 45px; line-height: 45px;"><i class="fas fa-image text-muted"></i></div>
+              {% endif %}
+            </td>
+            <td>
+              <span class="d-block font-weight-bold text-dark">{{ product.name }}</span>
+              <small class="text-muted font-italic">#PNK-{{ product.id }}</small>
+            </td>
+            <td><span class="badge badge-pill badge-primary-soft px-3">{{ product.brand.name }}</span></td>
+            <td class="font-weight-bold text-success">${{ product.price }}</td>
+            <td class="text-center">
+              {% if product.stock > 0 %}
+                <span class="badge badge-success-soft">{{ product.stock }} គ្រឿង</span>
+              {% else %}
+                <span class="badge badge-danger-soft">អស់ស្តុក</span>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-white shadow-sm border text-primary edit-product-btn" data-id="{{ product.id }}" title="កែសម្រួល">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <a href="{% url 'delete_product' product.id %}" class="btn btn-sm btn-white shadow-sm border text-danger ml-2" title="លុប" onclick="return confirm('តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ?');">
+                  <i class="fas fa-trash-alt"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center py-5 text-muted">មិនមានទិន្នន័យផលិតផលនៅឡើយទេ</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal សម្រាប់ Edit -->
+<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content" style="border-radius: 15px; border: none">
+      <div class="modal-header border-0">
+        <h5 class="modal-title font-weight-bold">កែសម្រួលព័ត៌មានទូរស័ព្ទ</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="editModalBody">
+        <!-- កន្លែងបង្ហាញ Form ចេញពី AJAX -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hover-row:hover { background-color: #fbfcfe !important; transition: 0.2s ease; }
+  .badge-primary-soft { background-color: rgba(127, 173, 57, 0.1); color: #7fad39; border: 1px solid rgba(127, 173, 57, 0.2); }
+  .badge-success-soft { background-color: rgba(40, 167, 69, 0.1); color: #28a745; }
+  .badge-danger-soft { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+  .btn-white { background-color: white; border-radius: 8px; }
+  .btn-white:hover { background-color: #f8f9fa; }
+  .thead-light th { background-color: #f8f9fa !important; color: #8898aa !important; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; padding: 1rem; }
+  .table td { vertical-align: middle; }
+  .edit-product-btn:hover { background-color: #e7f1ff !important; color: #0d6efd !important; }
+</style>
+
+<script>
+  $.ajaxSetup({
+    headers: { "X-CSRFToken": '{{ csrf_token }}' }
+});
+$(document).ready(function () {
+    // ១. បើក Modal និងទាញយក Form (GET)
+    $(document).on("click", ".edit-product-btn", function (e) {
+        e.preventDefault();
+        var productId = $(this).data("id");
+        // បង្កើត URL ដោយប្តូរលេខ 0 ទៅជា ID ពិតប្រាកដ
+        var editUrl = "{% url 'edit_product' 0 %}".replace('0', productId);
+
+        $("#editModalBody").html('<div class="text-center py-5"><div class="spinner-border text-success"></div><p class="mt-2 text-muted">កំពុងទាញយកទិន្នន័យ...</p></div>');
+        $("#editProductModal").modal("show");
+
+        $.ajax({
+            url: editUrl,
+            type: "GET",
+            success: function (data) {
+                $("#editModalBody").html(data);
+            },
+            error: function (xhr) {
+                $("#editModalBody").html('<p class="text-danger text-center p-3">មិនអាចទាញយកទិន្នន័យបានទេ! (Error ' + xhr.status + ')</p>');
+            }
+        });
+    });
+
+    // ២. រក្សាទុកការកែសម្រួល (POST) តាមរយៈ AJAX
+    $(document).on("submit", "#editProductForm", function (e) {
+        e.preventDefault();
+        var form = $(this);
+        var actionUrl = form.attr("action");
+        var formData = new FormData(this);
+
+        // ប្តូរប៊ូតុងទៅជា Loading
+        var submitBtn = form.find('button[type="submit"]');
+        var originalText = submitBtn.html();
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> កំពុងរក្សាទុក...');
+
+        $.ajax({
+            url: actionUrl,
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+                    $("#editProductModal").modal("hide");
+                    location.reload(); // ជោគជ័យគឺទាញទំព័រថ្មី
+                } else {
+                    // បើ Validation ខុស ឱ្យបង្ហាញ Form ជាមួយ Error ឡើងវិញ
+                    $("#editModalBody").html(response.html_form);
+                }
+            },
+            error: function () {
+                alert("មានបញ្ហាក្នុងការតភ្ជាប់ទៅកាន់ Server!");
+                submitBtn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    // ៣. មុខងារ Search ក្នុងតារាង
+    $("#productSearch").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#productTable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});
+
+</script>
+{% endblock %}

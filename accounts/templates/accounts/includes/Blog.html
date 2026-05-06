@@ -1,0 +1,121 @@
+    
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="from-blog spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title from-blog__title">
+                    <h2>From The Blog</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for blog in blogs %}
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <div class="blog__item">
+                    <!-- ១. ផ្នែករូបភាព (រៀបចំឱ្យ Fit ទាំង Computer និង Mobile) -->
+                    <div class="blog__item__pic">
+                        <a href="{% url 'blog_detail' blog.slug %}">
+                            {% if blog.image %}
+                                <img src="{{ blog.image.url }}" alt="{{ blog.title }}" class="responsive-blog-img" />
+                            {% else %}
+                                <img src="{% static 'img/blog/default.jpg' %}" alt="Default Image" class="responsive-blog-img" />
+                            {% endif %}
+                        </a>
+                    </div>
+                    
+                    <!-- ២. ផ្នែកអត្ថបទ -->
+                    <div class="blog__item__text">
+                        <ul>
+                            <li><i class="fa fa-calendar-o"></i> {{ blog.date_added|date:"M d, Y" }}</li>
+                            <li><i class="fa fa-comment-o"></i> 5</li>
+                        </ul>
+                        
+                        <h5>
+                            <a href="{% url 'blog_detail' blog.slug %}" class="blog-title-link">
+                                {{ blog.title }}
+                            </a>
+                        </h5>
+                        
+                        <p class="blog-desc">
+                            {{ blog.description|truncatewords:15 }}
+                        </p>
+                        
+                        <!-- ៣. ប៊ូតុង Read More (ធានាថាបង្ហាញច្បាស់) -->
+                        <div class="read-more-wrapper">
+                            <a href="{% url 'blog_detail' blog.slug %}" class="btn-read-more">
+                                READ MORE <i class="fa fa-long-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">មិនទាន់មានអត្ថបទ Blog នៅឡើយទេ។</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CSS សម្រាប់រៀបចំ Mobile Responsive និងបង្ហាញប៊ូតុង -->
+<style>
+    /* រៀបចំរូបភាពឱ្យសមតាមទំហំអេក្រង់ */
+    .responsive-blog-img {
+        height: 220px; /* ទំហំសម្រាប់ Computer */
+        width: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        display: block;
+    }
+
+    /* រៀបចំចំណងជើង */
+    .blog-title-link {
+        text-decoration: none !important;
+        color: #1c1c1c !important;
+        font-weight: bold;
+        font-size: 18px;
+        transition: 0.3s;
+    }
+
+    .blog-desc {
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+
+    /* កន្លែងដាក់ប៊ូតុង */
+    .read-more-wrapper {
+        margin-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .btn-read-more {
+        display: inline-block !important; /* បង្ខំឱ្យបង្ហាញ */
+        font-size: 14px;
+        color: #7fad39 !important;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-decoration: none !important;
+        visibility: visible !important;
+    }
+
+    /* នៅពេលស្ថិតលើទូរសព្ទ (Mobile) */
+    @media (max-width: 768px) {
+        .responsive-blog-img {
+            height: 200px; /* បន្ថយទំហំរូបភាពបន្តិចលើ Mobile */
+        }
+        .blog__item {
+            margin-bottom: 40px; /* បន្ថែមគម្លាតរវាង Post នីមួយៗ */
+            border-bottom: 1px solid #eee; /* បន្ថែមបន្ទាត់ខណ្ឌតិចៗ */
+            padding-bottom: 20px;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% load static %}
+
+<!-- បន្ថែម Library CSS សម្រាប់ចលនា (Animate.css) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<style>
+    /* រចនាអក្សរ និងប៊ូតុងឱ្យមានចលនា និងបង្ហាញជាប់ */
+    .slider-title, .slider-sub, .btn-hero {
+        opacity: 0; /* លាក់នៅពេលដំបូង */
+        animation-fill-mode: forwards; /* រក្សាស្ថានភាពចុងក្រោយនៃចលនា (ឱ្យវានៅជាប់) */
+    }
+
+    /* បញ្ជាចលនាឱ្យដំណើរការនៅពេល Slide កំពុងបង្ហាញ (Active) */
+    .active .slider-sub {
+        animation: fadeInUp 0.8s forwards;
+        animation-delay: 0.3s;
+    }
+    
+    .active .slider-title {
+        animation: fadeInLeft 0.8s forwards;
+        animation-delay: 0.6s;
+    }
+
+    /* កែសម្រួលត្រង់នេះ៖ ឱ្យប៊ូតុងរីកធំមកហើយនៅជាប់រហូត */
+    .active .btn-hero {
+        animation: zoomIn 0.8s forwards;
+        animation-delay: 1s;
+        opacity: 1 !important; /* បង្ខំឱ្យវាបង្ហាញចេញមក */
+    }
+
+    /* បន្ថែមស្ទីលឱ្យប៊ូតុងមើលទៅលេចធ្លោជាងមុន */
+    .btn-hero {
+        background-color: #7fad39;
+        color: white !important;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 700;
+        border: 2px solid transparent;
+        display: inline-block; /* ធានាថាវាមិនបាត់រូបរាង */
+        transition: all 0.3s ease;
+    }
+
+    .btn-hero:hover {
+        background-color: white;
+        color: #7fad39 !important;
+        border: 2px solid #7fad39;
+        transform: scale(1.1) !important; /* ពេលដាក់ Mouse លើ វារីកធំបន្តិច */
+    }
+</style>
+
+<div id="modernHero" class="carousel slide hero-slider carousel-fade" data-ride="carousel">
+    <div class="carousel-inner">
+        {% for slide in slides %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}" style="background-image: url('{{ slide.image.url }}');">
+            <div class="container h-100">
+                <div class="carousel-caption d-none d-md-block">
+                    <span class="slider-sub">PNK Mobile Promotion</span>
+                    <h2 class="slider-title text-uppercase">{{ slide.title }}</h2>
+                    <a href="{% if slide.link %}{{ slide.link }}{% else %}{% url 'shop' %}{% endif %}" class="btn btn-hero">
+                        ទិញឥឡូវនេះ <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ប៊ូតុងបញ្ជា -->
+    <a class="carousel-control-prev" href="#modernHero" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </a>
+    <a class="carousel-control-next" href="#modernHero" role="button" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </a>
+</div>

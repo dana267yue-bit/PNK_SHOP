@@ -1,0 +1,18 @@
+{% load static %}
+<section class="categories">
+    <div class="container">
+        <div class="row">
+            <div class="categories__slider owl-carousel">
+                {% for brand in brands %}
+                <div class="item"> 
+                    <div class="categories__item set-bg shadow-sm" 
+                         data-setbg="{% if brand.image %}{{ brand.image.url }}{% else %}{% static 'img/no-brand.png' %}{% endif %}"
+                         style="border-radius: 15px; overflow: hidden; background-color: #fff;">
+                        <h5><a href="#" class="brand-link">{{ brand.name }}</a></h5>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>

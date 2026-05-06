@@ -1,0 +1,61 @@
+<form id="editProductForm" method="post" enctype="multipart/form-data" action="{% url 'edit_product' product.id %}">
+    {% csrf_token %}
+    <div class="row">
+        <!-- បង្ហាញរូបភាពបច្ចុប្បន្ន -->
+        <div class="col-md-12 mb-4 text-center">
+            <label class="d-block text-muted small mb-2">រូបភាពបច្ចុប្បន្ន</label>
+            <img src="{{ product.image.url }}" class="rounded shadow-sm border" style="width: 120px; height: 120px; object-fit: cover;">
+        </div>
+
+        <!-- ឈ្មោះផលិតផល -->
+        <div class="col-md-6 mb-3">
+            <label class="font-weight-bold text-dark">{{ form.name.label }}</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <small class="text-danger">{{ form.name.errors.0 }}</small>
+            {% endif %}
+        </div>
+
+        <!-- តម្លៃ -->
+        <div class="col-md-6 mb-3">
+            <label class="font-weight-bold text-dark">{{ form.price.label }}</label>
+            {{ form.price }}
+            {% if form.price.errors %}
+                <small class="text-danger">{{ form.price.errors.0 }}</small>
+            {% endif %}
+        </div>
+
+        <!-- ម៉ាក និង ស្តុក (បន្ថែមឱ្យគ្រប់ fields) -->
+        <div class="col-md-6 mb-3">
+            <label class="font-weight-bold text-dark">{{ form.brand.label }}</label>
+            {{ form.brand }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="font-weight-bold text-dark">{{ form.stock.label }}</label>
+            {{ form.stock }}
+        </div>
+
+        <!-- ប្តូររូបភាព -->
+        <div class="col-md-12 mb-3">
+            <label class="font-weight-bold text-dark">{{ form.image.label }} (ជ្រើសរើសបើចង់ប្តូរ)</label>
+            <div class="custom-file">
+                {{ form.image }}
+            </div>
+        </div>
+
+        <!-- ការពិពណ៌នា -->
+        <div class="col-md-12 mb-3">
+            <label class="font-weight-bold text-dark">{{ form.description.label }}</label>
+            {{ form.description }}
+        </div>
+    </div>
+    
+    <div class="modal-footer border-0 px-0 pb-0 mt-3">
+        <button type="button" class="btn btn-light px-4" data-dismiss="modal" style="border-radius: 10px;">បោះបង់</button>
+        <button type="submit" class="btn btn-primary px-4 shadow-sm" style="border-radius: 10px; background-color: #7fad39; border: none;">
+            <i class="fas fa-save mr-1"></i> រក្សាទុកការផ្លាស់ប្តូរ
+        </button>
+    </div>
+</form>
+
+<!-- មិនបាច់ដាក់ <script> នៅទីនេះទេ ព្រោះយើងមានក្នុង product_list.html រួចហើយ -->

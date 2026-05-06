@@ -1,0 +1,133 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+
+{% block dashboard_content %}
+<div class="container-fluid py-4">
+    <!-- Card មេ -->
+    <div class="card shadow-sm border-0" style="border-radius: 16px; overflow: hidden;">
+        <!-- Header ផ្នែកខាងលើ -->
+        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center p-4">
+            <div>
+                <h5 class="m-0 font-weight-bold text-dark" style="letter-spacing: 0.5px;">
+                    <i class="fas fa-images text-primary mr-2"></i>គ្រប់គ្រងរូបភាព Slideshow
+                </h5>
+                <p class="text-muted small mb-0 mt-1">បងអាចបន្ថែម កែប្រែ ឬលុបស្លាយសម្រាប់ទំព័រមុខនៅទីនេះ</p>
+            </div>
+            <a href="{% url 'add_slideshow' %}" class="btn btn-primary px-4 shadow-sm" style="border-radius: 10px; font-weight: 500;">
+                <i class="fas fa-plus-circle mr-2"></i>បន្ថែមថ្មី
+            </a>
+        </div>
+
+        <div class="card-body px-4 pb-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle border-0">
+                    <thead class="text-secondary" style="background-color: #f8f9fa;">
+                        <tr>
+                            <th class="border-0 py-3" style="border-radius: 12px 0 0 12px; width: 180px; padding-left: 20px;">រូបភាព</th>
+                            <th class="border-0 py-3">ព័ត៌មានស្លាយ</th>
+                            <th class="border-0 py-3 text-center">ស្ថានភាព</th>
+                            <th class="border-0 py-3 text-right" style="border-radius: 0 12px 12px 0; padding-right: 20px;">សកម្មភាព</th>
+                        </tr>
+                    </thead>
+                    <tbody style="border-top: none;">
+                        {% for slide in slides %}
+                        <tr>
+                            <td class="pl-4">
+                                <div class="position-relative view-image cursor-pointer shadow-sm" 
+                                     data-img="{{ slide.image.url }}" 
+                                     style="width: 130px; height: 75px; overflow: hidden; border-radius: 10px; cursor: pointer;">
+                                    <img src="{{ slide.image.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <div class="overlay-zoom">
+                                        <i class="fas fa-search-plus text-white"></i>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="font-weight-bold text-dark">{{ slide.title }}</div>
+                                <div class="small text-muted text-truncate" style="max-width: 250px;">
+                                    <i class="fas fa-link mr-1"></i>{{ slide.link|default:"មិនមានតំណភ្ជាប់" }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge badge-pill badge-soft-success px-3 py-2">
+                                    <i class="fas fa-check-circle mr-1"></i>សកម្ម
+                                </span>
+                            </td>
+                            <td class="text-right pr-4">
+                                <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                    <a href="{% url 'edit_slideshow' slide.pk %}" class="btn btn-white btn-sm px-3 border-right" title="កែប្រែ">
+                                        <i class="fas fa-edit text-primary"></i>
+                                    </a>
+                                    <a href="{% url 'delete_slideshow' slide.pk %}" 
+                                       class="btn btn-white btn-sm px-3" 
+                                       onclick="return confirm('តើបងពិតជាចង់លុបរូបភាពនេះមែនទេ?');" title="លុប">
+                                        <i class="fas fa-trash-alt text-danger"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5">
+                                <div class="py-4">
+                                    <i class="fas fa-box-open fa-4x text-light mb-3"></i>
+                                    <h6 class="text-muted font-weight-normal">មិនទាន់មានទិន្នន័យស្លាយនៅឡើយទេ។</h6>
+                                    <a href="{% url 'add_slideshow' %}" class="btn btn-sm btn-outline-primary mt-2">បញ្ចូលឥឡូវនេះ</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal សម្រាប់បង្ហាញរូបភាពធំ -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 bg-transparent">
+            <div class="modal-body p-0 text-center position-relative">
+                <button type="button" class="close text-white position-absolute" data-dismiss="modal" 
+                        style="right: -30px; top: -30px; opacity: 1; outline: none;">
+                    <i class="fas fa-times-circle fa-lg"></i>
+                </button>
+                <img src="" id="modalPreview" class="img-fluid rounded shadow-lg" style="max-height: 85vh; border: 3px solid #fff;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Table Styling */
+    .table td { vertical-align: middle !important; padding-top: 1.2rem; padding-bottom: 1.2rem; transition: 0.2s; }
+    .table tr:hover td { background-color: #fcfcfc; }
+    
+    /* Button Custom */
+    .btn-white { background: #fff; border: 1px solid #f0f0f0; }
+    .btn-white:hover { background: #f8f9fa; }
+    
+    /* Badge Custom */
+    .badge-soft-success { background-color: #e8f5e9; color: #2e7d32; font-weight: 500; }
+
+    /* Image Overlay Zoom */
+    .overlay-zoom {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.4); display: flex; align-items: center;
+        justify-content: center; opacity: 0; transition: all 0.3s ease;
+    }
+    .view-image:hover .overlay-zoom { opacity: 1; }
+    .view-image img { transition: transform 0.5s ease; }
+    .view-image:hover img { transform: scale(1.1); }
+</style>
+
+<script>
+    document.querySelectorAll(".view-image").forEach((item) => {
+        item.addEventListener("click", function () {
+            const imgSrc = this.getAttribute("data-img");
+            document.getElementById("modalPreview").src = imgSrc;
+            $("#imageModal").modal("show");
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,244 @@
+{% load static %}
+<!doctype html>
+<html lang="zxx">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Phone Shop Blog - Latest Tech News" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Blog | Tech Insights</title>
+
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
+      rel="stylesheet"
+    />
+    {% include 'accounts/includes/CssStyles.html' %}
+    <style>
+      /* បន្ថែម Shadow ឱ្យកាន់តែទន់ និង Border កោងជាងមុន */
+      .blog__card {
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      }
+
+      /* ធ្វើឱ្យ Badge រាងមូល និងប្រើពណ៌ Gradient */
+      .tech-badge {
+        background: linear-gradient(45deg, #7fad39, #96c93d);
+        color: white;
+        padding: 3px 12px;
+        border-radius: 50px;
+        font-size: 10px;
+      }
+
+      /* ធ្វើឱ្យរូបភាពមានលក្ខណៈ Zoom បន្តិចពេល Hover */
+      .blog__card__pic img {
+        transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+
+      /* បន្ថែម Hover Effect លើ Title */
+      .blog__card__text h5 a:hover {
+        color: #7fad39;
+        padding-left: 5px; /* មានចលនារុញទៅមុខបន្តិច */
+      }
+      /* Modern Tech Blog Styling */
+      .blog-section {
+        padding: 60px 0;
+        background: #f8f9fa;
+      }
+
+      .blog__card {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border: none;
+        margin-bottom: 30px;
+      }
+
+      .blog__card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+      }
+
+      .blog__card__pic {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+      }
+
+      .blog__card__pic img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.5s;
+      }
+
+      .blog__card:hover .blog__card__pic img {
+        transform: scale(1.05);
+      }
+
+      .blog__card__date {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #7fad39;
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .blog__card__text {
+        padding: 20px;
+      }
+
+      .tech-badge {
+        background: rgba(127, 173, 57, 0.1);
+        color: #7fad39;
+        padding: 2px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        display: inline-block;
+      }
+
+      .blog__card__text h5 a {
+        color: #252525;
+        font-weight: 700;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 10px;
+        transition: 0.3s;
+      }
+
+      .blog__card__text h5 a:hover {
+        color: #7fad39;
+      }
+
+      .blog__card__text p {
+        font-size: 14px;
+        color: #6f6f6f;
+        line-height: 1.6;
+      }
+
+      .read-more-btn {
+        color: #252525;
+        font-weight: 700;
+        font-size: 13px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: 0.3s;
+      }
+
+      .read-more-btn:hover {
+        color: #7fad39;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+      <div class="loader"></div>
+    </div>
+
+    <!-- Header Section Begin -->
+    {% include 'accounts/includes/HeaderSection.html' %}
+
+    <!-- Blog Section Begin -->
+    <section class="blog-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center mb-5">
+            <div class="section-title">
+              <h2 style="font-weight: 900; color: #252525">
+                Latest Phone Insights
+              </h2>
+              <p class="text-muted">
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          {% for blog in blogs %}
+          <div class="col-lg-4 col-md-6">
+            <div class="blog__card">
+              <div class="blog__card__pic">
+                <img src="{{ blog.image.url }}" alt="{{ blog.title }}" />
+                <div class="blog__card__date">
+                  {{ blog.date_added|date:"d M, Y" }}
+                </div>
+              </div>
+              <div class="blog__card__text">
+                <span class="tech-badge">Smartphone</span>
+                <h5>
+                  <a href="{% url 'blog_detail' blog.slug %}"
+                    >{{ blog.title }}</a
+                  >
+                </h5>
+                <p>{{ blog.description|truncatewords:12 }}</p>
+                <hr style="border-top: 1px solid #eee; margin: 15px 0" />
+                <a href="{% url 'blog_detail' blog.slug %}">Read More</a>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-lg-12 text-center py-5">
+            <div class="card p-5 border-0 shadow-sm">
+              <i class="fa fa-newspaper-o fa-3x text-muted mb-3"></i>
+              <h4 class="text-muted">មិនទាន់មានអត្ថបទនៅឡើយទេ។</h4>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Section Begin -->
+    <footer class="footer spad">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer__about">
+              <div class="footer__about__logo">
+                <a href="/"
+                  ><img src="{% static 'img/logo.png' %}" alt="Logo"
+                /></a>
+              </div>
+              <ul>
+                <li>Address: Phnom Penh, Cambodia</li>
+                <li>Phone: +855 12 345 678</li>
+                <li>Email: info@phoneshop.com</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12 text-center mt-4">
+            <div class="footer__copyright__text">
+              <p>
+                Copyright &copy;
+                <script>
+                  document.write(new Date().getFullYear());
+                </script>
+                All rights reserved
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Js Plugins -->
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>

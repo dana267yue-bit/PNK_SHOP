@@ -1,0 +1,159 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+
+{% block dashboard_content %}
+<style>
+    /* --- Style បន្ថែមសម្រាប់ភាពទាក់ទាញ --- */
+    .management-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        color: white;
+        padding: 40px 20px;
+        border-radius: 20px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .manage-card {
+        text-decoration: none !important;
+        display: block;
+        height: 100%;
+    }
+
+    .manage-card .card {
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 20px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .manage-card:hover .card {
+        transform: translateY(-12px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+        border-color: #7fad39;
+    }
+
+    .manage-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 32px;
+        transition: all 0.3s ease;
+    }
+
+    .manage-card:hover .manage-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    /* ពណ៌ទន់ៗ (Soft Colors) */
+    .bg-soft-success { background: #e8f5e9; color: #2e7d32; }
+    .bg-soft-primary { background: #e3f2fd; color: #1565c0; }
+    .bg-soft-warning { background: #fff8e1; color: #f9a825; }
+    .bg-soft-danger { background: #ffebee; color: #c62828; }
+
+    .card-title {
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .card-text {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .badge-status {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 0.7rem;
+        padding: 5px 10px;
+        border-radius: 50px;
+        background: rgba(0,0,0,0.05);
+    }
+</style>
+
+<div class="container-fluid py-2">
+    <!-- Header Section -->
+    <div class="management-header text-center">
+        <h2 class="font-weight-bold mb-2">មជ្ឈមណ្ឌលគ្រប់គ្រងទូរស័ព្ទ</h2>
+        <p class="mb-0 opacity-75">គ្រប់គ្រងស្តុក ផលិតផល និងការផ្សព្វផ្សាយរបស់ហាង PNK Mobile</p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="row">
+        <!-- ១. គ្រប់គ្រងបញ្ជីទូរស័ព្ទ -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{% url 'product_list' %}" class="manage-card">
+                <div class="card shadow-sm p-4 text-center">
+                    <span class="badge-status">សកម្ម</span>
+                    <div class="manage-icon bg-soft-success">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h5 class="card-title">បញ្ជីទូរស័ព្ទ</h5>
+                    <p class="card-text">បន្ថែម កែសម្រួល ឬលុបម៉ូដែលទូរស័ព្ទ និងរូបភាព</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- ២. គ្រប់គ្រង Slideshow -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="{% url 'add_slideshow' %}" class="manage-card">
+                <div class="card shadow-sm p-4 text-center">
+                    <span class="badge-status">សកម្ម</span>
+                    <div class="manage-icon bg-soft-primary">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <h5 class="card-title">Slideshow</h5>
+                    <p class="card-text">គ្រប់គ្រង Banner រូបភាពរំកិលនៅលើទំព័រមុខ Website</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- ៣. គ្រប់គ្រងម៉ាក -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="#" class="manage-card">
+                <div class="card shadow-sm p-4 text-center">
+                    <span class="badge-status text-muted">មិនទាន់បើក</span>
+                    <div class="manage-icon bg-soft-warning">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h5 class="card-title">ម៉ាក/យីហោ</h5>
+                    <p class="card-text">គ្រប់គ្រងឈ្មោះក្រុមហ៊ុនផលិត (Apple, Samsung...)</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- ៤. ប្រូម៉ូសិន -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <a href="#" class="manage-card">
+                <div class="card shadow-sm p-4 text-center">
+                    <span class="badge-status text-muted">មិនទាន់បើក</span>
+                    <div class="manage-icon bg-soft-danger">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <h5 class="card-title">ប្រូម៉ូសិន</h5>
+                    <p class="card-text">កំណត់តម្លៃបញ្ចុះ និងការផ្តល់ជូនពិសេសផ្សេងៗ</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- ផ្នែកព័ត៌មានបន្ថែម -->
+    <div class="card border-0 shadow-sm mt-2" style="border-left: 5px solid #7fad39 !important; border-radius: 15px;">
+        <div class="card-body d-flex align-items-center p-4">
+            <div class="mr-4 text-success" style="font-size: 24px;">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div>
+                <h6 class="font-weight-bold mb-1">ណែនាំ</h6>
+                <p class="text-muted mb-0 small">ជ្រើសរើសផ្នែកណាមួយខាងលើ ដើម្បីចាប់ផ្តើមរៀបចំទិន្នន័យហាងរបស់អ្នក។ ប្រព័ន្ធនឹងរក្សាទុករាល់ការផ្លាស់ប្តូរដោយស្វ័យប្រវត្តិ។</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %} 
+{% block dashboard_content %}
+<!-- Stat Cards Row: បង្ហាញ ៤ កាតក្នុងមួយជួរដេក -->
+<div class="row mb-4">
+  <!-- កាតទី១: ទូរស័ព្ទសរុប -->
+  <div class="col-md-3 mb-3">
+    <div
+      class="stat-card bg-white shadow-sm p-3 d-flex justify-content-between align-items-center"
+      style="border-radius: 15px; border: none"
+    >
+      <div>
+        <p class="text-muted mb-1 small">ទូរស័ព្ទសរុប</p>
+        <h3 class="m-0 font-weight-bold" style="color: #2c3e50">12</h3>
+      </div>
+      <div
+        class="stat-icon p-3"
+        style="
+          color: #3498db;
+          background: rgba(52, 152, 219, 0.1);
+          border-radius: 12px;
+        "
+      >
+        <i class="fas fa-mobile-alt"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- កាតទី២: ការលក់ខែនេះ -->
+  <div class="col-md-3 mb-3">
+    <div
+      class="stat-card bg-white shadow-sm p-3 d-flex justify-content-between align-items-center"
+      style="border-radius: 15px; border: none"
+    >
+      <div>
+        <p class="text-muted mb-1 small">ការលក់ខែនេះ</p>
+        <h3 class="m-0 font-weight-bold" style="color: #27ae60">$1,250</h3>
+      </div>
+      <div
+        class="stat-icon p-3"
+        style="
+          color: #27ae60;
+          background: rgba(39, 174, 96, 0.1);
+          border-radius: 12px;
+        "
+      >
+        <i class="fas fa-chart-line"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- កាតទី៣: ការកម្មង់ថ្មី -->
+  <div class="col-md-3 mb-3">
+    <div
+      class="stat-card bg-white shadow-sm p-3 d-flex justify-content-between align-items-center"
+      style="border-radius: 15px; border: none"
+    >
+      <div>
+        <p class="text-muted mb-1 small">ការកម្មង់ថ្មី</p>
+        <h3 class="m-0 font-weight-bold" style="color: #f39c12">12</h3>
+      </div>
+      <div
+        class="stat-icon p-3"
+        style="
+          color: #f39c12;
+          background: rgba(243, 156, 18, 0.1);
+          border-radius: 12px;
+        "
+      >
+        <i class="fas fa-shopping-basket"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- កាតទី៤: ជិតអស់ស្តុក -->
+  <div class="col-md-3 mb-3">
+    <div
+      class="stat-card bg-white shadow-sm p-3 d-flex justify-content-between align-items-center"
+      style="border-radius: 15px; border: none"
+    >
+      <div>
+        <p class="text-muted mb-1 small">ជិតអស់ស្តុក</p>
+        <h3 class="m-0 font-weight-bold" style="color: #e74c3c">3</h3>
+      </div>
+      <div
+        class="stat-icon p-3"
+        style="
+          color: #e74c3c;
+          background: rgba(231, 76, 60, 0.1);
+          border-radius: 12px;
+        "
+      >
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart Section -->
+<div class="row">
+  <div class="col-md-8">
+    <div
+      class="card shadow border-0 p-4"
+      style="border-radius: 15px; background: #fff"
+    >
+      <h5 class="font-weight-bold mb-4 text-dark">
+        <i class="fas fa-fire mr-2 text-danger"></i>ទូរសព្ទពេញនិយមជាងគេ
+      </h5>
+      <!-- ត្រូវប្រាកដថាមាន Canvas ជាមួយ ID ត្រឹមត្រូវ -->
+      <div style="position: relative; height: 350px">
+        <canvas id="popularPhonesChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ដាក់ Script ខាងក្រោមគេបង្អស់ -->
+
+<!-- ១. បញ្ចូល Library Chart.js សិន (ដាក់ពីលើ Script របស់អ្នក) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById("popularPhonesChart");
+    
+    // ឆែកមើលថា តើវាស្គាល់ Canvas ដែរឬទេ
+    if (!canvas) {
+        console.error("រកមិនឃើញ Canvas ជាមួយ ID popularPhonesChart ទេ");
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+    
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["iPhone 15 Pro", "Oppo A3x", "Vivo V60 Lite", "Samsung S24", "Realme C53"],
+        datasets: [{
+          label: "ចំនួនលក់ (គ្រឿង)",
+          data: [120, 95, 80, 70, 45],
+          backgroundColor: ["#7fad39", "#3498db", "#f1c40f", "#e74c3c", "#9b59b6"],
+          borderRadius: 8,
+          barThickness: 35,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          y: { beginAtZero: true, grid: { display: false } },
+          x: { grid: { display: false } },
+        },
+      },
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% load static %}
+<section class="latest-product spad">
+  <div class="container">
+    <div class="row">
+      {% for category, title in sections %}
+      <div class="col-lg-4 col-md-6">
+        <div class="latest-product__text">
+          <h4>{{ title }}</h4>
+          <div class="latest-product__slider owl-carousel">
+            <div class="latest-prdouct__slider__item">
+              {% for product in products %}
+              {% if product.category == category %}
+              <a href="{% url 'ShopDetails' product.id %}" class="latest-product__item">
+                <div class="latest-product__item__pic">
+                  <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+                </div>
+                <div class="latest-product__item__text">
+                  <h6>{{ product.name }}</h6>
+                  <span>${{ product.price|floatformat:2 }}</span>
+                </div>
+              </a>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>

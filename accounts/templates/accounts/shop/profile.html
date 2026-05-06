@@ -1,0 +1,61 @@
+{% extends 'accounts/shop/index.html' %} <!-- ប្តូរទៅតាម Base Template របស់បង -->
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0" style="border-radius: 20px;">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="bg-light d-inline-block p-4 rounded-circle mb-3">
+                            <i class="fa fa-user-circle-o fa-5x text-primary"></i>
+                        </div>
+                        <h3 class="font-weight-bold">ប្រវត្តិរូបរបស់ខ្ញុំ</h3>
+                        <p class="text-muted">លោកអ្នកអាចធ្វើបច្ចុប្បន្នភាពព័ត៌មានផ្ទាល់ខ្លួននៅទីនេះ</p>
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label class="font-weight-bold">ឈ្មោះអ្នកប្រើ (Username)</label>
+                                <input type="text" class="form-control bg-light" value="{{ user.username }}" readonly>
+                                <small class="text-muted">មិនអាចផ្លាស់ប្តូរឈ្មោះអ្នកប្រើបានទេ</small>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="font-weight-bold">អាសយដ្ឋានអ៊ីមែល</label>
+                                <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                            </div>
+                            <div class="col-md-6 form-group mt-3">
+                                <label class="font-weight-bold">នាមត្រកូល</label>
+                                <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+                            </div>
+                            <div class="col-md-6 form-group mt-3">
+                                <label class="font-weight-bold">នាមខ្លួន</label>
+                                <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
+                            </div>
+                            <div class="col-12 text-center mt-4">
+                                <button type="submit" class="btn btn-primary px-5 py-2 shadow-sm" style="border-radius: 10px; font-weight: bold;">
+                                    <i class="fa fa-save mr-2"></i> រក្សាទុកការផ្លាស់ប្តូរ
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% load static %}
+<!doctype html>
+<html lang="zxx">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ blog.title }}</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet" />
+
+    <!-- Css Styles -->
+    {% include 'accounts/includes/CssStyles.html' %}
+
+    <style>
+        /* កំណត់ផ្ទៃខាងក្រោយឱ្យរាបស្មើ */
+        body { background-color: #fcfcfc; }
+
+        .blog-header {
+            padding-top: 50px;
+            padding-bottom: 30px;
+            text-align: center;
+        }
+
+        .blog-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1c1c1c;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .blog-meta {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .blog-meta span { margin: 0 10px; }
+
+        /* ផ្នែករូបភាព - កែសម្រួលឱ្យទំហំសមល្មមនៅទីនេះ */
+        .image-wrapper {
+            max-width: 600px; /* កំណត់ទទឹងរូបភាពអតិបរមា */
+            margin: 0 auto 40px; /* រុញឱ្យនៅកណ្តាល */
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: auto;
+            max-height: 600; /* កំណត់កម្ពស់អតិបរមាដើម្បីកុំឱ្យវាវែងពេក */
+            object-fit: cover; /* កាត់តម្រឹមរូបភាពឱ្យស្អាតក្នុងប្រអប់ */
+            display: block;
+        }
+
+        /* ផ្នែកអត្ថបទ */
+        .content-body {
+            max-width: 600px; /* កំណត់ទទឹងអត្ថបទឱ្យតូចជាងរូបភាពបន្តិច ដើម្បីងាយស្រួលអាន */
+            margin: 0 auto;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #333;
+            padding-bottom: 60px;
+        }
+
+        .content-body p {
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        /* ប៊ូតុងត្រឡប់ក្រោយ */
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #7fad39;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            border-bottom-color: #7fad39;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header Section -->
+    {% include 'accounts/includes/HeaderSection.html' %}
+
+    <div class="container">
+        <!-- ចំណងជើង និង កាលបរិច្ឆេទ -->
+        <div class="blog-header">
+            <div class="blog-meta">
+                <span><i class="fa fa-calendar-o"></i> {{ blog.date_added|date:"d M Y" }}</span>
+                <span><i class="fa fa-user-o"></i> Admin</span>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <h2>{{ blog.title }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- រូបភាពអត្ថបទ -->
+        <div class="image-wrapper">
+            <img src="{{ blog.image.url }}" alt="{{ blog.title }}">
+        </div>
+
+        <!-- ខ្លឹមសារអត្ថបទ -->
+        <div class="content-body">
+            {{ blog.description|linebreaks }}
+            
+            <div class="text-center">
+                <a href="{% url 'blog_page' %}" class="btn-back">
+                    <i class="fa fa-arrow-left"></i> ត្រឡប់ទៅកាន់ Blog ទាំងអស់
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    {% include 'accounts/includes/FooterSection.html' %}
+
+    <!-- Js Plugins -->
+    {% include 'accounts/includes/JsPlugins.html' %}
+</body>
+</html>

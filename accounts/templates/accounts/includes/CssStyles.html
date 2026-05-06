@@ -1,0 +1,266 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/elegant-icons.css' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/nice-select.css' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/slicknav.min.css' %}" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" />
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Kantumruy+Pro:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+    /* ==========================================================================
+   ១. ការកំណត់ទូទៅ (Global Settings & Variables)
+   ========================================================================== */
+:root {
+    --primary-color: #7fad39;
+    --bg-light: #f8f9fa;
+    --text-dark: #1c1c1c;
+    --text-grey: #6f6f6f;
+    --shadow-hover: 0 12px 30px rgba(0,0,0,0.1);
+    --shadow-card: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+body {
+    font-family: "Kantumruy Pro", "Cairo", sans-serif;
+    background-color: var(--bg-light);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* ==========================================================================
+   ២. ផ្នែកទំនាក់ទំនងក្នុង Header (Phone Support Section)
+   ========================================================================== */
+
+   
+   .hero__search__phone {
+    display: flex;
+    align-items: center;
+}
+
+.hero__search__phone__icon {
+    font-size: 18px;
+    color: var(--primary-color);
+    height: 45px;
+    width: 45px;
+    background: #f5f5f5;
+    line-height: 45px;
+    text-align: center;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+/* កំណត់ឱ្យបញ្ជីម៉ាកទូរស័ព្ទហោះពីលើស្លាយ */
+.phone-category-container {
+    position: relative;
+    z-index: 1000; /* ឱ្យខ្ពស់ជាង Slideshow */
+}
+
+.phone-category-title {
+    background: #7fad39;
+    color: #ffffff;
+    padding: 15px 25px;
+    font-weight: 700;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+}
+
+.phone-category-list {
+    position: absolute; /* សំខាន់៖ កុំឱ្យវារុញស្លាយធ្លាក់ចុះ */
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #ebebeb;
+    border-top: none;
+    list-style: none;
+    padding: 10px 0;
+    box-shadow: 0px 8px 15px rgba(0,0,0,0.1);
+    /* display: none; */ /* បើបងចង់ឱ្យវាលាក់សិន ចាំចុចបើក */
+}
+
+/* ១. រៀបចំលក្ខណៈដើមរបស់បញ្ជី (លាក់វាសិន) */
+.phone-category-list {
+    position: absolute;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #ebebeb;
+    border-top: none;
+    list-style: none;
+    padding: 10px 0;
+    box-shadow: 0px 8px 15px rgba(0,0,0,0.1);
+    z-index: 99;
+    
+    /* ចំណុចសំខាន់សម្រាប់ចលនា */
+    opacity: 0;             /* ធ្វើឱ្យមើលមិនឃើញ */
+    visibility: hidden;    /* បិទមិនឱ្យចុចកើត */
+    transform: translateY(20px); /* រុញវាចុះក្រោមបន្តិច */
+    transition: all 0.3s ease-out; /* កំណត់ល្បឿនចលនា 0.3 វិនាទី */
+}
+
+/* ២. នៅពេលដាក់ Mouse ពីលើ (Hover) */
+.phone-category-container:hover .phone-category-list {
+    opacity: 1;             /* បង្ហាញឱ្យឃើញច្បាស់ */
+    visibility: visible;   /* បើកឱ្យចុចបាន */
+    transform: translateY(0);    /* រុញមកទីតាំងដើមវិញ (ហោះឡើងលើ) */
+}
+
+/* ៣. បន្ថែមចលនាពេល Hover លើឈ្មោះម៉ាកនីមួយៗ */
+.phone-category-list li a {
+    display: block;
+    padding: 10px 25px;
+    color: #1c1c1c;
+    text-decoration: none;
+    transition: all 0.2s; /* ចលនាប្តូរពណ៌បន្តិចៗ */
+}
+
+.phone-category-list li a:hover {
+    background: #f8f9fa;
+    color: #7fad39;
+    padding-left: 35px; /* រុញអក្សរទៅស្តាំបន្តិចពេល Hover */
+}
+
+/* ៤. កំណត់ឱ្យ Title មើលទៅគួរឱ្យចង់ចុច */
+.phone-category-title {
+    background: #7fad39;
+    color: #ffffff;
+    padding: 15px 25px;
+    font-weight: 700;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   ៣. ផ្នែកចំណងជើង និងបន្ទាត់លម្អ (Section Title)
+   ========================================================================== */
+.section-title h2 {
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.section-title h2::after {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 4px;
+    width: 80px;
+    background: var(--primary-color);
+    content: "";
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   កូដរួមសម្រាប់កាតផលិតផល (Updated: ប្រើបានទាំង Index និង Shop)
+   ========================================================================== */
+
+/* ១. កំណត់កាតឱ្យចេញរាងមូល និងមានស្រមោលស្អាត */
+.featured__item, .product__item {
+    background: #ffffff;
+    border-radius: 20px !important;
+    border: 1px solid #f2f2f2 !important;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+/* ២. កំណត់រូបភាពឱ្យមានទំហំសមល្មម មិនបាំងអក្សរ */
+.featured__item__pic, .product__item__pic {
+    height: 220px !important; 
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    margin: 15px !important;
+    transition: transform 0.5s ease;
+}
+
+/* ៣. បន្ថែមគម្លាតអត្ថបទ (ឈ្មោះផលិតផល និងតម្លៃ) */
+.featured__item__text, .product__item__text {
+    padding: 10px 15px 25px 15px !important;
+    text-align: center;
+    background: #ffffff;
+    z-index: 5;
+    position: relative;
+}
+
+/* ៤. Hover Effect ពេលដាក់ Mouse ពីលើ */
+/* ១. ឱ្យកាតងើបឡើងលើ និងមានស្រមោលខ្លាំងពេលដាក់ Mouse ពីលើ */
+.featured__item:hover, .product__item:hover {
+    transform: translateY(-10px) !important; /* ងើបឡើងលើ ១០ភិចសែល */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important; /* បន្ថែមស្រមោល */
+    border-color: #7fad39 !important; /* ប្តូរពណ៌ស៊ុមទៅជាពណ៌បៃតង */
+}
+
+/* ២. ឱ្យរូបភាពរីកធំបន្តិច (Zoom In) នៅក្នុងស៊ុម */
+.featured__item:hover .featured__item__pic, 
+.product__item:hover .featured__item__pic,
+.product__item:hover .product__item__pic {
+    transform: scale(1.08) !important; /* រីកធំ ៨% */
+}
+
+/* ៣. បន្ថែម transition ដើម្បីឱ្យចលនារលូន (Smooth) */
+.featured__item, .product__item, .featured__item__pic, .product__item__pic {
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* កំណត់កម្ពស់ Slideshow ឱ្យសមសួន */
+.carousel-item {
+    height: 450px; /* បងអាចដំឡើង ឬបន្ថយតាមចិត្ត */
+    min-height: 400px;
+}
+
+.carousel-item h2 {
+    color: #1c1c1c;
+    line-height: 1.2;
+}
+
+.carousel-indicators li {
+    background-color: #7fad39; /* ប្តូរពណ៌ចុចៗខាងក្រោមឱ្យស៊ីជាមួយ Theme បៃតង */
+}
+
+/* ធ្វើឱ្យរូបភាពមានចលនាហោះចូលតិចៗ */
+.carousel-item img {
+    animation: fadeInUp 1s ease-in-out;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/*managePhone */
+.manage-card {
+        text-decoration: none !important;
+        transition: all 0.3s ease;
+    }
+    .manage-card:hover .card {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+    }
+    .manage-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        font-size: 24px;
+    }
+    /* ពណ៌ Background បែបស្រទន់ */
+    .bg-soft-success { background-color: rgba(40, 167, 69, 0.1); color: #28a745; }
+    .bg-soft-primary { background-color: rgba(0, 123, 255, 0.1); color: #007bff; }
+    .bg-soft-warning { background-color: rgba(255, 193, 7, 0.1); color: #ffc107; }
+    .bg-soft-danger { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+</style>

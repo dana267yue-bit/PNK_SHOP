@@ -1,0 +1,103 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<!-- ១. បន្ថែម Link Google Font Kantumruy Pro -->
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 p-4">
+                <h3 class="mb-4 text-success" style="font-family: 'Kantumruy Pro', sans-serif; font-weight: 700;">Create New Post</h3>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="form-group mb-3">
+                        {{ form.as_p }}
+                        <!-- កន្លែងបង្ហាញរូបភាព Preview -->
+                        <div class="mt-2">
+                            <img id="image-preview" src="#" alt="រូបភាព Preview" style="max-width: 250px; display: none; border-radius: 8px; border: 1px solid #ddd;" />
+                            <p id="file-name" class="text-muted small mt-1"></p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success px-5">Save Post</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* ២. កំណត់ Font ឱ្យទៅលើ Form ទាំងមូល */
+    .card, input, textarea, select, label, button, .alert {
+        font-family: 'Kantumruy Pro', sans-serif !important;
+    }
+
+    .card { border-radius: 15px; background: #fff; }
+    
+    input[type="text"], input[type="number"], textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        display: block;
+        font-weight: 400; /* កម្រាស់អក្សរធម្មតា */
+    }
+    
+    label { 
+        font-weight: 700; /* ដាក់ឱ្យដិតបន្តិចដើម្បីងាយស្រួលមើល */
+        margin-top: 15px; 
+        display: block; 
+        color: #333;
+    }
+
+    input[type="file"] {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px dashed #ccc;
+        width: 100%;
+    }
+
+    .btn-success {
+        font-weight: 600;
+    }
+</style>
+
+<script>
+    // JavaScript នៅដដែល...
+    const fileInput = document.querySelector('input[type="file"]');
+    const previewImage = document.getElementById('image-preview');
+    const fileNameDisplay = document.getElementById('file-name');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                fileNameDisplay.textContent = "បានជ្រើសរើស៖ " + file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>
+{% endblock %}

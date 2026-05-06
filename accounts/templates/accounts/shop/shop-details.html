@@ -1,0 +1,125 @@
+{% load static %}
+<!doctype html>
+<html lang="zxx">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="phonePhop" />
+    <meta name="keywords" content="phonephon, unica, creative, html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>{{ product.name }}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet" />
+
+    {% include 'accounts/includes/CssStyles.html' %}
+  </head>
+
+  <body>
+    {% include 'accounts/includes/HeaderSection.html' %}
+
+
+    <section class="product-details spad">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-md-6">
+            <div class="product__details__pic">
+              <div class="product__details__pic__item">
+                <img class="product__details__pic__item--large" src="{{ product.image.url }}" alt="{{ product.name }}" />
+              </div>
+
+              <div class="product__details__pic__slider owl-carousel mt-3">
+                <div class="pic-slider-item">
+                  <img src="{{ product.image.url }}" class="thumb-img active" 
+                       style="width: 100%; cursor: pointer; border: 2px solid #999c95; border-radius: 5px;" />
+                </div>
+
+                {% for img in product.images.all %}
+                <div class="pic-slider-item">
+                  <img src="{{ img.image.url }}" class="thumb-img" 
+                       style="width: 100%; cursor: pointer; border: 1px solid #eee; border-radius: 5px;" />
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-6">
+            <div class="product__details__text">
+              <h3>{{ product.name }}</h3>
+              <div class="product__details__rating">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star-half-o"></i>
+                <span>(18 reviews)</span>
+              </div>
+              <div class="product__details__price">${{ product.price }}</div>
+              <p>{{ product.description }}</p>
+
+              <div class="product__details__quantity">
+                <div class="quantity">
+                  <div class="pro-qty">
+                    <input type="text" value="1" />
+                  </div>
+                </div>
+              </div>
+              <a href="#" class="primary-btn">ADD TO CARD</a>
+
+              <ul>
+                <li>
+                  <b>Availability</b>
+                  <span>{% if product.stock > 0 %} In Stock {% else %} Out of Stock {% endif %}</span>
+                </li>
+                <li><b>Brand</b> <span>{{ product.brand }}</span></li>
+                <li>
+                  <b>Share on</b>
+                  <div class="share">
+                    <a href="#"><i class="fa fa-facebook"></i></a>
+                    <a href="#"><i class="fa fa-twitter"></i></a>
+                    <a href="#"><i class="fa fa-instagram"></i></a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Section Begin -->
+    {% include 'accounts/includes/FooterSection.html' %}
+    <!-- Footer Section End -->
+    <!-- Js Plugins -->
+    {% include 'accounts/includes/JsPlugins.html' %}
+
+    <script>
+      $(document).ready(function () {
+        // ១. កំណត់មុខងារឱ្យ Carousel រត់ពីស្តាំទៅឆ្វេង (RTL)
+        var productSlider = $(".product__details__pic__slider");
+        productSlider.owlCarousel({
+          loop: true,
+          margin: 15,
+          items: 4,
+          dots: true,
+          nav: false,
+          autoplay: true,
+          autoplayTimeout: 5000,
+          rtl: true  // នេះជាកន្លែងធ្វើឱ្យវារត់ពីស្តាំទៅឆ្វេង
+        });
+
+        // ២. មុខងារចុចលើរូបភាពតូចឱ្យដូររូបភាពធំ
+        $(".thumb-img").on("click", function () {
+          var imgUrl = $(this).attr("src");
+
+          // ប្តូររូបភាពធំ
+          $(".product__details__pic__item--large").attr("src", imgUrl);
+
+          // ប្តូរ Border លើរូបដែលបានចុច
+          $(".thumb-img").css("border", "1px solid #eee");
+          $(this).css("border", "2px solid #7fad39");
+        });
+      });
+    </script>
+  </body>
+</html>

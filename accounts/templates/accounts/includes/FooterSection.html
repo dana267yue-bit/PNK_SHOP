@@ -1,0 +1,80 @@
+{% load static %}
+<footer class="footer spad">
+  <div class="container">
+    <div class="row">
+      <!-- ផ្នែកអំពីយើង -->
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="footer__about">
+          <div class="footer__about__logo">
+            <a href="{% url 'index' %}">
+              <img src="{% static 'img/logo1.jpg' %}" alt="PNK Logo" style="max-height: 50px;">
+            </a>
+          </div>
+          <ul>
+            <li><strong>អាសយដ្ឋាន:</strong> ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ</li>
+            <li><strong>ទូរសព្ទ:</strong> 096 29 647 13</li>
+            <li><strong>អ៊ីមែល:</strong> dana267yue@gmail.com</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ផ្នែកលីងសំខាន់ៗ -->
+      <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
+        <div class="footer__widget">
+          <h6>តំណភ្ជាប់រហ័ស</h6>
+          <ul>
+            <li><a href="{% url 'About' %}">អំពីយើង</a></li>
+            <li><a href="{% url 'shop' %}">ហាងទំនិញ</a></li>
+            <li><a href="#">ការទិញទំនិញដោយសុវត្ថិភាព</a></li>
+            <li><a href="#">ព័ត៌មានដឹកជញ្ជូន</a></li>
+            <li><a href="#">គោលការណ៍ឯកជនភាព</a></li>
+          </ul>
+          <ul>
+            <li><a href="{% url 'contact' %}">ទំនាក់ទំនង</a></li>
+            <li><a href="{% url 'blog_page' %}">អត្ថបទថ្មីៗ</a></li>
+            <li><a href="#">សេវាកម្មរបស់យើង</a></li>
+            <li><a href="#">គម្រោងនានា</a></li>
+            <li><a href="#">មតិកែលម្អ</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ផ្នែកចុះឈ្មោះទទួលព័ត៌មាន -->
+      <div class="col-lg-4 col-md-12">
+        <div class="footer__widget">
+          <h6>ចុះឈ្មោះទទួលព័ត៌មានថ្មីៗ</h6>
+          <p>ទទួលបានព័ត៌មានអំពីផលិតផលថ្មី និងការផ្តល់ជូនពិសេសពីហាងរបស់យើង។</p>
+          <form action="#">
+            <input type="text" placeholder="បញ្ចូលអ៊ីមែលរបស់អ្នក" style="font-family: 'Cairo', sans-serif;" />
+            <button type="submit" class="site-btn">ចុះឈ្មោះ</button>
+          </form>
+          <div class="footer__widget__social">
+            <a href="#"><i class="fa fa-facebook"></i></a>
+            <a href="#"><i class="fa fa-instagram"></i></a>
+            <a href="#"><i class="fa fa-telegram"></i></a> <!-- ប្តូរមកប្រើ Telegram ដែលពេញនិយមនៅខ្មែរ -->
+            <a href="#"><i class="fa fa-tiktok"></i></a>   <!-- បន្ថែម TikTok -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ផ្នែករក្សាសិទ្ធិ -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="footer__copyright">
+          <div class="footer__copyright__text">
+            <p>
+              រក្សាសិទ្ធិគ្រប់យ៉ាងដោយ &copy; 
+              <script>document.write(new Date().getFullYear());</script>
+              <strong>PNK Phone Shop</strong> - ហាងទូរសព្ទនៅខេត្តត្បូងឃ្មុំ 
+              <i class="fa fa-heart" aria-hidden="true" style="color: #7fad39;"></i>
+            </p>
+          </div>
+          <div class="footer__copyright__payment">
+            <img src="{% static 'img/payment-item.png' %}" alt="Payment Methods" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,315 @@
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    /* ១. បិទ Scroll ធំរបស់ Browser ខាងក្រៅបង្អស់ 
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden; 
+    }
+    */
+    /* រៀបចំ Layout ឱ្យពេញអេក្រង់ និងមិនឱ្យធ្លាយចេញក្រៅ */
+    .wrapper {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+    }
+
+    /* ២. Sidebar ពណ៌ងងឹត (Fixed) */
+    .sidebar {
+        width: 260px;
+        background: #34495e;
+        height: 100vh;
+        flex-shrink: 0;
+        color: white;
+    }
+
+    /* ៣. ផ្នែក Main Content ខាងស្តាំ */
+    .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background-color: #f8f9fa;
+        overflow: hidden; /* ការពារកុំឱ្យ Scroll ធ្លាយចេញមកលើ Header */
+    }
+
+    /* Header ខាងលើ (ឈ្មោះ SAMORN) - ឱ្យនៅនឹងថ្កល់ */
+    .top-header {
+        height: 70px;
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        z-index: 10;
+        flex-shrink: 0;
+    }
+
+    /* ៤. ផ្នែកដែលត្រូវ Scroll (កន្លែងតារាង និង Stats Cards) */
+    .scrollable-area {
+        flex: 1;
+        overflow-y: auto; /* បើក Scroll តែក្នុងផ្នែកនេះប៉ុណ្ណោះ */
+        padding: 25px;
+    }
+
+    /* ៥. រចនា Scrollbar ពណ៌បៃតង (ដូចរូបភាពបងចង់បាន) */
+    .scrollable-area::-webkit-scrollbar {
+        width: 8px;
+    }
+    .scrollable-area::-webkit-scrollbar-thumb {
+        background: #7fad39; /* ពណ៌បៃតង PNK */
+        border-radius: 10px;
+    }
+    .scrollable-area::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    /* ប្រើប្រាស់ Font ខ្មែរឱ្យស្អាតបំផុត */
+body {
+    font-family: 'Kantumruy Pro', sans-serif;
+    background-color: #f0f2f5;
+}
+
+/* ១. Sidebar Styling */
+.sidebar {
+    background: #2c3e50; /* ពណ៌ងងឹតបែបទាន់សម័យ */
+    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+    padding: 25px;
+    font-size: 20px;
+    letter-spacing: 1px;
+    background: rgba(0,0,0,0.1);
+}
+
+.nav-link {
+    color: #a4b0be !important;
+    padding: 12px 25px !important;
+    margin: 4px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: white !important;
+    background: rgba(255,255,255,0.05);
+    transform: translateX(5px);
+}
+
+.nav-link.active {
+    background: #7fad39 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(127, 173, 57, 0.3);
+}
+
+/* ២. Stats Cards Styling (ឱ្យទាក់ទាញ) */
+.stat-card {
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: rgba(0,0,0,0.03);
+}
+
+/* ៣. Table Styling */
+.data-card {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.table thead th {
+    border-top: none;
+    background-color: #f8f9fa;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: #888;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 15px;
+}
+
+/* រចនាប៊ូតុងសកម្មភាព */
+.btn-action {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    line-height: 32px;
+    border-radius: 8px;
+}
+
+/* កំណត់កម្ពស់ឱ្យកាតតារាង និងបើក Scroll */
+.table-responsive-custom {
+    max-height: 400px; /* បងអាចដូរលេខនេះតាមចិត្ត (ឧទាហរណ៍ 500px) */
+    overflow-y: auto;
+    border-radius: 0 0 15px 15px;
+}
+
+/* រចនា Scrollbar ឱ្យមានពណ៌បៃតង និងតូចស្អាត */
+.table-responsive-custom::-webkit-scrollbar {
+    width: 6px;
+}
+.table-responsive-custom::-webkit-scrollbar-thumb {
+    background: #7fad39; /* ពណ៌បៃតង PNK */
+    border-radius: 10px;
+}
+.table-responsive-custom::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* កំណត់ឱ្យ Header តារាងនៅជាប់ខាងលើទោះបីជា Scroll ចុះក្រោម (Sticky Header) */
+.table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 5;
+    border-bottom: 2px solid #dee2e6;
+}
+/* បង្កើត Scrollbar បែប Minimalist */
+.table-container {
+    max-height: 480px; /* កម្ពស់តារាង */
+    overflow-y: auto;
+    position: relative;
+    border-radius: 0 0 16px 16px;
+}
+
+.table-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #7fad39; /* ពណ៌បៃតងបងចង់បាន */
+    border-radius: 10px;
+}
+
+/* រៀបចំតារាងឱ្យមើលទៅ Premium */
+.custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.custom-table thead th {
+    position: sticky;
+    top: 0;
+    background: #fdfdfd;
+    color: #7f8c8d;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 15px 20px;
+    border-bottom: 1px solid #edf2f7;
+    z-index: 10;
+}
+
+.custom-table tbody td {
+    padding: 15px 20px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f4f8;
+    color: #2d3436;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+
+.custom-table tbody tr:hover td {
+    background: #f9fbf7; /* ពណ៌ពេលដាក់ Mouse លើជួរនីមួយៗ */
+}
+
+/* រចនារូបភាពក្នុងតារាង */
+.img-product {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* រចនាប៊ូតុងសកម្មភាព (Edit/Delete) */
+.btn-action-edit {
+    color: #3498db;
+    background: rgba(52, 152, 219, 0.1);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.btn-action-edit:hover {
+    background: #3498db;
+    color: white;
+}
+
+.btn-action-del {
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.btn-action-del:hover {
+    background: #e74c3c;
+    color: white;
+}
+/* ប៊ូតុង Edit/Delete បែប Modern */
+.btn-action-edit { color: #3498db; background: rgba(52, 152, 219, 0.1); border: none; width: 35px; height: 35px; border-radius: 8px; }
+.btn-action-del { color: #e74c3c; background: rgba(231, 76, 60, 0.1); border: none; width: 35px; height: 35px; border-radius: 8px; }
+.btn-action-edit:hover { background: #3498db; color: white; }
+.btn-action-del:hover { background: #e74c3c; color: white; }
+
+/* រចនា Badge ឱ្យមានពណ៌ស្រាលៗ */
+.badge-success-light { background-color: rgba(40, 167, 69, 0.1); color: #28a745; }
+.badge-warning-light { background-color: rgba(255, 193, 7, 0.1); color: #ffc107; }
+/* ស្ទីលសម្រាប់ប្រអប់តារាងទាំងមូល */
+.custom-card-shadow {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* ស្រមោលព្រិលទន់ៗ */
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+/* ស្ទីលសម្រាប់ជួរនីមួយៗពេល Hover Mouse ពីលើ */
+.table-hover tbody tr:hover {
+    background-color: #f8fbff !important;
+    transform: scale(1.002); /* រីកបន្តិចឱ្យដឹងថាមានសកម្មភាព */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.02);
+}
+
+/* ស្ទីលសម្រាប់ប៊ូតុង និង Input ឱ្យមានស្រមោលតិចៗ */
+.shadow-small {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+</style>
+

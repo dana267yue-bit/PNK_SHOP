@@ -1,0 +1,147 @@
+{% load static %}
+
+<!-- ហៅ Font Kantumruy Pro -->
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;700&display=swap" rel="stylesheet">
+
+<style>
+  .featured {
+    font-family: 'Kantumruy Pro', sans-serif;
+    background-color: #fcfcfc;
+  }
+
+  /* កែសម្រួល Card ឱ្យបង្រួមគម្លាតសមសួន */
+  .product__item {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+    text-align: center;
+    padding: 15px !important; /* បង្រួម Padding ឱ្យតូចជាងមុនបន្តិច */
+  }
+
+  .product__item:hover {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border-color: #7fad39;
+  }
+
+  /* រូបភាពផលិតផល */
+  .featured__item__pic {
+    margin: 0 auto 10px auto; 
+    height: 180px !important; /* បង្រួមកម្ពស់រូបភាពបន្តិចឱ្យសមជាមួយ Card */
+    width: 100%;
+    background-size: contain !important;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  /* Brand Logo ឬ ឈ្មោះ Brand */
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    margin-bottom: 5px;
+  }
+  
+  .brand-text {
+    font-size: 10px;
+    font-weight: 700; /* កែពី 1000px មក 700 */
+    letter-spacing: 1px;
+    color: #b2b2b2;
+    text-transform: uppercase;
+  }
+
+  /* ឈ្មោះផលិតផល */
+  .product-name {
+    margin-bottom: 2px !important;
+  }
+
+  .product-name a {
+    /* ... កូដផ្សេងៗ ... */
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* សម្រាប់ Chrome/Safari */
+    line-clamp: 1;         /* បន្ថែមបន្ទាត់នេះ (Standard) */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+  /* តម្លៃផលិតផល - កែឱ្យនៅជិតឈ្មោះ */
+  .product-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e74c3c;
+    margin-bottom: 12px !important; /* គម្លាតទៅប៊ូតុងសមល្មម */
+  }
+
+  /* ប៊ូតុង "មើលលម្អិត" - រាងស្លីមសមភ្នែក */
+  .view-detail-btn .btn {
+    border: 1.5px solid #7fad39;
+    color: #7fad39;
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 5px 20px;
+    font-size: 13px;
+    background: transparent;
+    transition: 0.3s;
+    width: 85% !important;
+    margin: 0 auto;
+  }
+
+  .view-detail-btn .btn:hover {
+    background-color: #7fad39;
+    color: #ffffff;
+  }
+</style>
+
+<section class="featured spad">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center mb-4">
+        <div class="section-title">
+          <h2 style="font-weight: 700;">ផលិតផលពិសេស</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="row featured__filter">
+      {% for product in products %}
+      <div class="col-6 col-md-4 col-lg-3 mb-4">
+        <div class="product__item">
+          {% url 'ShopDetails' product.id as the_url %}
+
+          <!-- រូបភាពផលិតផល -->
+          <div class="featured__item__pic set-bg"
+               data-setbg="{{ product.image.url }}"
+               onclick="window.location.href='{{ the_url }}'"
+               style="cursor: pointer;">
+          </div>
+
+          <!-- ព័ត៌មានផលិតផល (លុប flex-grow-1 និង mt-auto ចេញដើម្បីឱ្យអក្សរនៅជិតគ្នា) -->
+          <div class="featured__item__text">
+            
+            <div class="brand-logo">
+              {% if product.brand.logo %}
+                <img src="{{ product.brand.logo.url }}" style="max-height: 18px; opacity: 0.6;">
+              {% else %}
+                <span class="brand-text">{{ product.brand.name }}</span>
+              {% endif %}
+            </div>
+
+            <h6 class="product-name">
+              <a href="{{ the_url }}">{{ product.name }}</a>
+            </h6>
+
+            <div class="product-price">
+              ${{ product.price }}
+            </div>
+
+            <div class="view-detail-btn">
+              <a href="{{ the_url }}" class="btn">មើលលម្អិត</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>

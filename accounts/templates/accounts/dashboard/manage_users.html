@@ -1,0 +1,55 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0" style="border-radius: 15px;">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="m-0 font-weight-bold text-dark"><i class="fas fa-users-cog mr-2 text-success"></i> គ្រប់គ្រងអ្នកប្រើប្រាស់</h5>
+        <span class="badge badge-success p-2">{{ users.count }} នាក់</span>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ឈ្មោះអ្នកប្រើ</th>
+                        <th>អ៊ីមែល</th>
+                        <th>ថ្ងៃចុះឈ្មោះ</th>
+                        <th>ប្រភេទ</th>
+                        <th class="text-center">សកម្មភាព</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-secondary text-white rounded-circle mr-2 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                    {{ user.username|first|upper }}
+                                </div>
+                                <strong>{{ user.username }}</strong>
+                            </div>
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.date_joined|date:"d M Y" }}</td>
+                        <td>
+                            {% if user.is_superuser %}
+                                <span class="badge badge-danger">Admin</span>
+                            {% else %}
+                                <span class="badge badge-info">Member</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if not user.is_superuser %}
+                            <a href="{% url 'delete_user' user.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('តើអ្នកពិតជាចង់លុបអ្នកប្រើប្រាស់នេះមែនទេ?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

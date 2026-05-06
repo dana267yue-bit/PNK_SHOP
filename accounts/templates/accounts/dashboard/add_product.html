@@ -1,0 +1,116 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+
+{% block dashboard_content %}
+<style>
+    /* រចនាប្រអប់ Form ឱ្យមានស្រមោល និងជ្រុងមូលស្អាត */
+    .form-container {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        padding: 30px;
+        margin-bottom: 50px;
+    }
+    .form-title {
+        color: #2c3e50;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 15px;
+    }
+    .form-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background-color: #28a745;
+        border-radius: 2px;
+    }
+    /* រចនា Label និង Input ឱ្យមានរបៀប */
+    label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+    }
+    input, select, textarea {
+        border-radius: 8px !important;
+        border: 1px solid #ced4da !important;
+        padding: 10px !important;
+    }
+    input:focus {
+        border-color: #28a745 !important;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+    }
+    .image-preview-card {
+        background: #f8f9fa;
+        border: 2px dashed #dee2e6;
+        border-radius: 10px;
+        padding: 15px;
+        transition: 0.3s;
+    }
+    .image-preview-card:hover {
+        background: #e9ecef;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="form-container">
+                <h3 class="text-center form-title mb-5">បញ្ចូលព័ត៌មានផលិតផលថ្មី</h3>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- ផ្នែកព័ត៌មានទូទៅ -->
+                    <div class="row">
+                        
+                        <!-- ការបង្ហាញ Form បងអាចប្រើ loop ដើម្បីគ្រប់គ្រង Class Bootstrap -->
+                        {% for field in form %}
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- ផ្នែករូបភាពបន្ថែម (បើមាន) -->
+                    {% if formset %}
+                        <hr class="my-5">
+                        <h5 class="font-weight-bold mb-4 text-success">
+                            <i class="fas fa-images mr-2"></i> រូបភាពបន្ថែមសម្រាប់ផលិតផល
+                        </h5>
+                        {{ formset.management_form }}
+                        <div class="row">
+                            {% for f in formset %}
+                                <div class="col-md-4 mb-4">
+                                    <div class="image-preview-card">
+                                        {{ f.as_p }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- ប៊ូតុងបញ្ជូន -->
+                    <div class="mt-5 border-top pt-4 text-right">
+                        <a href="{% url 'product_list' %}" class="btn btn-light px-4 mr-2 border">
+                            <i class="fas fa-times mr-1"></i> បោះបង់
+                        </a>
+                        <button type="submit" class="btn btn-success px-5 shadow">
+                            <i class="fas fa-save mr-1"></i> រក្សាទុកផលិតផល
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
