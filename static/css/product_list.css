@@ -1,0 +1,281 @@
+@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap');
+
+/* =========================
+   Global Font
+========================= */
+body,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th,
+td,
+span,
+button,
+input,
+textarea,
+select,
+label,
+a,
+.modal-title,
+.product-name {
+  font-family: 'Kantumruy Pro', sans-serif !important;
+}
+
+/* =========================
+   Main Container
+========================= */
+.dashboard-product-page {
+  background-color: #f8f9fc;
+  min-height: 100vh;
+}
+
+/* =========================
+   Top Header Card
+========================= */
+.product-header-card {
+  border-radius: 16px;
+  background: #fff;
+}
+
+.product-header-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #7fad39, #5e8223);
+  border-radius: 12px;
+}
+
+.add-product-btn {
+  border-radius: 12px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #28a745, #1e7e34);
+  border: none;
+  transition: all 0.25s ease;
+}
+
+.add-product-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(40, 167, 69, 0.2);
+}
+
+/* =========================
+   Alert
+========================= */
+.custom-alert {
+  border-radius: 12px;
+}
+
+/* =========================
+   Product Card
+========================= */
+.product-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* =========================
+   Table Head
+========================= */
+.custom-thead th {
+  background-color: #f8fafc !important;
+  color: #4a5568 !important;
+  text-transform: uppercase;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+  padding: 1.1rem 1rem !important;
+  border-bottom: 2px solid #edf2f7 !important;
+}
+
+/* =========================
+   Table Body
+========================= */
+.table td {
+  vertical-align: middle !important;
+  padding: 1rem !important;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.hover-row {
+  transition: all 0.2s ease-in-out;
+}
+
+.hover-row:hover {
+  background-color: #f8fafc !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+/* =========================
+   Search Box
+========================= */
+.search-wrapper {
+  width: 280px;
+}
+
+.search-input {
+  border-radius: 12px !important;
+  padding-left: 40px !important;
+  padding-right: 15px !important;
+  background: #f1f3f9 !important;
+  height: 42px !important;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.search-input:focus {
+  background: #fff !important;
+  border: 1px solid #7fad39 !important;
+  box-shadow: 0 0 0 3px rgba(127, 173, 57, 0.15) !important;
+}
+
+.search-icon {
+  left: 15px;
+  top: 13px;
+  font-size: 0.9rem;
+}
+
+/* =========================
+   Product Image
+========================= */
+.product-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 10px !important;
+}
+
+.image-placeholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px !important;
+}
+
+.hover-zoom {
+  transition: all 0.2s ease;
+}
+
+.hover-zoom:hover {
+  transform: scale(1.06);
+}
+
+/* =========================
+   Product Name
+========================= */
+.product-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* =========================
+   Soft Badges
+========================= */
+.badge-primary-soft {
+  background-color: rgba(127, 173, 57, 0.08) !important;
+  color: #6a942d !important;
+  border: 1px solid rgba(127, 173, 57, 0.15) !important;
+}
+
+.badge-success-soft {
+  background-color: rgba(40, 167, 69, 0.08) !important;
+  color: #1e7e34 !important;
+  border: 1px solid rgba(40, 167, 69, 0.12) !important;
+}
+
+.badge-danger-soft {
+  background-color: rgba(220, 53, 69, 0.08) !important;
+  color: #bd2130 !important;
+  border: 1px solid rgba(220, 53, 69, 0.12) !important;
+}
+
+/* =========================
+   Dot Indicator
+========================= */
+.dot-indicator {
+  width: 7px;
+  height: 7px;
+  display: inline-block;
+  border-radius: 50%;
+}
+
+/* =========================
+   Action Buttons
+========================= */
+.btn-icon-only {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  color: #4299e1;
+}
+
+.btn-edit:hover {
+  background-color: #ebf8ff;
+  border-color: #bee3f8;
+  color: #2b6cb0;
+}
+
+.btn-delete {
+  color: #f56565;
+}
+
+.btn-delete:hover {
+  background-color: #fff5f5;
+  border-color: #fed7d7;
+  color: #c53030;
+}
+
+/* =========================
+   Modal
+========================= */
+.modal-content {
+  border-radius: 20px !important;
+}
+
+.modal-header {
+  border-bottom: none !important;
+}
+
+/* =========================
+   Utility
+========================= */
+.transition-all {
+  transition: all 0.2s ease;
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 768px) {
+  .search-wrapper {
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  .add-product-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .product-header-card {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 15px;
+  }
+}

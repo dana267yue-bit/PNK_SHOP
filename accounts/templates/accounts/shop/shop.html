@@ -1,180 +1,607 @@
+{% extends 'accounts/base_shop.html' %}
 {% load static %}
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Phone Shop | Products</title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
-      rel="stylesheet"
-    />
+{% block title %}PNK Mobile | ហាងទូរស័ព្ទដៃ{% endblock %}
 
-    {% include 'accounts/includes/CssStyles.html' %}
-  </head>
-  <body>
-    <div id="preloder">
-      <div class="loader"></div>
-    </div>
+{% block content %}
+<style>
+  .product.spad {
+    padding-top: 20px !important;
+    padding-bottom: 60px !important;
+  }
+  
+  /* SIDEBAR STYLING */
+  .sidebar__item {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04) !important;
+  }
 
-    {% include 'accounts/includes/HeaderSection.html' %}
+  .cat-item-btn, .sub-brand-btn {
+    transition: all 0.22s ease-in-out;
+  }
+  .cat-item-btn:hover, .sub-brand-btn:hover {
+    background-color: rgba(25, 135, 84, 0.08) !important;
+    color: #198754 !important;
+  }
+  .cat-item-btn.active, .sub-brand-btn.active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28) !important;
+  }
+  .cat-item-btn.active *, .sub-brand-btn.active * {
+    color: #ffffff !important;
+  }
 
-    <section
-      class="apple-section set-bg"
-      data-setbg="{% static 'img/phone.jpg' %}"
-    >
-      <div class="container-fluid text-center">
-        <div class="apple__text">
-          <h2>Phone Shop</h2>
-          <div class="apple__option">
-            <a href="{% url 'index' %}">Home</a>
-            <span>Shop</span>
+  /* SECTION TITLE & HEADER TOOLBAR */
+  .shop-header-title {
+    background: #ffffff;
+    padding: 16px 22px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    margin-bottom: 24px;
+  }
+
+  /* CUSTOM SORT SELECT STYLING */
+  .shop-sort-wrapper .nice-select {
+    display: none !important;
+  }
+  .shop-sort-select {
+    display: inline-block !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-color: #ffffff !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%230f172a' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.8rem center !important;
+    background-size: 12px 12px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 50px !important;
+    padding: 6px 34px 6px 16px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05) !important;
+    transition: all 0.2s ease !important;
+  }
+  .shop-sort-select:focus {
+    border-color: #10b981 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18) !important;
+  }
+
+  /* CATEGORY PILL TABS BAR (LIGHT ELEGANT THEME) */
+  .category-pill-bar {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03) !important;
+    padding: 4px !important;
+    border-radius: 50px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  .cat-pill-tab {
+    color: #475569 !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    padding: 7px 18px !important;
+    border-radius: 50px !important;
+    text-decoration: none !important;
+    border-bottom: none !important;
+    transition: all 0.2s ease-in-out !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    border: 1px solid transparent !important;
+  }
+
+  .cat-pill-tab:hover {
+    color: #0f172a !important;
+    background: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+    text-decoration: none !important;
+  }
+
+  .cat-pill-tab.active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.28) !important;
+    text-decoration: none !important;
+  }
+
+  .cat-pill-tab.active i {
+    color: #ffffff !important;
+  }
+
+  .cat-pill-tab img.cat-tab-logo {
+    height: 18px;
+    width: auto;
+    object-fit: contain;
+    filter: none !important;
+  }
+
+  .cat-pill-tab.active img.cat-tab-logo {
+    filter: brightness(0) invert(1) !important;
+  }
+
+  /* SHOP BY BRANDS SIDEBAR CARD (MATCHING SCREENSHOT) */
+  .shop-by-brands-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+  }
+
+  /* ANIMATED WATER WAVE CARD HEADER */
+  .brands-card-header {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #e0f2fe 100%);
+    background-size: 200% 200%;
+    animation: fluidGradient 8s ease infinite;
+    padding: 22px 18px 18px 18px;
+    border-bottom: 1px solid #a7f3d0;
+  }
+
+  @keyframes fluidGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .wave-bg-container {
+    opacity: 0.85;
+  }
+
+  .wave-layer {
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .wave-layer-1 {
+    animation: waveAnimation1 9s ease-in-out infinite alternate;
+  }
+
+  .wave-layer-2 {
+    animation: waveAnimation2 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes waveAnimation1 {
+    0% {
+      transform: translateX(0) scaleY(1);
+    }
+    100% {
+      transform: translateX(-40%) scaleY(1.2);
+    }
+  }
+
+  @keyframes waveAnimation2 {
+    0% {
+      transform: translateX(-35%) scaleY(1.1);
+    }
+    100% {
+      transform: translateX(0) scaleY(0.85);
+    }
+  }
+
+  .brands-card-title {
+    font-size: 21px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+  }
+
+  .brands-card-title span {
+    color: #10b981;
+  }
+
+  .brands-card-subtitle {
+    font-size: 11.5px;
+    color: #64748b;
+    margin-top: 4px;
+    margin-bottom: 0;
+    line-height: 1.35;
+  }
+
+  /* BRAND GRID ITEM MICRO-ANIMATIONS */
+  .brand-grid-item {
+    background: #ffffff;
+    border: 1.5px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 8px 6px;
+    min-height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* SWEEPING SHINE LIGHT EFFECT ON HOVER */
+  .brand-grid-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+    z-index: 2;
+  }
+
+  .brand-grid-item:hover::before {
+    left: 180%;
+  }
+
+  .brand-grid-item:hover {
+    border-color: #10b981 !important;
+    background-color: rgba(16, 185, 129, 0.05) !important;
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.18) !important;
+  }
+
+  .brand-grid-item.active {
+    border: 2px solid #10b981 !important;
+    background: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25) !important;
+    animation: activeGlowPulse 2.2s infinite alternate ease-in-out;
+  }
+
+  .brand-grid-item.active span {
+    color: #059669 !important;
+    font-weight: 800 !important;
+  }
+
+  .brand-grid-item.active i {
+    color: #10b981 !important;
+  }
+
+  .brand-grid-item.active img.brand-vector-img {
+    filter: none !important;
+    transform: scale(1.06);
+  }
+
+  @keyframes activeGlowPulse {
+    0% {
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+    }
+    100% {
+      box-shadow: 0 6px 22px rgba(16, 185, 129, 0.55);
+    }
+  }
+
+  /* CONTINUOUS INFINITE SCROLLING SKYLINE ANIMATION */
+  .skyline-wrapper {
+    height: 32px;
+    background: linear-gradient(180deg, #f8fafc 0%, #ecfdf5 100%);
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid #d1fae5;
+  }
+
+  .skyline-track {
+    display: flex;
+    width: 200%;
+    animation: skylineScroll 20s linear infinite;
+  }
+
+  .skyline-svg {
+    width: 50%;
+    height: 30px;
+    flex-shrink: 0;
+  }
+
+  @keyframes skylineScroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* BACKGROUND ANIMATED WATER WAVE BANNER */
+  .shop-bg-wave-banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 260px;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  }
+
+  .shop-bg-wave-banner .wave-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 220px;
+    pointer-events: none;
+  }
+</style>
+
+<!-- MAIN SHOP SECTION -->
+<section class="product spad pt-4 position-relative overflow-hidden bg-white">
+  
+  <!-- BACKGROUND ANIMATED WATER WAVE BANNER -->
+  <div class="shop-bg-wave-banner">
+    <svg class="wave-layer wave-layer-1" viewBox="0 0 1200 220" preserveAspectRatio="none">
+      <path d="M0,0 L1200,0 L1200,140 C1050,60 850,200 600,100 C350,200 150,50 0,140 Z" fill="rgba(16, 185, 129, 0.22)"></path>
+    </svg>
+    <svg class="wave-layer wave-layer-2" viewBox="0 0 1200 220" preserveAspectRatio="none">
+      <path d="M0,0 L1200,0 L1200,100 C1000,180 750,45 500,150 C250,45 100,160 0,100 Z" fill="rgba(5, 150, 105, 0.15)"></path>
+    </svg>
+  </div>
+
+  <div class="container position-relative" style="z-index: 2;">
+    <div class="row">
+      
+      <!-- SIDEBAR COL (LEFT) -->
+      <div class="col-lg-3 col-md-4 shop-sidebar-wrapper mb-4">
+        
+        <!-- SEARCH INPUT CARD WITH HTMX -->
+        <div class="sidebar__item p-3 mb-4">
+          <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2" style="font-size: 15px;">
+            <i class="bi bi-search text-success fs-5"></i> ស្វែងរកទូរស័ព្ទ
+          </h6>
+          <div class="position-relative">
+            <input
+              type="text"
+              id="search-input-field"
+              name="search"
+              value="{{ request.GET.search|default:'' }}"
+              placeholder="វាយឈ្មោះទូរស័ព្ទ..."
+              class="form-control rounded-pill ps-3 pe-4 py-2 border text-dark shadow-xs"
+              style="font-size: 13.5px;"
+              onkeyup="onSearchKeyUp(this)"
+            />
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="product spad">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-2 col-md-4">
-            <div class="sidebar">
-              <div class="sidebar__item">
-                <h4>Brand</h4>
-                <ul>
-                  {% for brand in brands %}
-                  <li><a href="#">{{ brand }}</a></li>
-                  {% endfor %}
-                </ul>
-              </div>
-
-              <div class="sidebar__item">
-                <h4>Price</h4>
-                <div class="price-range-wrap">
-                  <div
-                    class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
-                    data-min="50"
-                    data-max="2000"
-                  >
-                    <div
-                      class="ui-slider-range ui-corner-all ui-widget-header"
-                    ></div>
-                    <span
-                      tabindex="0"
-                      class="ui-slider-handle ui-corner-all ui-state-default"
-                    ></span>
-                    <span
-                      tabindex="0"
-                      class="ui-slider-handle ui-corner-all ui-state-default"
-                    ></span>
-                  </div>
-                  <div class="range-slider">
-                    <div class="price-input">
-                      <input type="text" id="minamount" />
-                      <input type="text" id="maxamount" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="sidebar__item">
-                <h4>Sizes</h4>
-                {% for size in sizes %}
-                <div class="sidebar__item__size">
-                  <label for="{{ size|lower }}"
-                    >{{ size }}
-                    <input
-                      type="radio"
-                      id="{{ size|lower }}"
-                      name="size-filter"
-                    />
-                  </label>
-                </div>
-                {% endfor %}
-              </div>
+        <!-- SHOP BY BRANDS CARD (MATCHING USER SCREENSHOT) -->
+        <div class="shop-by-brands-card mb-4">
+          <!-- ANIMATED WATER WAVE CARD HEADER -->
+          <div class="brands-card-header text-start position-relative overflow-hidden">
+            <!-- WATER WAVE SVG LAYERS -->
+            <div class="wave-bg-container position-absolute top-0 start-0 w-100 h-100 overflow-hidden">
+              <svg class="wave-layer wave-layer-1" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0 C150,90 350,-40 500,45 C650,130 900,10 1200,50 L1200,120 L0,120 Z" fill="rgba(16, 185, 129, 0.22)"></path>
+              </svg>
+              <svg class="wave-layer wave-layer-2" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0 C200,40 400,90 600,20 C800,-30 1000,70 1200,30 L1200,120 L0,120 Z" fill="rgba(5, 150, 105, 0.16)"></path>
+              </svg>
             </div>
+            <h5 class="brands-card-title mb-0 position-relative" style="z-index: 2;">ជ្រើសរើស <span>Brands</span></h5>
           </div>
 
-          <div class="col-lg-10 col-md-8">
-            <div class="section-title">
-              <h2>All Phones</h2>
-            </div>
+          <!-- BRAND LOGO GRID -->
+          <div class="p-3">
+            <div class="row row-cols-2 g-2">
+              
+              <!-- ALL BRANDS OPTION -->
+              <div class="col">
+                <a
+                  href="javascript:void(0);"
+                  id="brand-grid-all"
+                  onclick="filterProducts({brand: ''})"
+                  class="brand-grid-item filter-tab-btn {% if not selected_brand %}active{% endif %}"
+                >
+                  <i class="bi bi-grid-fill text-warning fs-5 mb-0.5"></i>
+                  <span style="font-size: 11px; font-weight: 700;">ទាំងអស់</span>
+                </a>
+              </div>
 
-            <div class="row">
-              {% for product in products %}
-              <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                <div class="product__item">
-                  <div
-                    class="featured__item__pic set-bg"
-                    data-setbg="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no-image.png' %}{% endif %}"
-                  >
-                    <ul class="featured__item__pic__hover">
-                      <li>
-                        <a href="#"><i class="fa fa-heart"></i></a>
-                      </li>
-                      <li>
-                        <a href="#"><i class="fa fa-retweet"></i></a>
-                      </li>
-                      <li>
-                        <a href="{% url 'add_to_cart' product.id %}"
-                          ><i class="fa fa-shopping-cart"></i
-                        ></a>
-                      </li>
-                    </ul>
-
-                    <a
-                      href="{% url 'ShopDetails' product.id %}"
-                      class="item-link-overlay"
-                    ></a>
-                  </div>
-
-                  <div class="featured__item__text">
-                    <span class="brand-tag">{{ product.brand }}</span>
-                    <h6 class="product-name">
-                      <a href="{% url 'ShopDetails' product.id %}"
-                        >{{ product.name }}</a
-                      >
-                    </h6>
-                    <div class="product-price">${{ product.price }}</div>
-                    <div class="view-detail-btn">
-                    <a
-                      href="{% url 'ShopDetails' product.id %}"
-                      class="btn btn-sm btn-outline-success rounded-pill px-4"
-                style="font-size: 12px">
-                      មើលលម្អិត</a
-                    >
-                    </div>
-                  </div>
-                </div>
+              <!-- DYNAMIC BRAND LOGOS (ONLY BRANDS IN DB) -->
+              {% for brand in brands %}
+              <div class="col">
+                <a
+                  href="javascript:void(0);"
+                  id="brand-grid-{{ brand.id }}"
+                  onclick="filterProducts({brand: '{{ brand.id }}'})"
+                  class="brand-grid-item filter-tab-btn {% if selected_brand|stringformat:'s' == brand.id|stringformat:'s' %}active{% endif %}"
+                  title="{{ brand.name }}"
+                >
+                  {% if brand.logo %}
+                    <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="brand-vector-img img-fluid" style="max-height: 24px; width: auto; object-fit: contain;">
+                  {% else %}
+                    {% if 'apple' in brand.name|lower %}<i class="bi bi-apple text-dark fs-4"></i>
+                    {% elif 'huawei' in brand.name|lower %}<i class="bi bi-phone-fill text-danger fs-4"></i>
+                    {% elif 'vivo' in brand.name|lower %}<i class="bi bi-phone text-primary fs-4"></i>
+                    {% elif 'oppo' in brand.name|lower %}<i class="bi bi-phone-landscape text-success fs-4"></i>
+                    {% else %}<i class="bi bi-phone-fill text-muted fs-4"></i>
+                    {% endif %}
+                  {% endif %}
+                  <span style="font-size: 10.5px; font-weight: 700;" class="text-truncate w-100 text-center mt-1">{{ brand.name }}</span>
+                </a>
               </div>
               {% endfor %}
-            </div>
 
-            <div class="product__pagination text-center mt-4">
-              {% if products.has_previous %}
-              <a href="?page={{ products.previous_page_number }}"
-                ><i class="fa fa-long-arrow-left"></i
-              ></a>
-              {% endif %} {% for num in products.paginator.page_range %}
-              <a
-                href="?page={{ num }}"
-                class="{% if products.number == num %}active{% endif %}"
-                >{{ num }}</a
-              >
-              {% endfor %} {% if products.has_next %}
-              <a href="?page={{ products.next_page_number }}"
-                ><i class="fa fa-long-arrow-right"></i
-              ></a>
-              {% endif %}
+            </div>
+          </div>
+
+          <!-- BOTTOM ANIMATED SKYLINE SILHOUETTE DECORATION -->
+          <div class="skyline-wrapper">
+            <div class="skyline-track">
+              <svg class="skyline-svg d-block" viewBox="0 0 300 35" fill="#10b981" opacity="0.85" preserveAspectRatio="none">
+                <path d="M0 35 L0 25 L8 25 L8 15 L12 15 L12 10 L16 10 L16 25 L25 25 L25 8 L30 8 L30 35 Z M36 35 L36 20 L40 20 L40 4 L44 4 L44 20 L48 20 L48 35 Z M52 35 L52 16 L56 16 L56 10 L60 10 L60 35 Z M68 35 L68 14 L72 14 L72 6 L76 6 L76 14 L80 14 L80 35 Z M85 35 L85 18 L94 18 L94 35 Z M102 35 L102 12 L106 12 L106 3 L110 3 L110 12 L114 12 L114 35 Z M122 35 L122 22 L130 22 L130 35 Z M138 35 L138 16 L142 16 L142 8 L146 8 L146 35 Z M154 35 L154 12 L162 12 L162 35 Z M170 35 L170 20 L178 20 L178 35 Z M186 35 L186 10 L190 10 L190 4 L194 4 L194 35 Z M202 35 L202 18 L210 18 L210 35 Z M218 35 L218 14 L226 14 L226 35 Z M234 35 L234 20 L245 20 L245 35 Z M253 35 L253 10 L257 10 L261 2 L261 35 Z M270 35 L270 16 L280 16 L280 35 Z M288 35 L288 22 L300 22 L300 35 Z"/>
+              </svg>
+              <svg class="skyline-svg d-block" viewBox="0 0 300 35" fill="#10b981" opacity="0.85" preserveAspectRatio="none">
+                <path d="M0 35 L0 25 L8 25 L8 15 L12 15 L12 10 L16 10 L16 25 L25 25 L25 8 L30 8 L30 35 Z M36 35 L36 20 L40 20 L40 4 L44 4 L44 20 L48 20 L48 35 Z M52 35 L52 16 L56 16 L56 10 L60 10 L60 35 Z M68 35 L68 14 L72 14 L72 6 L76 6 L76 14 L80 14 L80 35 Z M85 35 L85 18 L94 18 L94 35 Z M102 35 L102 12 L106 12 L106 3 L110 3 L110 12 L114 12 L114 35 Z M122 35 L122 22 L130 22 L130 35 Z M138 35 L138 16 L142 16 L142 8 L146 8 L146 35 Z M154 35 L154 12 L162 12 L162 35 Z M170 35 L170 20 L178 20 L178 35 Z M186 35 L186 10 L190 10 L190 4 L194 4 L194 35 Z M202 35 L202 18 L210 18 L210 35 Z M218 35 L218 14 L226 14 L226 35 Z M234 35 L234 20 L245 20 L245 35 Z M253 35 L253 10 L257 10 L261 2 L261 35 Z M270 35 L270 16 L280 16 L280 35 Z M288 35 L288 22 L300 22 L300 35 Z"/>
+              </svg>
             </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    {% include 'accounts/includes/FooterSection.html' %} 
-    {% include 'accounts/includes/JsPlugins.html' %}
-  </body>
-</html>
+      </div>
+
+      <!-- PRODUCT CONTENT AREA (RIGHT) -->
+      <div class="col-lg-9 col-md-8" id="shop-content-area">
+        
+        <!-- TOP TOOLBAR: CATEGORY PILL TABS & SORTING -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+          
+          <!-- CATEGORY PILL TABS WITH CLEAN LOGOS -->
+          <div class="category-pill-bar my-1">
+            <a
+              href="javascript:void(0);"
+              id="pill-cat-all"
+              onclick="filterProducts({category: ''})"
+              class="cat-pill-tab filter-tab-btn {% if not selected_category %}active{% endif %}"
+            >
+              <img src="/media/categories/all.svg" alt="All" class="cat-tab-logo">
+              <span>All</span>
+            </a>
+
+            {% for cat in categories %}
+            <a
+              href="javascript:void(0);"
+              id="pill-cat-{{ cat.id }}"
+              onclick="filterProducts({category: '{{ cat.id }}'})"
+              class="cat-pill-tab filter-tab-btn {% if selected_category|stringformat:'s' == cat.id|stringformat:'s' %}active{% endif %}"
+            >
+              {% if cat.image %}
+                <img src="{{ cat.image.url }}" alt="{{ cat.name }}" class="cat-tab-logo">
+              {% else %}
+                {% if 'phone' in cat.name|lower or 'smartphone' in cat.name|lower or 'ស្មាតហ្វូន' in cat.name or cat.id == 1 %}
+                  <i class="bi bi-phone-fill text-success"></i>
+                {% elif 'accessory' in cat.name|lower or 'គ្រឿង' in cat.name or cat.id == 2 %}
+                  <i class="bi bi-headphones text-primary"></i>
+                {% else %}
+                  <i class="bi bi-tag-fill text-success"></i>
+                {% endif %}
+              {% endif %}
+              <span>
+                {% if 'phone' in cat.name|lower or 'smartphone' in cat.name|lower or 'ស្មាតហ្វូន' in cat.name or cat.id == 1 %}
+                  ស្មាតហ្វូន
+                {% elif 'accessory' in cat.name|lower or 'គ្រឿង' in cat.name or cat.id == 2 %}
+                  គ្រឿងបន្លាស់
+                {% else %}
+                  {{ cat.name }}
+                {% endif %}
+              </span>
+            </a>
+            {% endfor %}
+          </div>
+
+          <!-- SORTING DROPDOWN WITH HTMX -->
+          <div class="d-flex align-items-center gap-2 shop-sort-wrapper ms-auto">
+            <label class="small text-muted mb-0 fw-semibold">តម្រៀប៖</label>
+            <select 
+              name="sort" 
+              id="shop-sort-select"
+              class="form-select form-select-sm shop-sort-select no-nice-select"
+              onchange="filterProducts()"
+            >
+              <option value="newest" {% if selected_sort == 'newest' %}selected{% endif %}>ទើបមកដល់ (ថ្មីៗ)</option>
+              <option value="price_asc" {% if selected_sort == 'price_asc' %}selected{% endif %}>តម្លៃ៖ ទាប ➔ ខ្ពស់</option>
+              <option value="price_desc" {% if selected_sort == 'price_desc' %}selected{% endif %}>តម្លៃ៖ ខ្ពស់ ➔ ទាប</option>
+              <option value="name_asc" {% if selected_sort == 'name_asc' %}selected{% endif %}>ឈ្មោះ (A - Z)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PRODUCT GRID CONTAINER -->
+        <div id="product-list-container">
+          {% include 'accounts/shop/product_list_partial.html' %}
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- SEAMLESS HTMX SIDEBAR & BRAND PILLS ACTIVE TOGGLER -->
+<script>
+let searchTimeout;
+function onSearchKeyUp(input) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(function() {
+        filterProducts();
+    }, 300);
+}
+
+function clearSearch() {
+    const searchInput = document.getElementById('search-input-field');
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    filterProducts();
+}
+
+function filterProducts(options = {}) {
+    // 1. Determine Category
+    let category = '';
+    if (options.hasOwnProperty('category')) {
+        category = options.category;
+    } else {
+        const activeCat = document.querySelector('.cat-pill-tab.active');
+        if (activeCat && activeCat.id !== 'pill-cat-all') {
+            category = activeCat.id.replace('pill-cat-', '');
+        }
+    }
+
+    // 2. Determine Brand
+    let brand = '';
+    if (options.hasOwnProperty('brand')) {
+        brand = options.brand;
+    } else {
+        const activeBrand = document.querySelector('.brand-grid-item.active');
+        if (activeBrand && activeBrand.id !== 'brand-grid-all') {
+            brand = activeBrand.id.replace('brand-grid-', '');
+        }
+    }
+
+    // 3. Update active classes immediately for visual feedback
+    if (options.hasOwnProperty('category')) {
+        document.querySelectorAll('.cat-pill-tab').forEach(el => el.classList.remove('active'));
+        const newActiveCat = document.getElementById(category ? 'pill-cat-' + category : 'pill-cat-all');
+        if (newActiveCat) newActiveCat.classList.add('active');
+    }
+    if (options.hasOwnProperty('brand')) {
+        document.querySelectorAll('.brand-grid-item').forEach(el => el.classList.remove('active'));
+        const newActiveBrand = document.getElementById(brand ? 'brand-grid-' + brand : 'brand-grid-all');
+        if (newActiveBrand) newActiveBrand.classList.add('active');
+    }
+
+    // 4. Get Search and Sort values
+    const searchInput = document.getElementById('search-input-field');
+    const search = searchInput ? searchInput.value : '';
+
+    const sortSelect = document.getElementById('shop-sort-select');
+    const sort = sortSelect ? sortSelect.value : 'newest';
+
+    // 5. Call HTMX ajax
+    htmx.ajax('GET', "{% url 'shop:shop' %}", {
+        target: '#product-list-container',
+        values: {
+            category: category,
+            brand: brand,
+            sort: sort,
+            search: search
+        },
+        pushUrl: true
+    });
+}
+</script>
+{% endblock %}

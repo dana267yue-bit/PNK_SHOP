@@ -1,80 +1,491 @@
 {% load static %}
-<footer class="footer spad">
+
+<!-- =========================
+     CLEAN WHITE FOOTER
+========================= -->
+<footer class="bg-white border-top mt-5 pt-5 pb-3">
   <div class="container">
-    <div class="row">
-      <!-- ផ្នែកអំពីយើង -->
-      <div class="col-lg-3 col-md-6 col-sm-6">
-        <div class="footer__about">
-          <div class="footer__about__logo">
-            <a href="{% url 'index' %}">
-              <img src="{% static 'img/logo1.jpg' %}" alt="PNK Logo" style="max-height: 50px;">
-            </a>
+    <div class="row gy-4">
+      
+      <!-- COLUMN 1: STORE ABOUT & CONTACT -->
+      <div class="col-lg-4 col-md-6">
+        <div class="mb-3 d-flex align-items-center">
+          <a href="{% url 'core:home' %}" class="d-flex align-items-center text-decoration-none">
+            <img src="{% if store_settings.logo %}{{ store_settings.logo.url }}{% else %}{% static 'img/photologo.JPG' %}{% endif %}" alt="{{ store_settings.store_name|default:'PNK Logo' }}" height="42" class="rounded-3 shadow-xs">
+            <span class="fw-bold fs-5 text-dark ms-2">PNK <span class="text-success">SHOP</span></span>
+          </a>
+        </div>
+        <p class="text-muted small mb-3 lh-base">
+          ហាងលក់ទូរសព្ទដៃទំនើប និងឯកទេសជួសជុលទូរសព្ទដៃគ្រប់ប្រភេទ
+        </p>
+        <ul class="list-unstyled text-secondary small mb-0 lh-lg">
+          <li class="d-flex align-items-start gap-2 mb-2">
+            <i class="bi bi-geo-alt-fill text-success fs-6 mt-0.5"></i>
+            <span><strong>អាសយដ្ឋាន:</strong> {{ store_settings.address|default:"ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ, ព្រះរាជាណាចក្រកម្ពុជា" }}</span>
+          </li>
+          <li class="d-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-telephone-fill text-success fs-6"></i>
+            <span><strong>ទូរស័ព្ទ:</strong> <a href="tel:{{ store_settings.phone|default:'0962964713' }}" class="text-secondary text-decoration-none hover-success">{{ store_settings.phone|default:"096 29 647 13" }}</a></span>
+          </li>
+          <li class="d-flex align-items-center gap-2">
+            <i class="bi bi-envelope-fill text-success fs-6"></i>
+            <span><strong>អ៊ីមែល:</strong> <a href="mailto:{{ store_settings.email|default:'dana267yue@gmail.com' }}" class="text-secondary text-decoration-none hover-success">{{ store_settings.email|default:"dana267yue@gmail.com" }}</a></span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- COLUMN 2: QUICK LINKS -->
+      <div class="col-lg-2 col-md-6 col-6">
+        <h6 class="fw-bold text-dark mb-3">តំណភ្ជាប់រហ័ស</h6>
+        <ul class="list-unstyled text-secondary small mb-0 lh-lg">
+          <li class="mb-1"><a href="{% url 'core:home' %}" class="text-decoration-none text-secondary hover-success"><i class="bi bi-chevron-right text-success small me-1"></i> ទំព័រដើម</a></li>
+          <li class="mb-1"><a href="{% url 'shop:shop' %}" class="text-decoration-none text-secondary hover-success"><i class="bi bi-chevron-right text-success small me-1"></i> ហាងទំនិញ</a></li>
+          <li class="mb-1"><a href="{% url 'core:about_page' %}" class="text-decoration-none text-secondary hover-success"><i class="bi bi-chevron-right text-success small me-1"></i> អំពីយើង</a></li>
+          <li class="mb-1"><a href="{% url 'shop:blog_page' %}" class="text-decoration-none text-secondary hover-success"><i class="bi bi-chevron-right text-success small me-1"></i> អត្ថបទថ្មីៗ</a></li>
+          <li class="mb-1"><a href="{% url 'core:contact_Page' %}" class="text-decoration-none text-secondary hover-success"><i class="bi bi-chevron-right text-success small me-1"></i> ទំនាក់ទំនង</a></li>
+        </ul>
+      </div>
+
+      <!-- COLUMN 3: CATEGORIES & SERVICES -->
+      <div class="col-lg-3 col-md-6 col-6">
+        <h6 class="fw-bold text-dark mb-3">ប្រភេទទំនិញ</h6>
+        <ul class="list-unstyled text-secondary small mb-0 lh-lg">
+          <li class="mb-1"><a href="{% url 'shop:shop' %}?category=1" class="text-decoration-none text-secondary hover-success"><i class="bi bi-phone text-success me-1.5"></i> ទូរស័ព្ទដៃស្មាតហ្វូន</a></li>
+          <li class="mb-1"><a href="{% url 'shop:shop' %}?category=2" class="text-decoration-none text-secondary hover-success"><i class="bi bi-headphones text-success me-1.5"></i> គ្រឿងបន្លាស់ & ឧបករណ៍</a></li>
+          <li class="mb-1"><a href="javascript:void(0);" onclick="openPnkChatWithQuestion('tradein');" class="text-decoration-none text-secondary hover-success"><i class="bi bi-arrow-repeat text-success me-1.5"></i> ប្តូរចាស់យកថ្មី (Trade-In)</a></li>
+          <li class="mb-1"><a href="javascript:void(0);" onclick="openPnkChatWithQuestion('installment');" class="text-decoration-none text-secondary hover-success"><i class="bi bi-percent text-success me-1.5"></i> បង់រំលស់ 0%</a></li>
+        </ul>
+      </div>
+
+      <!-- COLUMN 4: NEWSLETTER & SOCIAL -->
+      <div class="col-lg-3 col-md-6">
+        <h6 class="fw-bold text-dark mb-3">ចុះឈ្មោះទទួលព័ត៌មាន</h6>
+        <p class="text-muted small mb-3">ទទួលបានព័ត៌មានអំពីទូរស័ព្ទចេញថ្មី និងការផ្តល់ជូនពិសេសពីហាងយើងខ្ញុំ។</p>
+        
+        <form method="POST" action="{% url 'shop:subscribe_newsletter' %}" class="mb-3">
+          {% csrf_token %}
+          <div class="input-group">
+            <input type="email" name="email" required class="form-control form-control-sm rounded-start-pill border-end-0 px-3" placeholder="បញ្ចូលអ៊ីមែល..." aria-label="Email">
+            <button class="btn btn-success btn-sm rounded-end-pill px-3 fw-bold" type="submit">ចុះឈ្មោះ</button>
           </div>
-          <ul>
-            <li><strong>អាសយដ្ឋាន:</strong> ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ</li>
-            <li><strong>ទូរសព្ទ:</strong> 096 29 647 13</li>
-            <li><strong>អ៊ីមែល:</strong> dana267yue@gmail.com</li>
-          </ul>
+        </form>
+
+        <div class="d-flex gap-2">
+          <a href="{{ store_settings.facebook_link|default:'https://facebook.com/pnkmobile' }}" target="_blank" class="btn btn-outline-success btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Facebook">
+            <i class="bi bi-facebook fs-6"></i>
+          </a>
+          <a href="{{ store_settings.telegram_link|default:'https://t.me/pnkmobile' }}" target="_blank" class="btn btn-outline-success btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Telegram">
+            <i class="bi bi-telegram fs-6"></i>
+          </a>
+          <a href="https://tiktok.com" target="_blank" class="btn btn-outline-success btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="TikTok">
+            <i class="bi bi-tiktok fs-6"></i>
+          </a>
         </div>
       </div>
 
-      <!-- ផ្នែកលីងសំខាន់ៗ -->
-      <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
-        <div class="footer__widget">
-          <h6>តំណភ្ជាប់រហ័ស</h6>
-          <ul>
-            <li><a href="{% url 'About' %}">អំពីយើង</a></li>
-            <li><a href="{% url 'shop' %}">ហាងទំនិញ</a></li>
-            <li><a href="#">ការទិញទំនិញដោយសុវត្ថិភាព</a></li>
-            <li><a href="#">ព័ត៌មានដឹកជញ្ជូន</a></li>
-            <li><a href="#">គោលការណ៍ឯកជនភាព</a></li>
-          </ul>
-          <ul>
-            <li><a href="{% url 'contact' %}">ទំនាក់ទំនង</a></li>
-            <li><a href="{% url 'blog_page' %}">អត្ថបទថ្មីៗ</a></li>
-            <li><a href="#">សេវាកម្មរបស់យើង</a></li>
-            <li><a href="#">គម្រោងនានា</a></li>
-            <li><a href="#">មតិកែលម្អ</a></li>
-          </ul>
-        </div>
-      </div>
+    </div>
 
-      <!-- ផ្នែកចុះឈ្មោះទទួលព័ត៌មាន -->
-      <div class="col-lg-4 col-md-12">
-        <div class="footer__widget">
-          <h6>ចុះឈ្មោះទទួលព័ត៌មានថ្មីៗ</h6>
-          <p>ទទួលបានព័ត៌មានអំពីផលិតផលថ្មី និងការផ្តល់ជូនពិសេសពីហាងរបស់យើង។</p>
-          <form action="#">
-            <input type="text" placeholder="បញ្ចូលអ៊ីមែលរបស់អ្នក" style="font-family: 'Cairo', sans-serif;" />
-            <button type="submit" class="site-btn">ចុះឈ្មោះ</button>
-          </form>
-          <div class="footer__widget__social">
-            <a href="#"><i class="fa fa-facebook"></i></a>
-            <a href="#"><i class="fa fa-instagram"></i></a>
-            <a href="#"><i class="fa fa-telegram"></i></a> <!-- ប្តូរមកប្រើ Telegram ដែលពេញនិយមនៅខ្មែរ -->
-            <a href="#"><i class="fa fa-tiktok"></i></a>   <!-- បន្ថែម TikTok -->
-          </div>
-        </div>
+    <!-- COPYRIGHT & PAYMENT ACCEPTED -->
+    <div class="border-top mt-4 pt-3 d-flex flex-wrap justify-content-between align-items-center text-muted small gap-2">
+      <p class="mb-0">
+        &copy; <script>document.write(new Date().getFullYear());</script> <strong class="text-success">PNK SHOP</strong>. រក្សាសិទ្ធិគ្រប់យ៉ាង។
+      </p>
+      
+      <!-- PAYMENT BADGES -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-muted small">ទទួលទូទាត់តាម៖</span>
+        <span class="badge bg-light text-dark border px-2.5 py-1.5 rounded-2 d-inline-flex align-items-center gap-1" style="font-size: 11px;">
+          <i class="bi bi-qr-code-scan text-success"></i> KHQR
+        </span>
       </div>
     </div>
 
-    <!-- ផ្នែករក្សាសិទ្ធិ -->
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="footer__copyright">
-          <div class="footer__copyright__text">
-            <p>
-              រក្សាសិទ្ធិគ្រប់យ៉ាងដោយ &copy; 
-              <script>document.write(new Date().getFullYear());</script>
-              <strong>PNK Phone Shop</strong> - ហាងទូរសព្ទនៅខេត្តត្បូងឃ្មុំ 
-              <i class="fa fa-heart" aria-hidden="true" style="color: #7fad39;"></i>
-            </p>
-          </div>
-          <div class="footer__copyright__payment">
-            <img src="{% static 'img/payment-item.png' %}" alt="Payment Methods" />
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </footer>
+
+<!-- ==========================================
+     FLOATING LIVE CUSTOMER SUPPORT CHAT WIDGET
+     ========================================== -->
+<div id="pnk-live-chat-container" class="position-fixed bottom-0 end-0 m-3 m-md-4" style="z-index: 1080;">
+  <!-- CHAT WINDOW (HIDDEN BY DEFAULT) -->
+  <div id="pnkChatWindow" class="card shadow-lg border-0 rounded-4 overflow-hidden d-none mb-3" style="width: 350px; max-width: calc(100vw - 32px); height: 470px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+    <!-- HEADER -->
+    <div class="p-3 text-white d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #064e3b 100%); border-bottom: 1px solid rgba(255,255,255,0.1);">
+      <div class="d-flex align-items-center gap-3" style="gap: 12px;">
+        <div class="position-relative">
+          <img src="{% if store_settings.logo %}{{ store_settings.logo.url }}{% else %}{% static 'img/photologo.JPG' %}{% endif %}" alt="PNK SHOP" class="rounded-circle border border-white border-2" style="width: 40px; height: 40px; object-fit: cover; background: white;">
+          <span id="adminOnlineDot" class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle" style="display: none;" title="Admin Online"></span>
+        </div>
+        <div>
+          <h6 class="fw-bold text-white mb-0" style="font-size: 0.95rem;">PNK SHOP Support</h6>
+        </div>
+      </div>
+      <button type="button" class="btn-close btn-close-white shadow-none" id="closeChatBtn" aria-label="Close"></button>
+    </div>
+
+    <!-- BODY CHAT MESSAGES LOG WITH TELEGRAM WALLPAPER -->
+    <div class="card-body p-3 overflow-y-auto" id="chatMessagesLog" style="height: 350px; font-size: 0.88rem; background-color: #f1f5f9; background-image: radial-gradient(#cbd5e1 0.75px, transparent 0.75px); background-size: 16px 16px; scrollbar-width: thin;">
+      <!-- BOT WELCOME BUBBLE -->
+      <div class="d-flex align-items-start gap-2 mb-3">
+        <div class="text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 shadow-sm" style="width: 32px; height: 32px; font-size: 0.9rem; background: linear-gradient(135deg, #10b981, #047857);">
+          <i class="bi bi-robot"></i>
+        </div>
+        <div class="bg-white p-3 shadow-xs border text-dark lh-base" style="max-width: 84%; border-radius: 18px 18px 18px 4px;">
+          ជម្រាបសួរលោកអ្នក! ស្វាគមន៍មកកាន់ <strong>PNK SHOP</strong> 📱<br>
+          តើខ្ញុំអាចជួយផ្ដល់ព័ត៌មានអ្វីខ្លះជូនលោកអ្នកដែរ?
+        </div>
+      </div>
+
+      <!-- QUICK QUESTION CHIPS -->
+      <div class="mb-3 ps-4" id="quickQuestionsBox">
+        <small class="text-muted fw-bold d-block mb-1.5" style="font-size: 0.75rem;">💡 សំណួរញឹកញាប់៖</small>
+        <div class="d-flex flex-column gap-1.5">
+          <button type="button" class="btn btn-outline-success btn-sm rounded-pill text-start px-3 py-1.5 bg-white shadow-xs text-dark hover-success quick-q-btn" data-q="tradein">
+            🔄 សួរអំពីការប្តូរចាស់យកថ្មី (Trade-In)?
+          </button>
+          <button type="button" class="btn btn-outline-success btn-sm rounded-pill text-start px-3 py-1.5 bg-white shadow-xs text-dark hover-success quick-q-btn" data-q="installment">
+            💳 សួរអំពីការបង់រំលស់ 0%?
+          </button>
+          <button type="button" class="btn btn-outline-success btn-sm rounded-pill text-start px-3 py-1.5 bg-white shadow-xs text-dark hover-success quick-q-btn" data-q="hours">
+            🕒 តើហាងបើកលក់ម៉ោងប៉ុន្មាន?
+          </button>
+          <button type="button" class="btn btn-outline-success btn-sm rounded-pill text-start px-3 py-1.5 bg-white shadow-xs text-dark hover-success quick-q-btn" data-q="shipping">
+            🚚 តើមានសេវាដឹកជញ្ជូន ២៤ ខេត្តក្រុងទេ?
+          </button>
+          <a href="{{ store_settings.telegram_link|default:'https://t.me/pnkmobile' }}" target="_blank" class="btn btn-success btn-sm rounded-pill text-start px-3 py-1.5 text-white shadow-xs d-inline-flex align-items-center gap-1.5 fw-bold" style="background: linear-gradient(135deg, #10b981, #059669); border: none;">
+            <i class="bi bi-telegram fs-6 text-warning"></i> ឆាតផ្ទាល់តាម Telegram
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER INPUT (TELEGRAM STYLE WITH EMOJI PICKER) -->
+    <div class="p-2.5 bg-white border-top position-relative">
+      
+      <!-- TELEGRAM EMOJI PICKER POPUP FOR CUSTOMER LIVE CHAT -->
+      <div id="customerEmojiPickerPopup" class="card shadow-lg border-0 rounded-4 position-absolute bottom-100 start-0 mb-2 ms-2 d-none" style="width: 290px; z-index: 1060; overflow: hidden; animation: fadeInUp 0.2s ease;">
+        <div class="card-header bg-light border-bottom p-2 d-flex justify-content-between align-items-center">
+          <small class="fw-bold text-dark"><i class="bi bi-emoji-smile-fill text-warning me-1"></i> ជ្រើសរើស Emoji</small>
+          <button type="button" class="btn-close btn-close-xs shadow-none" id="closeCustomerEmojiBtn" aria-label="Close"></button>
+        </div>
+        <div class="card-body p-2" style="max-height: 180px; overflow-y: auto; scrollbar-width: thin;">
+          <div class="d-flex flex-wrap gap-1">
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">😊</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">😀</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">😂</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">😍</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">🥰</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">🤩</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">😎</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">👍</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">🙏</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">❤️</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">🔥</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">✨</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">🎉</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">📱</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">📦</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">🚚</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">💳</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">⏰</button>
+            <button type="button" class="btn btn-sm btn-light border-0 cust-emoji-btn p-1.5 fs-5 rounded-2">✅</button>
+          </div>
+        </div>
+      </div>
+
+      <form id="chatMessageForm" class="d-flex align-items-center gap-1.5 bg-light rounded-pill border p-1 shadow-xs">
+        <button type="button" class="btn btn-link text-muted p-1.5 rounded-circle hover-bg shadow-none text-decoration-none" id="toggleCustomerEmojiBtn" title="បន្ថែម Emoji">
+          <i class="bi bi-emoji-smile fs-5 text-warning"></i>
+        </button>
+        <input type="text" id="chatInputText" class="form-control border-0 bg-transparent shadow-none px-2" placeholder="សរសេរសារឆ្លើយតប..." required style="font-size: 0.85rem;">
+        <button type="submit" class="btn btn-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 shadow-xs" style="width: 34px; height: 34px; background: linear-gradient(135deg, #10b981, #059669); border: none;">
+          <i class="bi bi-send-fill text-white" style="font-size: 0.8rem;"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FLOATING CHAT TRIGGER BUTTON -->
+  <button type="button" id="toggleChatTrigger" class="btn btn-success rounded-circle shadow-lg d-flex align-items-center justify-content-center position-relative hover-scale" style="width: 58px; height: 58px; background: linear-gradient(135deg, #10b981 0%, #047857 100%); border: 3px solid #ffffff; transition: all 0.3s ease;">
+    <i class="bi bi-chat-dots-fill text-white fs-3" id="chatTriggerIcon"></i>
+    <span id="chatBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white shadow-sm" style="font-size: 10.5px; padding: 4px 7px; margin-left: -8px; margin-top: 6px; display: none;">
+      0
+    </span>
+  </button>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const chatWindow = document.getElementById("pnkChatWindow");
+  const toggleBtn = document.getElementById("toggleChatTrigger");
+  const closeBtn = document.getElementById("closeChatBtn");
+  const chatIcon = document.getElementById("chatTriggerIcon");
+  const chatBadge = document.getElementById("chatBadge");
+  const messagesLog = document.getElementById("chatMessagesLog");
+  const chatForm = document.getElementById("chatMessageForm");
+  const chatInput = document.getElementById("chatInputText");
+
+  const answersMap = {
+    tradein: "🔄 <strong>សេវាកម្ម ប្តូរចាស់យកថ្មី (Trade-In)</strong>៖<br>• វាយតម្លៃទូរស័ព្ទចាស់បានតម្លៃខ្ពស់សមរម្យ<br>• ថែមប្រាក់តិចតួចយកស៊េរីថ្មីភ្លាមៗ<br>👉 សូមផ្ញើ <strong>ម៉ូឌែលទូរស័ព្ទចាស់ + ស្ថានភាព (ស្អាត/ឆ្កូត)</strong> មកកាន់ទីនេះ ឬទាក់ទងមក Admin ដើម្បីវាយតម្លៃភ្លាមៗបាទ/ចាស! 📱✨",
+    installment: "💳 <strong>សេវាកម្ម បង់រំលស់ងាយៗ 0%</strong>៖<br>• ការប្រាក់ចាប់ពី 0% ឯកសារងាយៗ<br>• អនុម័តរហ័សក្នុងរយៈពេល ១៥-៣០ នាទី<br>• ឯកសារ៖ អត្តសញ្ញាណប័ណ្ណ + សៀវភៅគ្រួសារ/ស្នាក់នៅ + លិខិតបញ្ជាក់ប្រាក់ខែ<br>👉 សូមផ្ញើ <strong>ម៉ូឌែលទូរស័ព្ទដែលចង់បាន</strong> មកកាន់ទីនេះដើម្បីឱ្យ Admin ជួយគណនាប្រាក់បង់ប្រចាំខែជូនបាទ/ចាស! 📱✨",
+    hours: "ហាង <strong>PNK SHOP</strong> បើកបម្រើអតិថិជនរៀងរាល់ថ្ងៃ ពីម៉ោង <strong>7:30 ព្រឹក ដល់ 8:30 យប់</strong>! អាចអញ្ជើញមកផ្ទាល់ ឬកុម្មង់តាមអនឡាញបានរហ័ស។ 🕒",
+    shipping: "យើងខ្ញុំមានសេវាដឹកជញ្ជូនរហ័សទាន់ចិត្ត និងសុវត្ថិភាព ដល់ដៃអតិថិជននៅគ្រប់ <strong>២៤ ខេត្តក្រុង</strong> ទូទាំងប្រទេសកម្ពុជា! 📦🚚"
+  };
+
+  const questionLabelsMap = {
+    tradein: "🔄 សួរអំពីការប្តូរចាស់យកថ្មី (Trade-In)",
+    installment: "💳 សួរអំពីការបង់រំលស់ 0%",
+    hours: "🕒 តើហាងបើកលក់ម៉ោងប៉ុន្មាន?",
+    shipping: "🚚 តើមានសេវាដឹកជញ្ជូន ២៤ ខេត្តក្រុងទេ?"
+  };
+
+  let loadedHistory = false;
+  let maxCustomerMsgId = 0;
+  let unreadCount = 0;
+  let lastSeenAdminMsgId = parseInt(localStorage.getItem("pnk_last_seen_admin_msg_id") || "0", 10);
+
+  function updateBadgeUI() {
+    if (!chatBadge) return;
+    if (unreadCount > 0 && chatWindow.classList.contains("d-none")) {
+      chatBadge.innerText = unreadCount;
+      chatBadge.style.display = "inline-block";
+    } else {
+      chatBadge.style.display = "none";
+    }
+  }
+
+  function markAdminMessagesAsRead() {
+    unreadCount = 0;
+    if (maxCustomerMsgId > lastSeenAdminMsgId) {
+      lastSeenAdminMsgId = maxCustomerMsgId;
+      localStorage.setItem("pnk_last_seen_admin_msg_id", maxCustomerMsgId.toString());
+    }
+    updateBadgeUI();
+  }
+
+  function loadCustomerChatHistory() {
+    fetch("{% url 'accounts:get_customer_chat_history_api' %}")
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success" && data.messages) {
+          const isInitialLoad = !loadedHistory;
+          if (isInitialLoad) {
+            messagesLog.querySelectorAll(".dynamic-chat-msg").forEach(el => el.remove());
+            loadedHistory = true;
+          }
+
+          data.messages.forEach(m => {
+            if (m.id > maxCustomerMsgId) {
+              maxCustomerMsgId = m.id;
+              if (m.sender === "admin") {
+                appendAdminReplyMsg(m.message, m.created_at);
+                if (m.id > lastSeenAdminMsgId && chatWindow.classList.contains("d-none")) {
+                  unreadCount++;
+                }
+              } else {
+                appendUserMsg(m.message, m.created_at);
+              }
+            }
+          });
+
+          if (!chatWindow.classList.contains("d-none")) {
+            markAdminMessagesAsRead();
+          } else {
+            updateBadgeUI();
+          }
+
+          const adminDot = document.getElementById("adminOnlineDot");
+          if (adminDot) {
+            adminDot.style.display = data.is_admin_online ? "inline-block" : "none";
+          }
+        }
+      })
+      .catch(err => console.error("Error loading chat history:", err));
+  }
+
+  // Load chat history in background on page load
+  loadCustomerChatHistory();
+
+  function toggleChat() {
+    if (chatWindow.classList.contains("d-none")) {
+      chatWindow.classList.remove("d-none");
+      chatIcon.className = "bi bi-x-lg text-white fs-4";
+      markAdminMessagesAsRead();
+      if (!loadedHistory) {
+        loadCustomerChatHistory();
+      } else {
+        scrollToBottom();
+      }
+    } else {
+      chatWindow.classList.add("d-none");
+      chatIcon.className = "bi bi-chat-dots-fill text-white fs-3";
+    }
+  }
+
+  if (toggleBtn) toggleBtn.addEventListener("click", toggleChat);
+  if (closeBtn) closeBtn.addEventListener("click", toggleChat);
+
+  function appendUserMsg(text, timeStr) {
+    const div = document.createElement("div");
+    div.className = "d-flex align-items-end justify-content-end mb-3 gap-2 dynamic-chat-msg";
+    const now = new Date();
+    const timeDisplay = timeStr || (now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0'));
+
+    div.innerHTML = `
+      <div class="text-white lh-base position-relative" style="width: fit-content; max-width: 78%; font-size: 0.88rem; line-height: 1.65; padding: 10px 14px 8px 14px; background: linear-gradient(135deg, #059669 0%, #047857 100%); border-radius: 18px 18px 4px 18px !important; box-shadow: 0 4px 14px rgba(4, 120, 87, 0.22);">
+        <div style="word-break: break-word;">${text}</div>
+        <small class="text-white-50 float-end ms-2 mt-1 d-inline-flex align-items-center gap-1" style="font-size: 9.5px;">
+          ${timeDisplay} <i class="bi bi-check2-all text-warning"></i>
+        </small>
+      </div>
+    `;
+    messagesLog.appendChild(div);
+    scrollToBottom();
+  }
+
+  function appendBotMsg(html) {
+    const div = document.createElement("div");
+    div.className = "d-flex align-items-start gap-2 mb-3 dynamic-chat-msg";
+    div.innerHTML = `
+      <div class="text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 shadow-sm" style="width: 32px; height: 32px; font-size: 0.9rem; background: linear-gradient(135deg, #10b981, #047857);">
+        <i class="bi bi-robot"></i>
+      </div>
+      <div class="bg-white shadow-xs border text-dark lh-base" style="width: fit-content; max-width: 82%; font-size: 0.88rem; line-height: 1.65; padding: 10px 14px 8px 14px; border-radius: 18px 18px 18px 4px !important; border-color: #e2e8f0 !important; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
+        <div style="word-break: break-word;">${html}</div>
+      </div>
+    `;
+    messagesLog.appendChild(div);
+    scrollToBottom();
+  }
+
+  function appendAdminReplyMsg(text, timeStr) {
+    const div = document.createElement("div");
+    div.className = "d-flex align-items-start gap-2 mb-3 dynamic-chat-msg";
+    const adminAvatarUrl = "{% if store_settings.logo %}{{ store_settings.logo.url }}{% else %}{% static 'img/photologo.JPG' %}{% endif %}";
+
+    div.innerHTML = `
+      <img src="${adminAvatarUrl}" class="rounded-circle border border-success border-2 flex-shrink-0 shadow-sm mt-1" style="width: 32px; height: 32px; object-fit: cover; background: white;" alt="Admin Avatar">
+      <div class="bg-white border text-dark lh-base position-relative" style="width: fit-content; max-width: 78%; font-size: 0.88rem; line-height: 1.65; padding: 10px 14px 8px 14px; border-color: #e2e8f0 !important; border-radius: 18px 18px 18px 4px !important; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
+        <div style="word-break: break-word;">${text}</div>
+        <small class="text-muted float-end ms-2 mt-1" style="font-size: 9.5px;">${timeStr || 'ឥឡូវនេះ'}</small>
+      </div>
+    `;
+    messagesLog.appendChild(div);
+    scrollToBottom();
+  }
+
+  // Customer Live Chat Emoji Picker
+  const toggleCustEmojiBtn = document.getElementById("toggleCustomerEmojiBtn");
+  const custEmojiPickerPopup = document.getElementById("customerEmojiPickerPopup");
+  const closeCustEmojiBtn = document.getElementById("closeCustomerEmojiBtn");
+  const chatInputText = document.getElementById("chatInputText");
+
+  if (toggleCustEmojiBtn && custEmojiPickerPopup) {
+    toggleCustEmojiBtn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      custEmojiPickerPopup.classList.toggle("d-none");
+    });
+  }
+
+  if (closeCustEmojiBtn && custEmojiPickerPopup) {
+    closeCustEmojiBtn.addEventListener("click", function() {
+      custEmojiPickerPopup.classList.add("d-none");
+    });
+  }
+
+  document.addEventListener("click", function(e) {
+    if (custEmojiPickerPopup && !custEmojiPickerPopup.contains(e.target) && e.target !== toggleCustEmojiBtn) {
+      custEmojiPickerPopup.classList.add("d-none");
+    }
+  });
+
+  document.querySelectorAll(".cust-emoji-btn").forEach(function(btn) {
+    btn.addEventListener("click", function(e) {
+      e.preventDefault();
+      const emoji = this.innerText.trim();
+      if (!chatInputText) return;
+
+      const start = chatInputText.selectionStart || chatInputText.value.length;
+      const end = chatInputText.selectionEnd || chatInputText.value.length;
+      const text = chatInputText.value;
+
+      chatInputText.value = text.substring(0, start) + emoji + text.substring(end);
+      chatInputText.focus();
+      chatInputText.setSelectionRange(start + emoji.length, start + emoji.length);
+    });
+  });
+
+  function scrollToBottom() {
+    messagesLog.scrollTop = messagesLog.scrollHeight;
+  }
+
+  function sendCustomerMessageToBackend(messageText) {
+    fetch("{% url 'accounts:customer_send_chat_api' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: new URLSearchParams({
+        "message": messageText
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success" && data.id) {
+        if (data.id > maxCustomerMsgId) maxCustomerMsgId = data.id;
+      }
+    })
+    .catch(err => console.error("Error saving customer chat:", err));
+  }
+
+  document.querySelectorAll(".quick-q-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      const qKey = this.getAttribute("data-q");
+      const qText = this.innerText.trim();
+      appendUserMsg(qText);
+      sendCustomerMessageToBackend(qText);
+
+      setTimeout(function() {
+        if (answersMap[qKey]) {
+          appendBotMsg(answersMap[qKey]);
+        }
+      }, 350);
+    });
+  });
+
+  if (chatForm) {
+    chatForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const val = chatInput.value.trim();
+      if (!val) return;
+
+      appendUserMsg(val);
+      sendCustomerMessageToBackend(val);
+      chatInput.value = "";
+    });
+  }
+
+  window.openPnkChatWithQuestion = function(qKey, customUserText) {
+    if (chatWindow.classList.contains("d-none")) {
+      toggleChat();
+    }
+    const userText = customUserText || questionLabelsMap[qKey] || qKey;
+    appendUserMsg(userText);
+    sendCustomerMessageToBackend(userText);
+
+    setTimeout(function() {
+      if (answersMap[qKey]) {
+        appendBotMsg(answersMap[qKey]);
+      } else {
+        appendBotMsg("សូមអរគុណសម្រាប់ការទាក់ទងមកកាន់ <strong>PNK SHOP</strong>! ក្រុមការងារ Admin នឹងឆ្លើយតបជូនលោកអ្នកក្នុងពេលបន្តិចទៀតនេះ។");
+      }
+    }, 350);
+  };
+
+  // Poll for new admin replies continuously (every 3 seconds), even when chat window is closed!
+  setInterval(function() {
+    loadCustomerChatHistory();
+  }, 3000);
+});
+</script>

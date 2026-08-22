@@ -1,0 +1,345 @@
+{% extends 'accounts/shop/index.html' %}
+{% load static %}
+
+{% block title %}ប្រវត្តិការទិញកន្លងមក - PNK Mobile Store{% endblock %}
+
+{% block content %}
+<style>
+    .order-history-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #064e3b 100%);
+        border-radius: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    .order-history-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(16, 185, 129, 0.15);
+        filter: blur(80px);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .stat-card {
+        background: #ffffff;
+        border-radius: 18px;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.25s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06) !important;
+    }
+    .order-card {
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.07);
+        transition: all 0.3s ease;
+    }
+    .order-card:hover {
+        border-color: rgba(16, 185, 129, 0.3);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05) !important;
+    }
+    .product-img-thumb {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 14px;
+        border: 1px solid #f1f5f9;
+        background-color: #f8fafc;
+    }
+    .filter-pill {
+        border-radius: 50px;
+        padding: 8px 20px;
+        font-weight: 600;
+        font-size: 13.5px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .filter-pill.active {
+        background-color: #10b981 !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .filter-pill:not(.active) {
+        background-color: #ffffff;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+    }
+    .filter-pill:not(.active):hover {
+        background-color: #f8fafc;
+        color: #10b981;
+        border-color: #10b981;
+    }
+</style>
+
+<div class="container py-4" style="font-family: 'Kantumruy Pro', sans-serif;">
+    
+    <!-- 1. HERO HEADER BANNER -->
+    <div class="order-history-hero p-4 p-md-5 mb-4 text-white shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-30 rounded-pill px-3 py-1.5 font-monospace">Order History</span>
+                </div>
+                <h2 class="fw-bold text-white mb-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history text-success"></i> ប្រវត្តិការទិញកន្លងមក
+                </h2>
+                <p class="text-white-50 mb-0" style="font-size: 14.5px;">
+                    ពិនិត្យ មើល និងតាមដានរាល់ស្ថានភាពការបញ្ជាទិញទំនិញទាំងអស់របស់អ្នកនៅ PNK Mobile Store
+                </p>
+            </div>
+            <div class="col-md-auto mt-3 mt-md-0 text-md-end">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 bg-white bg-opacity-10 backdrop-blur rounded-pill px-3.5 py-2 small border border-white border-opacity-10">
+                        <li class="breadcrumb-item"><a href="{% url 'shop:shop' %}" class="text-decoration-none text-white-50"><i class="bi bi-house me-1"></i>ទំព័រដើម</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'accounts:profile' %}" class="text-decoration-none text-white-50">Profile</a></li>
+                        <li class="breadcrumb-item active text-white fw-bold" aria-current="page">ប្រវត្តិការទិញ</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. KPI METRICS SUMMARY CARDS -->
+    <div class="row g-3 mb-4">
+        <!-- TOTAL ORDERS -->
+        <div class="col-6 col-lg-3">
+            <div class="stat-card p-3 p-md-4 shadow-sm h-100 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary-subtle text-primary p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px;">
+                    <i class="bi bi-bag-check-fill fs-3"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block text-uppercase font-monospace fw-semibold" style="font-size: 11px;">ការបញ្ជាទិញសរុប</small>
+                    <h4 class="fw-bold text-dark mb-0">{{ total_orders_count }} <small class="fs-6 text-muted font-normal">Order</small></h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPLETED ORDERS -->
+        <div class="col-6 col-lg-3">
+            <div class="stat-card p-3 p-md-4 shadow-sm h-100 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-success-subtle text-success p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px;">
+                    <i class="bi bi-check-circle-fill fs-3"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block text-uppercase font-monospace fw-semibold" style="font-size: 11px;">សម្រេចជោគជ័យ</small>
+                    <h4 class="fw-bold text-success mb-0">{{ completed_orders_count }} <small class="fs-6 text-muted font-normal">Order</small></h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- PENDING / IN PROGRESS -->
+        <div class="col-6 col-lg-3">
+            <div class="stat-card p-3 p-md-4 shadow-sm h-100 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-warning-subtle text-warning p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px;">
+                    <i class="bi bi-hourglass-split fs-3"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block text-uppercase font-monospace fw-semibold" style="font-size: 11px;">កំពុងដំណើរការ</small>
+                    <h4 class="fw-bold text-warning mb-0">{{ pending_orders_count|add:processing_orders_count }} <small class="fs-6 text-muted font-normal">Order</small></h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOTAL SPENT -->
+        <div class="col-6 col-lg-3">
+            <div class="stat-card p-3 p-md-4 shadow-sm h-100 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-info-subtle text-info p-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px;">
+                    <i class="bi bi-cash-coin fs-3"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block text-uppercase font-monospace fw-semibold" style="font-size: 11px;">ថវិកាចំណាយសរុប</small>
+                    <h4 class="fw-bold text-dark mb-0">${{ total_spent|floatformat:2 }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. STATUS FILTER TABS -->
+    <div class="d-flex align-items-center gap-2 mb-4 flex-wrap overflow-auto pb-2">
+        <a href="?status=all" class="filter-pill {% if status_filter == 'all' %}active{% endif %}">
+            <i class="bi bi-grid-fill me-1.5"></i> ទាំងអស់ ({{ total_orders_count }})
+        </a>
+        <a href="?status=Pending" class="filter-pill {% if status_filter == 'Pending' %}active{% endif %}">
+            <i class="bi bi-hourglass-split me-1.5 text-warning"></i> កំពុងរង់ចាំ ({{ pending_orders_count }})
+        </a>
+        <a href="?status=Processing" class="filter-pill {% if status_filter == 'Processing' %}active{% endif %}">
+            <i class="bi bi-box-seam me-1.5 text-info"></i> កំពុងរៀបចំ ({{ processing_orders_count }})
+        </a>
+        <a href="?status=Completed" class="filter-pill {% if status_filter == 'Completed' %}active{% endif %}">
+            <i class="bi bi-check-circle-fill me-1.5 text-success"></i> ជោគជ័យ ({{ completed_orders_count }})
+        </a>
+        <a href="?status=Rejected" class="filter-pill {% if status_filter == 'Rejected' %}active{% endif %}">
+            <i class="bi bi-x-circle-fill me-1.5 text-danger"></i> បដិសេធ ({{ rejected_orders_count }})
+        </a>
+    </div>
+
+    <!-- 4. ORDERS LIST -->
+    {% if orders %}
+        <div class="d-flex flex-column gap-4 mb-5">
+            {% for order in orders %}
+                <div class="order-card p-4 shadow-sm">
+                    
+                    <!-- ORDER HEADER -->
+                    <div class="d-flex justify-content-between align-items-start align-items-md-center flex-wrap gap-2 pb-3 border-bottom mb-3">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h5 class="fw-bold text-dark mb-0">Order #ORD-{{ order.id }}</h5>
+                                {% if order.status == 'Pending' %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-1.5 fw-bold">
+                                        <i class="bi bi-hourglass-split me-1"></i> កំពុងផ្ទៀងផ្ទាត់
+                                    </span>
+                                {% elif order.status == 'Processing' %}
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-3 py-1.5 fw-bold">
+                                        <i class="bi bi-box-seam me-1"></i> កំពុងរៀបចំដឹកជញ្ជូន
+                                    </span>
+                                {% elif order.status == 'Completed' %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 fw-bold">
+                                        <i class="bi bi-check-circle-fill me-1"></i> សម្រេចជោគជ័យ
+                                    </span>
+                                {% elif order.status == 'Rejected' %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-1.5 fw-bold">
+                                        <i class="bi bi-x-circle-fill me-1"></i> បដិសេធ
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary border rounded-pill px-3 py-1.5 fw-bold">{{ order.status }}</span>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted font-monospace">
+                                <i class="bi bi-calendar-event me-1 text-success"></i> កាលបរិច្ឆេទបញ្ជាទិញ៖ {{ order.created_at|date:"d F Y, h:i A" }}
+                            </small>
+                        </div>
+
+                        <div class="text-md-end">
+                            <small class="text-muted d-block" style="font-size: 12px;">វិធីសាស្ត្រទូទាត់ប្រាក់</small>
+                            <span class="badge bg-light text-dark border rounded-pill px-3 py-1 font-monospace">
+                                {% if order.payment_method == 'khqr' or order.payment_method == 'online' %}
+                                    <i class="bi bi-qr-code-scan text-primary me-1"></i> វេរប្រាក់តាម KHQR
+                                {% else %}
+                                    <i class="bi bi-cash-stack text-success me-1"></i> ប្រាក់សុទ្ធ (COD)
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- ORDER ITEMS TABLE / LIST -->
+                    <div class="mb-3">
+                        <div class="d-flex flex-column gap-3">
+                            {% for item in order.items.all %}
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 p-2.5 rounded-3 bg-light bg-opacity-50">
+                                    <div class="d-flex align-items-center gap-3">
+                                        {% if item.product.image %}
+                                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="product-img-thumb">
+                                        {% else %}
+                                            <div class="product-img-thumb d-flex align-items-center justify-content-center text-muted">
+                                                <i class="bi bi-phone fs-4"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <h6 class="fw-bold text-dark mb-0">{{ item.product.name }}</h6>
+                                            <small class="text-muted">
+                                                តម្លៃ៖ <strong class="text-success">${{ item.price }}</strong> &nbsp;|&nbsp; ចំនួន៖ <strong>x{{ item.quantity }}</strong>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-muted d-block" style="font-size: 11px;">សរុប item</small>
+                                        <strong class="text-dark fs-6">${{ item.price|floatformat:2 }}</strong>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- REJECT NOTE ALERT IF REJECTED -->
+                    {% if order.status == 'Rejected' and order.admin_note %}
+                        <div class="alert alert-danger border-0 bg-danger-subtle rounded-3 p-3 mb-3 small">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="bi bi-info-circle-fill text-danger fs-5 mt-0.5"></i>
+                                <div>
+                                    <strong class="text-danger">មូលហេតុនៃការបដិសេធ៖</strong> {{ order.admin_note }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- ORDER FOOTER & ACTIONS -->
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-3 border-top">
+                        <div>
+                            <small class="text-muted d-block" style="font-size: 12px;">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i> ដឹកជញ្ជូនទៅ៖ {{ order.address_1 }}, {{ order.city }} (ទូរស័ព្ទ៖ {{ order.phone }})
+                            </small>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="text-end me-2">
+                                <small class="text-muted d-block" style="font-size: 11px;">តម្លៃសរុបចុងក្រោយ</small>
+                                <h5 class="fw-bold text-success mb-0">
+                                    ${{ order.total_amount }} 
+                                    <small class="text-muted font-normal fs-7">({{ order.total_amount|floatformat:0 }} $)</small>
+                                </h5>
+                            </div>
+
+                            <!-- ACTION BUTTONS -->
+                            {% if order.status == 'Pending' %}
+                                <a href="{% url 'shop:order_waiting' order.id %}" class="btn btn-warning rounded-pill px-4 py-2 text-dark fw-bold btn-sm shadow-xs">
+                                    <i class="bi bi-hourglass-split me-1"></i> តាមដានការផ្ទៀងផ្ទាត់
+                                </a>
+                            {% else %}
+                                <a href="{% url 'shop:order_success' order.id %}" class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold btn-sm">
+                                    <i class="bi bi-receipt me-1"></i> មើលវិក្កយបត្រ
+                                </a>
+                            {% endif %}
+
+                            {% if order.payment_receipt %}
+                                <button type="button" class="btn btn-light border rounded-pill px-3 py-2 btn-sm text-secondary" data-bs-toggle="modal" data-bs-target="#receiptModal{{ order.id }}">
+                                    <i class="bi bi-image me-1 text-primary"></i> ប័ណ្ណបង់ប្រាក់
+                                </button>
+
+                                <!-- RECEIPT MODAL -->
+                                <div class="modal fade" id="receiptModal{{ order.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content rounded-4 border-0 shadow-lg">
+                                            <div class="modal-header border-0 pb-0">
+                                                <h6 class="modal-title fw-bold text-dark">
+                                                    <i class="bi bi-receipt text-success me-1"></i> រូបភាពប័ណ្ណបង់ប្រាក់ (Order #ORD-{{ order.id }})
+                                                </h6>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body text-center p-4">
+                                                <img src="{{ order.payment_receipt.url }}" alt="Receipt" class="img-fluid rounded-3 border shadow-xs" style="max-height: 450px; object-fit: contain;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- EMPTY STATE -->
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4 bg-white">
+            <div class="mx-auto mb-3 rounded-circle bg-light text-muted d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                <i class="bi bi-bag-x fs-1 text-secondary"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-2">មិនទាន់មានប្រវត្តិបញ្ជាទិញឡើយ!</h4>
+            <p class="text-muted small mb-4" style="max-width: 450px; margin: 0 auto;">
+                លោកអ្នកមិនទាន់មានទំនិញដែលបានបញ្ជាទិញនៅក្នុងប្រព័ន្ធនៅឡើយទេ។ សូមចូលទៅកាន់ហាងទំនិញដើម្បីជ្រើសរើសទូរស័ព្ទ និងសម្ភារៈអេឡិចត្រូនិកដែលលោកអ្នកពេញចិត្ត។
+            </p>
+            <div>
+                <a href="{% url 'shop:shop' %}" class="btn btn-success rounded-pill px-5 py-2.5 fw-bold shadow-sm">
+                    <i class="bi bi-shop me-1.5"></i> ទៅកាន់ហាងទំនិញឥឡូវនេះ
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

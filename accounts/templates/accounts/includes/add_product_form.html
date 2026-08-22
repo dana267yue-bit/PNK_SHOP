@@ -1,0 +1,228 @@
+{% load widget_tweaks %}
+
+<form id="addProductForm" action="{% url 'shop:add_product' %}" method="POST" enctype="multipart/form-data" class="needs-validation">
+    {% csrf_token %}
+    
+    <div class="row g-3">
+        {% if form.non_field_errors %}
+            <div class="col-12">
+                <div class="alert alert-danger border-0 rounded-3 p-3 mb-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-octagon-fill fs-5"></i>
+                    <span>{{ form.non_field_errors }}</span>
+                </div>
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="{% if field.name == 'description' or field.name == 'promotion' %}col-12{% else %}col-md-6{% endif %}">
+                <label class="form-label fw-semibold text-secondary small mb-1.5 d-flex align-items-center gap-1.5">
+                    {% if field.name == 'name' %}
+                        <i class="bi bi-phone text-success"></i>
+                    {% elif field.name == 'category' %}
+                        <i class="bi bi-grid text-success"></i>
+                    {% elif field.name == 'brand' %}
+                        <i class="bi bi-tag text-success"></i>
+                    {% elif field.name == 'price' %}
+                        <i class="bi bi-currency-dollar text-success"></i>
+                    {% elif field.name == 'original_price' %}
+                        <i class="bi bi-cash-stack text-success"></i>
+                    {% elif field.name == 'stock' %}
+                        <i class="bi bi-box-seam text-success"></i>
+                    {% elif field.name == 'image' %}
+                        <i class="bi bi-image text-success"></i>
+                    {% elif field.name == 'promotion' %}
+                        <i class="bi bi-gift text-success"></i>
+                    {% elif field.name == 'description' %}
+                        <i class="bi bi-text-paragraph text-success"></i>
+                    {% else %}
+                        <i class="bi bi-pencil-fill text-success"></i>
+                    {% endif %}
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                
+                <div class="input-wrapper">
+                    {% if field.name == 'category' or field.name == 'brand' %}
+                        {% render_field field class="form-select custom-form-input" %}
+                    {% elif field.name == 'description' %}
+                        <div class="rich-editor-wrapper rounded-3 overflow-hidden border">
+                          <!-- RICH TOOLBAR -->
+                          <div class="rich-toolbar d-flex align-items-center gap-1 p-2 border-bottom flex-wrap" style="background-color: var(--bg-soft, #f8fafc);">
+                            <button type="button" class="btn btn-sm btn-light border-0 fw-bold px-2 py-1 shadow-xs" onclick="formatDoc('bold')" title="Bold (B)"><b>B</b></button>
+                            <button type="button" class="btn btn-sm btn-light border-0 fst-italic px-2 py-1 shadow-xs" onclick="formatDoc('italic')" title="Italic (I)"><i>I</i></button>
+                            <button type="button" class="btn btn-sm btn-light border-0 text-decoration-underline px-2 py-1 shadow-xs" onclick="formatDoc('underline')" title="Underline (U)"><u>U</u></button>
+                            <button type="button" class="btn btn-sm btn-light border-0 text-decoration-line-through px-2 py-1 shadow-xs" onclick="formatDoc('strikeThrough')" title="Strikethrough (S)"><s>S</s></button>
+                            
+                            <div class="vr mx-1 my-1"></div>
+                            
+                            <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatDoc('createLink')" title="Insert Link"><i class="bi bi-link-45deg fs-6"></i></button>
+                            <button type="button" class="btn btn-sm btn-light border-0 fw-bold px-2 py-1 shadow-xs" onclick="formatDoc('formatBlock', 'h2')" title="Heading 2">H₂</button>
+                            <button type="button" class="btn btn-sm btn-light border-0 fw-bold px-2 py-1 shadow-xs" onclick="formatDoc('formatBlock', 'h3')" title="Heading 3">H₃</button>
+                            <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatDoc('formatBlock', 'blockquote')" title="Quote"><i class="bi bi-chat-square-quote"></i></button>
+                            <button type="button" class="btn btn-sm btn-light border-0 font-monospace px-2 py-1 shadow-xs" onclick="formatDoc('formatBlock', 'pre')" title="Code">&lt;/&gt;</button>
+                            
+                            <div class="vr mx-1 my-1"></div>
+                            
+                            <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatDoc('insertUnorderedList')" title="Bullet List"><i class="bi bi-list-ul"></i></button>
+                            <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatDoc('insertOrderedList')" title="Numbered List"><i class="bi bi-list-ol"></i></button>
+                            <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatDoc('insertImage')" title="Insert Image"><i class="bi bi-image"></i></button>
+                            
+                            <div class="vr mx-1 my-1"></div>
+                            
+                            <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatDoc('undo')" title="Undo"><i class="bi bi-arrow-counterclockwise"></i></button>
+                            <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatDoc('redo')" title="Redo"><i class="bi bi-arrow-clockwise"></i></button>
+                          </div>
+                          
+                          <!-- EDITABLE AREA -->
+                          <div id="richTextEditor" contenteditable="true" class="p-3 bg-white" style="min-height: 120px; outline: none; font-size: 0.9rem; color: #1e293b;" oninput="syncRichText()">
+                            {{ field.value|default:""|safe }}
+                          </div>
+                          
+                          <textarea id="hiddenDescription" name="{{ field.name }}" class="d-none">{{ field.value|default:"" }}</textarea>
+                        </div>
+                    {% elif field.name == 'promotion' %}
+                        {% render_field field class="form-control custom-form-input" rows="2" %}
+                    {% else %}
+                        {% render_field field class="form-control custom-form-input" %}
+                    {% endif %}
+                </div>
+                
+                {% if field.errors %}
+                    <div class="text-danger mt-1 small d-flex align-items-center gap-1" style="font-size: 12px;">
+                        <i class="bi bi-exclamation-circle-fill"></i> {{ field.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if field.name == 'image' %}
+                <div class="col-md-6 d-flex align-items-end">
+                    <div id="imagePreviewContainer" class="rounded-3 border border-2 border-dashed d-flex align-items-center justify-content-center overflow-hidden text-muted transition-all" style="width: 80px; height: 80px; min-width: 80px; background-color: var(--bg-soft, #f8fafc);">
+                        <span id="previewText" class="small fw-medium text-secondary" style="font-size: 10px; text-align: center; line-height: 1.2;">
+                            <i class="bi bi-cloud-arrow-up d-block" style="font-size: 18px;"></i>មិនមាន
+                        </span>
+                        <img id="imagePreview" src="#" alt="Preview" class="d-none rounded" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                </div>
+
+                <!-- 3 GALLERY IMAGES INPUTS -->
+                <div class="col-12 mt-3 pt-3 border-top">
+                    <label class="form-label fw-bold text-dark small mb-2 d-flex align-items-center gap-1.5">
+                        <i class="bi bi-images text-success fs-5"></i> រូបភាពបន្ថែមក្នុង Detail (រូបតូចៗចំនួន ៣ ជ្រុង)
+                    </label>
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted mb-1" style="font-size: 11px;">រូបភាពទី ១ (ជ្រុងទី១ / ផ្ទៃមុខ)</label>
+                            <input type="file" name="gallery_image_1" accept="image/*" class="form-control custom-form-input">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted mb-1" style="font-size: 11px;">រូបភាពទី ២ (ជ្រុងទី២ / ខ្នងក្រោយ)</label>
+                            <input type="file" name="gallery_image_2" accept="image/*" class="form-control custom-form-input">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted mb-1" style="font-size: 11px;">រូបភាពទី ៣ (ជ្រុងទី៣ / ជ្រុងចំហៀង)</label>
+                            <input type="file" name="gallery_image_3" accept="image/*" class="form-control custom-form-input">
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+        {% endfor %}
+    </div>
+    
+    <div class="d-flex justify-content-end align-items-center gap-2 pt-4 mt-4 border-top">
+        <button type="button" class="btn btn-light px-4 rounded-3 fw-semibold border" data-bs-dismiss="modal">
+            <i class="bi bi-x-lg me-1"></i> បោះបង់
+        </button>
+        <button type="submit" class="btn btn-success px-4 rounded-3 fw-semibold shadow-sm text-white" style="background: linear-gradient(135deg, #198754, #146c43); border: none;">
+            <i class="bi bi-check-lg me-1"></i> រក្សាទុកទិន្នន័យ
+        </button>
+    </div>
+</form>
+
+<style>
+    .custom-form-input {
+        background-color: var(--bg-soft, #f8fafc) !important;
+        color: var(--text, #1e293b) !important;
+        border: 1.5px solid var(--border-color, #cbd5e1) !important;
+        border-radius: 12px !important;
+        padding: 0.6rem 0.9rem !important;
+        font-size: 0.92rem !important;
+        font-family: 'Kantumruy Pro', sans-serif !important;
+        transition: all 0.2s ease-in-out !important;
+    }
+    
+    .custom-form-input:focus {
+        background-color: var(--bg-card, #ffffff) !important;
+        border-color: #198754 !important;
+        box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.15) !important;
+        outline: none !important;
+    }
+    
+    .custom-form-input::placeholder {
+        color: #94a3b8 !important;
+        font-size: 0.88rem !important;
+    }
+
+    [data-theme="dark"] .custom-form-input {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        color: #f8fafc !important;
+    }
+    
+    [data-theme="dark"] .custom-form-input:focus {
+        background-color: rgba(255, 255, 255, 0.08) !important;
+        border-color: #198754 !important;
+    }
+</style>
+
+<script>
+    function formatDoc(cmd, value = null) {
+        if (cmd === 'createLink') {
+            const url = prompt('បញ្ចូល URL តំណភ្ជាប់ (Link URL):', 'https://');
+            if (url) document.execCommand(cmd, false, url);
+        } else if (cmd === 'insertImage') {
+            const url = prompt('បញ្ចូល URL រូបភាព (Image URL):', 'https://');
+            if (url) document.execCommand(cmd, false, url);
+        } else if (cmd === 'formatBlock') {
+            document.execCommand(cmd, false, value);
+        } else {
+            document.execCommand(cmd, false, null);
+        }
+        syncRichText();
+    }
+
+    function syncRichText() {
+        const editor = document.getElementById('richTextEditor');
+        const hiddenInput = document.getElementById('hiddenDescription');
+        if (editor && hiddenInput) {
+            hiddenInput.value = editor.innerHTML;
+        }
+    }
+
+    document.addEventListener("change", function(event) {
+        if (event.target && event.target.name === "image") {
+            const input = event.target;
+            const previewContainer = document.getElementById("imagePreviewContainer");
+            const previewImg = document.getElementById("imagePreview");
+            const previewText = document.getElementById("previewText");
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewImg.classList.remove("d-none");
+                    previewText.classList.add("d-none");
+                    previewContainer.style.borderColor = "#198754"; 
+                    previewContainer.classList.remove("border-dashed");
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                previewImg.src = "#";
+                previewImg.classList.add("d-none");
+                previewText.classList.remove("d-none");
+                previewContainer.style.borderColor = "var(--border-color, #cbd5e1)";
+                previewContainer.classList.add("border-dashed");
+            }
+        }
+    });
+</script>

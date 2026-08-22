@@ -1,0 +1,27 @@
+{% extends 'accounts/shop/index.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <h2 class="fw-bold text-success mb-3">អំពី PNK SHOP</h2>
+            <p class="lead text-secondary">
+                PNK SHOPគឺជាហាងលក់ទូរស័ព្ទដៃ ថេបប្លេត និងគ្រឿងបន្លាស់អេឡិចត្រូនិចឈានមុខគេ ដែលផ្តល់ជូនផលិតផលមានគុណភាពខ្ពស់ និងតម្លៃសមរម្យបំផុត។
+            </p>
+            <p class="text-muted">
+                យើងខ្ញុំប្តេជ្ញាផ្តល់ជូននូវសេវាកម្មដ៏ល្អឥតខ្ចោះជូនអតិថិជនគ្រប់រូប ជាមួយនឹងការធានាលើផលិតផលច្បាស់លាស់ និងការដឹកជញ្ជូនរហ័សទាន់ចិត្ត។
+            </p>
+            <a href="{% url 'shop:shop' %}" class="btn btn-success rounded-pill px-4 py-2 mt-2">
+                <i class="fas fa-shopping-bag mr-2"></i> ទិញទំនិញឥឡូវនេះ
+            </a>
+        </div>
+        <div class="col-lg-6">
+            <div class="p-4 bg-white rounded-4 shadow-sm text-center">
+                <i class="fas fa-mobile-alt fa-5x text-success mb-3"></i>
+                <p class="text-muted mb-0">ទាក់ទងមកយើងខ្ញុំតាមរយៈលេខទូរស័ព្ទ ឬ Telegram សម្រាប់ព័ត៌មានបន្ថែម។</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

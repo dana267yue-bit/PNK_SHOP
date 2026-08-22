@@ -1,125 +1,637 @@
+{% extends 'accounts/shop/index.html' %}
 {% load static %}
-<!doctype html>
-<html lang="zxx">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content="phonePhop" />
-    <meta name="keywords" content="phonephon, unica, creative, html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>{{ product.name }}</title>
+{% load custom_filters %}
 
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet" />
+{% block title %}{{ product.name }} | PNK Mobile Store{% endblock %}
 
-    {% include 'accounts/includes/CssStyles.html' %}
-  </head>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+{% endblock %}
 
-  <body>
-    {% include 'accounts/includes/HeaderSection.html' %}
+{% block content %}
+<style>
+  /* ================= MAIN IMAGE ================= */
+  .product__details__pic__item--large{
+      width:100%;
+      height:500px;
+      object-fit:contain;
+      border:1px solid #eee;
+      border-radius:12px;
+      background:#fff;
+      padding:15px;
+  }
 
+  /* ================= THUMBNAILS ================= */
+  .product__details__pic__slider {
+      margin-top: 15px;
+      position: relative;
+  }
 
-    <section class="product-details spad">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6 col-md-6">
-            <div class="product__details__pic">
-              <div class="product__details__pic__item">
-                <img class="product__details__pic__item--large" src="{{ product.image.url }}" alt="{{ product.name }}" />
-              </div>
+  .product__details__pic__slider .item {
+      padding: 4px;
+  }
 
-              <div class="product__details__pic__slider owl-carousel mt-3">
-                <div class="pic-slider-item">
-                  <img src="{{ product.image.url }}" class="thumb-img active" 
-                       style="width: 100%; cursor: pointer; border: 2px solid #999c95; border-radius: 5px;" />
-                </div>
+  .thumb-box {
+      width: 100%;
+      height: 90px;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      padding: 4px;
+  }
 
-                {% for img in product.images.all %}
-                <div class="pic-slider-item">
-                  <img src="{{ img.image.url }}" class="thumb-img" 
-                       style="width: 100%; cursor: pointer; border: 1px solid #eee; border-radius: 5px;" />
-                </div>
-                {% endfor %}
-              </div>
+  .thumb-box:hover {
+      border-color: #198754;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(25, 135, 84, 0.15);
+  }
+
+  .thumb-box.active-thumb {
+      border-color: #198754 !important;
+      box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.22) !important;
+      background: #ffffff;
+  }
+
+  .thumb-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+  }
+
+  .owl-stage-outer {
+      overflow: hidden !important;
+  }
+
+  .product__details__pic__slider .owl-nav {
+      position: absolute;
+      top: 50%;
+      left: -12px;
+      right: -12px;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 10;
+  }
+
+  .product__details__pic__slider .owl-nav button.owl-prev,
+  .product__details__pic__slider .owl-nav button.owl-next {
+      width: 32px;
+      height: 32px;
+      border-radius: 50% !important;
+      background: #ffffff !important;
+      color: #198754 !important;
+      border: 1px solid #cbd5e1 !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: auto !important;
+      transition: all 0.2s ease !important;
+  }
+
+  .product__details__pic__slider .owl-nav button.owl-prev:hover,
+  .product__details__pic__slider .owl-nav button.owl-next:hover {
+      background: #198754 !important;
+      color: #ffffff !important;
+      border-color: #198754 !important;
+      transform: scale(1.12);
+  }
+
+  /* SPECS PILLS */
+  .spec-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 16px;
+  }
+
+  /* PRODUCT DESCRIPTION CONTENT */
+  .product-description-content {
+    color: #334155;
+    line-height: 1.8;
+  }
+  .product-description-content p {
+    margin-bottom: 0.4rem;
+  }
+  .product-description-content ul, 
+  .product-description-content ol {
+    padding-left: 1.5rem !important;
+    margin-left: 0.25rem !important;
+    margin-bottom: 0.6rem;
+    list-style-position: outside;
+  }
+  .product-description-content ul ul, 
+  .product-description-content ol ol,
+  .product-description-content ul ol,
+  .product-description-content ol ul {
+    padding-left: 1.4rem !important;
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+  }
+  .product-description-content li {
+    margin-bottom: 0.35rem;
+    padding-left: 0.25rem;
+  }
+  .product-description-content li p {
+    margin-bottom: 0;
+    display: inline;
+  }
+  .product-description-content li::marker {
+    color: #198754;
+    font-size: 1.1em;
+  }
+  .product-description-content strong, 
+  .product-description-content b {
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  /* QUANTITY SELECTOR */
+  .qty-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .qty-btn:hover {
+    background: #198754;
+    color: #ffffff;
+    border-color: #198754;
+  }
+
+  /* PERSPECTIVE CARD */
+  .perspective-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+  .perspective-card:hover {
+    transform: translateY(-4px);
+    border-color: #198754;
+    box-shadow: 0 10px 25px rgba(25, 135, 84, 0.08);
+  }
+</style>
+
+<!-- BREADCRUMB HEADER BANNER -->
+<section class="bg-dark py-4 mb-4" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-7 text-center text-md-start mb-2 mb-md-0">
+        <h2 class="fw-bold text-white mb-1 fs-3">{{ product.name }}</h2>
+        <p class="text-white-50 small mb-0">{{ product.brand.name|default:"Phone" }} | លក្ខណៈពិសេស និងព័ត៌មានលម្អិត</p>
+      </div>
+      <div class="col-md-5 text-center text-md-end">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-center justify-content-md-end mb-0 small align-items-center">
+            <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-white-50 text-decoration-none fw-medium opacity-75"><i class="bi bi-house-door me-1"></i> ទំព័រដើម</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'shop:shop' %}" class="text-white-50 text-decoration-none fw-medium opacity-75"><i class="bi bi-shop me-1"></i> ហាងទំនិញ</a></li>
+            <li class="breadcrumb-item active text-success fw-bold" aria-current="page">{{ product.name|truncatechars:25 }}</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN PRODUCT DETAILS SECTION -->
+<div class="container mb-5">
+  <div class="row g-4 g-lg-5">
+    
+    <!-- LEFT: GALLERY IMAGES -->
+    <div class="col-lg-6">
+      
+      <!-- MAIN DISPLAY IMAGE -->
+      <div class="product__details__pic__item position-relative">
+        {% if product.old_price and product.old_price > product.price %}
+        <span class="badge bg-danger rounded-pill position-absolute top-0 start-0 m-3 px-3 py-2 fs-6 shadow-sm fw-bold" style="z-index: 5;">
+          -{{ product.old_price|calculate_discount:product.price }}% OFF
+        </span>
+        {% else %}
+        <span class="badge bg-success rounded-pill position-absolute top-0 start-0 m-3 px-3 py-2 fs-6 shadow-sm fw-bold" style="z-index: 5;">
+          <i class="bi bi-patch-check-fill me-1"></i> ទំនិញថ្មី
+        </span>
+        {% endif %}
+
+        <img id="main-img"
+             class="product__details__pic__item--large"
+             src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no-image.png' %}{% endif %}"
+             alt="{{ product.name }}">
+      </div>
+
+      <!-- THUMB CAROUSEL -->
+      <div class="product__details__pic__slider owl-carousel mt-3 position-relative px-1">
+
+        <!-- MAIN IMAGE THUMB -->
+        <div class="item">
+          <div class="thumb-box active-thumb thumb-trigger" data-img="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no-image.png' %}{% endif %}">
+            <img class="thumb-img"
+                 src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no-image.png' %}{% endif %}"
+                 alt="{{ product.name }}">
+          </div>
+        </div>
+
+        {% for img in product.images.all %}
+        <div class="item">
+          <div class="thumb-box thumb-trigger" data-img="{{ img.image.url }}">
+            <img class="thumb-img"
+                 src="{{ img.image.url }}"
+                 alt="{{ product.name }}">
+          </div>
+        </div>
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT: PRODUCT INFO & PURCHASE -->
+    <div class="col-lg-6">
+      
+      <!-- BRAND & CATEGORY -->
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 text-uppercase fw-bold">
+          {{ product.brand.name|default:"Phone Brand" }}
+        </span>
+        {% if product.category %}
+        <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1">
+          {{ product.category.name }}
+        </span>
+        {% endif %}
+      </div>
+
+      <!-- TITLE -->
+      <h1 class="fw-bold text-dark mb-2" style="font-size: 32px;">{{ product.name }}</h1>
+
+      <!-- RATING & STOCK STATUS -->
+      <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+        <div class="text-warning small d-flex align-items-center gap-1">
+          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-fill"></i>
+          <i class="bi bi-star-fill"></i>
+          <span class="text-muted fw-semibold ms-1" style="font-size: 12px;">({{ avg_rating|default:"4.9" }} / 5.0 - {{ reviews_count|default:"12" }} វាយតម្លៃ)</span>
+        </div>
+        <span class="text-muted">|</span>
+        <div>
+          {% if product.stock > 0 %}
+          <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fw-bold">
+            <i class="bi bi-check-circle-fill me-1"></i> មានក្នុងស្តុក ({{ product.stock }} គ្រឿង)
+          </span>
+          {% else %}
+          <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1 fw-bold">
+            <i class="bi bi-x-circle-fill me-1"></i> អស់ពីស្តុក
+          </span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- PRICE BLOCK -->
+      <div class="p-3 bg-light rounded-4 mb-4 border d-flex align-items-baseline gap-3">
+        <span class="display-6 fw-bold text-success">${{ product.price }}</span>
+        {% if product.old_price and product.old_price > product.price %}
+        <span class="fs-5 text-muted text-decoration-line-through">${{ product.old_price }}</span>
+        <span class="badge bg-danger rounded-pill px-2 py-1 small">
+          សន្សំបាន ${{ product.old_price|sub:product.price }}
+        </span>
+        {% endif %}
+      </div>
+
+      <!-- SHORT DESCRIPTION -->
+      <div class="mb-4 p-3 p-md-4 bg-light rounded-4 border border-light-subtle">
+        <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-1.5" style="font-size: 15px;">
+          <i class="bi bi-info-circle-fill text-success fs-6"></i> ការរៀបរាប់សង្ខេប៖
+        </h6>
+        <div class="product-description-content" style="font-size: 14.5px;">
+          {% if product.description %}
+            {{ product.description|safe }}
+          {% else %}
+            <p class="text-muted mb-0">ទូរស័ព្ទដៃស៊េរីថ្មី គុណភាពខ្ពស់ អេក្រង់ច្បាស់ត្រជាក់ភ្នែក កាមេរ៉ាច្បាស់ច្បាស់ខ្លាំង និងកម្លាំងថ្មធំកាន់បានយូរថ្ងៃ។</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- QUANTITY & ADD TO CART FORM -->
+      <form method="POST" action="{% url 'shop:add_to_cart' product.id %}" class="mb-4">
+        {% csrf_token %}
+
+        {% if product.stock > 0 %}
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <!-- QUANTITY SELECTOR -->
+          <div class="d-flex align-items-center gap-2">
+            <label class="fw-bold text-dark mb-0 fs-6">ចំនួន៖</label>
+            <div class="d-inline-flex align-items-center gap-1 bg-white border rounded-pill p-1 shadow-sm">
+              <button type="button" class="qty-btn" onclick="decrementQty()">-</button>
+              <input type="number" id="productQtyInput" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control text-center border-0 fw-bold shadow-none fs-6" style="width: 46px;">
+              <button type="button" class="qty-btn" onclick="incrementQty()">+</button>
             </div>
           </div>
 
-          <div class="col-lg-6 col-md-6">
-            <div class="product__details__text">
-              <h3>{{ product.name }}</h3>
-              <div class="product__details__rating">
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star-half-o"></i>
-                <span>(18 reviews)</span>
-              </div>
-              <div class="product__details__price">${{ product.price }}</div>
-              <p>{{ product.description }}</p>
+          <!-- ADD TO CART BUTTON (COMPACT & PROPORTIONAL) -->
+          <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm d-inline-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; height: 48px;">
+            <i class="bi bi-cart-plus-fill fs-5"></i> ថែមចូលកន្ត្រក
+          </button>
+          
+          <!-- WISHLIST HEART BUTTON -->
+          <button type="button" class="btn btn-outline-danger rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center flex-shrink-0 wishlist-btn-heart" 
+                  style="width: 48px; height: 48px; padding: 0;"
+                  id="wishlistToggleBtn"
+                  data-id="{{ product.id }}"
+                  data-name="{{ product.name|escapejs }}"
+                  data-price="{{ product.price }}"
+                  data-image="{% if product.image %}{{ product.image.url }}{% elif product.images.first %}{{ product.images.first.image.url }}{% endif %}"
+                  data-url="{% url 'shop:product_details' product.id %}"
+                  data-brand="{{ product.brand.name|default:'Phone'|escapejs }}"
+                  data-stock="{{ product.stock|default:1 }}"
+                  data-old-price="{{ product.old_price|default:'' }}"
+                  title="បន្ថែមក្នុងទំនិញពេញចិត្ត (Wishlist)">
+            <i class="bi bi-heart-fill fs-5"></i>
+          </button>
+        </div>
+        {% else %}
+        <div class="d-flex align-items-center gap-3">
+          <button type="button" class="btn btn-secondary rounded-pill px-4 fw-bold shadow-sm d-inline-flex align-items-center justify-content-center gap-2 opacity-75" style="height: 48px;" disabled>
+            <i class="bi bi-x-circle fs-5"></i> ទំនិញនេះអស់ស្តុក
+          </button>
+        </div>
+        {% endif %}
+      </form>
 
-              <div class="product__details__quantity">
-                <div class="quantity">
-                  <div class="pro-qty">
-                    <input type="text" value="1" />
-                  </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+<!-- CUSTOMER REVIEWS & FEEDBACK SECTION -->
+<section class="py-5 bg-white border-top">
+  <div class="container">
+    <div class="row g-4 g-lg-5">
+      
+      <!-- LEFT: RATING OVERVIEW & WRITE REVIEW FORM -->
+      <div class="col-lg-5">
+        <div class="p-4 rounded-4 border bg-light shadow-sm">
+          <h4 class="fw-bold text-dark mb-1">មតិ និងការវាយតម្លៃ (Customer Reviews)</h4>
+          <p class="text-muted small mb-4">មតិយោបល់ពិតៗពីអតិថិជនដែលបានប្រើប្រាស់ {{ product.name }}</p>
+          
+          <div class="d-flex align-items-center gap-3 mb-4 p-3 bg-white rounded-3 border">
+            <div class="text-center pe-3 border-end">
+              <h1 class="fw-bold text-warning mb-0 display-5">{{ avg_rating|default:"4.9" }}</h1>
+              <div class="text-warning small fs-6">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <small class="text-muted" style="font-size: 11px;">({{ reviews|length|default:"12" }} មតិវាយតម្លៃ)</small>
+            </div>
+            <div>
+              <div class="fw-bold text-dark mb-1 small"><i class="bi bi-patch-check-fill text-success me-1"></i> ទំនិញទទួលបានការពេញចិត្ត 98%</div>
+              <p class="text-secondary small mb-0" style="font-size: 12px;">អតិថិជនភាគច្រើនសរសើរអំពី កាមេរ៉ាច្បាស់ ថ្មជាន់បានយូរ និងរលូនក្នុងការលេង Game។</p>
+            </div>
+          </div>
+
+          <!-- WRITE A REVIEW FORM -->
+          <div class="card border-0 shadow-xs rounded-3 p-3 bg-white">
+            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-pencil-square text-success me-1"></i> សរសេរមតិវាយតម្លៃរបស់អ្នក</h6>
+            <form action="{% url 'shop:add_review' product.id %}" method="POST">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label class="form-label small text-secondary fw-semibold mb-1">ជ្រើសរើសពិន្ទុ (Rating Star)៖</label>
+                <select name="rating" class="form-select form-select-sm custom-form-input">
+                  <option value="5" selected>⭐⭐⭐⭐⭐ 5/5 - ល្អឥតខ្ចោះ (Excellent)</option>
+                  <option value="4">⭐⭐⭐⭐ 4/5 - ល្អណាស់ (Very Good)</option>
+                  <option value="3">⭐⭐⭐ 3/5 - បង្គួរ (Good)</option>
+                  <option value="2">⭐⭐ 2/5 - ធម្មតា (Fair)</option>
+                  <option value="1">⭐ 1/5 - មិនសូវល្អ (Poor)</option>
+                </select>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label small text-secondary fw-semibold mb-1">មតិយោបល់របស់អ្នក (Your Review)៖</label>
+                <textarea name="comment" rows="3" class="form-control custom-form-input" placeholder="ចែករំលែកបទពិសោធន៍របស់អ្នកអំពី {{ product.name }}..." required></textarea>
+              </div>
+              
+              <button type="submit" class="btn btn-success w-100 rounded-3 fw-bold py-2 shadow-sm text-white" style="background: linear-gradient(135deg, #198754, #146c43); border: none;">
+                <i class="bi bi-send-fill me-1.5"></i> ផ្ញើការវាយតម្លៃ 
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: REVIEWS LIST -->
+      <div class="col-lg-7">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold text-dark mb-0"><i class="bi bi-chat-square-quote-fill text-success me-2"></i>មតិយោបល់ថ្មីៗពីអតិថិជន</h5>
+          <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 small fw-semibold">
+            {{ reviews|length }} មតិវាយតម្លៃ
+          </span>
+        </div>
+
+        <div class="reviews-scroll-container d-flex flex-column gap-3" style="max-height: 520px; overflow-y: auto;">
+          {% for r in reviews %}
+          <div class="p-3 bg-light rounded-4 border shadow-xs transition-all">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div class="d-flex align-items-center gap-2.5">
+                <div class="avatar-circle bg-success text-white fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 14px;">
+                  {{ r.user.username|slice:":1"|upper|default:"U" }}
+                </div>
+                <div>
+                  <h6 class="fw-bold text-dark mb-0 small d-flex align-items-center gap-1.5">
+                    {{ r.user.username|default:"អតិថិជន PNK" }}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5" style="font-size: 9px;">
+                      <i class="bi bi-check-circle-fill me-0.5"></i> ទិញរួចរាល់ (Verified Purchaser)
+                    </span>
+                  </h6>
+                  <small class="text-muted" style="font-size: 11px;">{{ r.created_at|date:"d M Y, h:i A" }}</small>
                 </div>
               </div>
-              <a href="#" class="primary-btn">ADD TO CARD</a>
+              <div class="text-warning small">
+                {% if r.rating >= 1 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+                {% if r.rating >= 2 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+                {% if r.rating >= 3 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+                {% if r.rating >= 4 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+                {% if r.rating >= 5 %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+              </div>
+            </div>
+            <p class="text-dark small mb-0 lh-base" style="font-size: 0.9rem;">
+              {{ r.comment }}
+            </p>
+          </div>
+          {% empty %}
+          <div class="p-4 text-center bg-light rounded-4 border">
+            <i class="bi bi-chat-left-dots text-muted fs-2 d-block mb-2"></i>
+            <p class="text-muted small mb-0">មិនទាន់មានមតិយោបល់នៅឡើយទេ! ក្លាយជាមនុស្សដំបូងគេដែលសរសេរ Review សម្រាប់ទូរស័ព្ទនេះ។</p>
+          </div>
+          {% endfor %}
+        </div>
 
-              <ul>
-                <li>
-                  <b>Availability</b>
-                  <span>{% if product.stock > 0 %} In Stock {% else %} Out of Stock {% endif %}</span>
-                </li>
-                <li><b>Brand</b> <span>{{ product.brand }}</span></li>
-                <li>
-                  <b>Share on</b>
-                  <div class="share">
-                    <a href="#"><i class="fa fa-facebook"></i></a>
-                    <a href="#"><i class="fa fa-twitter"></i></a>
-                    <a href="#"><i class="fa fa-instagram"></i></a>
-                  </div>
-                </li>
-              </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- RELATED PRODUCTS SECTION -->
+{% if related_products %}
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <h4 class="fw-bold text-dark mb-1">ទូរស័ព្ទម៉ាកស្រដៀងគ្នា </h4>
+        <p class="text-muted small mb-0">ម៉ូដែលផ្សេងទៀតពីម៉ាក {{ product.brand.name|default:"" }}</p>
+      </div>
+      <a href="{% url 'shop:shop' %}" class="btn btn-outline-success rounded-pill px-4 btn-sm fw-bold">
+        មើលទាំងអស់ <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+      {% for item in related_products %}
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden text-center p-3">
+          <a href="{% url 'shop:product_details' item.id %}" class="d-block mb-2">
+            <img src="{% if item.image %}{{ item.image.url }}{% else %}{% static 'img/no-image.png' %}{% endif %}" 
+                 alt="{{ item.name }}" 
+                 style="height: 160px; object-fit: contain;">
+          </a>
+          <div class="card-body p-0 d-flex flex-column justify-content-between">
+            <div>
+              <small class="text-uppercase text-muted fw-semibold d-block mb-1" style="font-size: 11px;">{{ item.brand.name }}</small>
+              <h6 class="fw-bold mb-2">
+                <a href="{% url 'shop:product_details' item.id %}" class="text-decoration-none text-dark hover-success">
+                  {{ item.name }}
+                </a>
+              </h6>
+            </div>
+            <div>
+              <div class="fw-bold text-success fs-5 mb-2">${{ item.price }}</div>
+              <a href="{% url 'shop:product_details' item.id %}" class="btn btn-outline-success btn-sm rounded-pill w-100 fw-bold">
+                មើលលម្អិត
+              </a>
             </div>
           </div>
         </div>
       </div>
-    </section>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
-    <!-- Footer Section Begin -->
-    {% include 'accounts/includes/FooterSection.html' %}
-    <!-- Footer Section End -->
-    <!-- Js Plugins -->
-    {% include 'accounts/includes/JsPlugins.html' %}
+<style>
+  .custom-form-input {
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+  }
+  .custom-form-input:focus {
+    border-color: #198754 !important;
+    box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.15) !important;
+  }
+</style>
 
-    <script>
-      $(document).ready(function () {
-        // ១. កំណត់មុខងារឱ្យ Carousel រត់ពីស្តាំទៅឆ្វេង (RTL)
-        var productSlider = $(".product__details__pic__slider");
-        productSlider.owlCarousel({
-          loop: true,
-          margin: 15,
-          items: 4,
-          dots: true,
-          nav: false,
-          autoplay: true,
-          autoplayTimeout: 5000,
-          rtl: true  // នេះជាកន្លែងធ្វើឱ្យវារត់ពីស្តាំទៅឆ្វេង
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+<script>
+$(document).ready(function () {
+
+    const main = $("#main-img");
+    const slider = $(".product__details__pic__slider");
+    const totalItems = slider.find(".item").length;
+
+    slider.owlCarousel({
+        loop: totalItems > 1,
+        rewind: totalItems <= 1,
+        margin: 10,
+        nav: totalItems > 1,
+        dots: false,
+        smartSpeed: 450,
+        navText: [
+            '<i class="bi bi-chevron-left"></i>',
+            '<i class="bi bi-chevron-right"></i>'
+        ],
+        responsive: {
+            0: { items: 3 },
+            576: { items: 4 },
+            992: { items: 4 }
+        }
+    });
+
+    // CLICK THUMB TRIGGER (Supports Owl Clones)
+    $(document).on("click", ".thumb-trigger", function () {
+
+        const imgUrl = $(this).data("img");
+
+        if (!imgUrl) return;
+
+        $(".thumb-trigger").removeClass("active-thumb");
+        $(this).addClass("active-thumb");
+
+        main.stop(true, true).fadeOut(120, function () {
+            $(this).attr("src", imgUrl).fadeIn(120);
         });
 
-        // ២. មុខងារចុចលើរូបភាពតូចឱ្យដូររូបភាពធំ
-        $(".thumb-img").on("click", function () {
-          var imgUrl = $(this).attr("src");
+    });
 
-          // ប្តូររូបភាពធំ
-          $(".product__details__pic__item--large").attr("src", imgUrl);
-
-          // ប្តូរ Border លើរូបដែលបានចុច
-          $(".thumb-img").css("border", "1px solid #eee");
-          $(this).css("border", "2px solid #7fad39");
-        });
+    const wishlistBtn = document.getElementById('wishlistToggleBtn');
+    if (wishlistBtn) {
+      wishlistBtn.addEventListener('click', function() {
+        if (typeof toggleWishlist === 'function') {
+          toggleWishlist(
+            this.dataset.id,
+            this.dataset.name,
+            this.dataset.price,
+            this.dataset.image,
+            this.dataset.url,
+            this.dataset.brand,
+            this.dataset.stock,
+            this.dataset.oldPrice
+          );
+        }
       });
-    </script>
-  </body>
-</html>
+    }
+
+});
+
+function incrementQty() {
+  const input = document.getElementById('productQtyInput');
+  if (input) {
+    let val = parseInt(input.value) || 1;
+    input.value = val + 1;
+  }
+}
+
+function decrementQty() {
+  const input = document.getElementById('productQtyInput');
+  if (input) {
+    let val = parseInt(input.value) || 1;
+    if (val > 1) input.value = val - 1;
+  }
+}
+</script>
+{% endblock %}

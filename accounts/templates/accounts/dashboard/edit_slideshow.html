@@ -1,0 +1,106 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+
+{% block dashboard_content %}
+<style>
+    .edit-card { background-color: var(--bg) !important; border: 1px solid var(--border) !important; border-radius: 16px; }
+    .form-control-theme { background-color: var(--bg-soft) !important; border: 1px solid var(--border) !important; color: var(--text) !important; border-radius: 10px; padding: 12px; }
+    .color-input-custom { width: 60px !important; height: 60px !important; border-radius: 50% !important; border: 2px solid var(--border); cursor: pointer; background: none; padding: 3px; }
+    .color-input-custom::-webkit-color-swatch { border: none; border-radius: 50%; }
+    .preview-box { padding: 30px; border-radius: 15px; background-color: #222; text-align: center; transition: 0.3s; border: 1px dashed var(--border); }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm edit-card">
+                <div class="card-header bg-transparent border-bottom p-4">
+                    <h5 class="m-0 font-weight-bold" style="color: var(--text);">
+                        <i class="fas fa-edit text-primary mr-2"></i>កែប្រែស្លាយ៖ {{ slide.title }}
+                    </h5>
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data" class="p-4">
+                    {% csrf_token %}
+                    
+                    <div class="form-group mb-4">
+                        <label class="font-weight-bold mb-2" style="color: var(--text);">ចំណងជើងស្លាយ</label>
+                        <input type="text" name="title" value="{{ slide.title }}" class="form-control form-control-theme" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="font-weight-bold mb-2" style="color: var(--text);">រូបភាពបច្ចុប្បន្ន</label>
+                            <div class="mb-2">
+                                <img src="{{ slide.image.url }}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border);">
+                            </div>
+                            <input type="file" name="image" class="form-control-file">
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="font-weight-bold mb-2" style="color: var(--text);">តំណភ្ជាប់ (URL)</label>
+                            <input type="url" name="link" value="{{ slide.link }}" class="form-control form-control-theme" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <div class="card p-3 mb-4" style="background-color: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px;">
+                        <label class="font-weight-bold mb-3" style="color: var(--text);"><i class="fas fa-palette mr-2"></i>កំណត់ពណ៌អក្សរ</label>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <input type="color" name="title_color" value="{{ slide.title_color }}" class="color-input-custom">
+                                <p class="small mt-2" style="color: var(--text-light);">ពណ៌ចំណងជើង</p>
+                            </div>
+                            <div class="col-4">
+                                <input type="color" name="desc_color" value="{{ slide.desc_color }}" class="color-input-custom">
+                                <p class="small mt-2" style="color: var(--text-light);">ពណ៌ពិពណ៌នា</p>
+                            </div>
+                            <div class="col-4">
+                                <input type="color" name="shadow_color" value="{{ slide.shadow_color }}" class="color-input-custom">
+                                <p class="small mt-2" style="color: var(--text-light);">ពណ៌ស្រមោល</p>
+                            </div>
+                        </div>
+
+                        <div class="preview-box mt-3">
+                            <h3 id="previewTitle" style="font-weight: bold;">{{ slide.title }}</h3>
+                            <p id="previewDesc" class="mb-0">ការពិពណ៌នានឹងបង្ហាញនៅទីនេះ</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="font-weight-bold mb-2" style="color: var(--text);">ការពិពណ៌នាខ្លីៗ</label>
+                        <textarea name="description" rows="3" class="form-control form-control-theme">{{ slide.description }}</textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <a href="{% url 'accounts:manage_slideshow' %}" class="btn btn-light px-4 mr-2" style="border-radius: 10px;">បោះបង់</a>
+                        <button type="submit" class="btn btn-primary px-5" style="border-radius: 10px;">រក្សាទុកការកែប្រែ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const titleIn = document.querySelector('input[name="title"]');
+        const descIn = document.querySelector('textarea[name="description"]');
+        const tCol = document.querySelector('input[name="title_color"]');
+        const dCol = document.querySelector('input[name="desc_color"]');
+        const sCol = document.querySelector('input[name="shadow_color"]');
+        
+        const pTitle = document.getElementById('previewTitle');
+        const pDesc = document.getElementById('previewDesc');
+
+        function update() {
+            pTitle.innerText = titleIn.value || "ចំណងជើងស្លាយ";
+            pDesc.innerText = descIn.value || "ការពិពណ៌នាស្លាយ...";
+            pTitle.style.color = tCol.value;
+            pDesc.style.color = dCol.value;
+            pTitle.style.textShadow = `2px 2px 10px ${sCol.value}`;
+            pDesc.style.textShadow = `1px 1px 5px ${sCol.value}`;
+        }
+
+        [titleIn, descIn, tCol, dCol, sCol].forEach(el => el.addEventListener('input', update));
+        update();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,14 @@
+<div class="sidebar__item">
+    <h4>ប្រភេទផលិតផល</h4>
+    <ul>
+        {% for cat in categories %}
+            <li>
+                <a href="{% url 'category_detail' cat.slug %}">
+                    {{ cat.name }}
+                </a>
+            </li>
+        {% empty %}
+            <li><a href="#">មិនទាន់មានប្រភេទនៅឡើយ</a></li>
+        {% endfor %}
+    </ul>
+</div>

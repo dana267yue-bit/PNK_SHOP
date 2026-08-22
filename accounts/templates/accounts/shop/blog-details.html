@@ -1,135 +1,242 @@
+{% extends 'accounts/shop/index.html' %}
 {% load static %}
-<!doctype html>
-<html lang="zxx">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ blog.title }}</title>
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet" />
+{% block title %}{{ blog.name }} | PNK Mobile Blog{% endblock %}
 
-    <!-- Css Styles -->
-    {% include 'accounts/includes/CssStyles.html' %}
+{% block content %}
+<style>
+  .blog-hero-img-wrap {
+    width: 100%;
+    max-height: 480px;
+    min-height: 250px;
+    background: #0f172a;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  .blog-hero-img {
+    max-width: 100%;
+    max-height: 480px;
+    object-fit: contain;
+  }
+  @media (max-width: 768px) {
+    .blog-hero-img-wrap {
+      max-height: 300px;
+      min-height: 180px;
+      border-radius: 1rem;
+    }
+    .blog-hero-img {
+      max-height: 300px;
+    }
+    .blog-title-main {
+      font-size: 1.4rem !important;
+      line-height: 1.4 !important;
+    }
+    .blog-body-text {
+      font-size: 0.95rem !important;
+      line-height: 1.8 !important;
+    }
+  }
+  .blog-body-text img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 1rem;
+    margin: 1.25rem 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    object-fit: contain;
+  }
+  .perspective-card {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .perspective-card:hover {
+    transform: translateY(-4px);
+    border-color: #198754 !important;
+    box-shadow: 0 10px 25px rgba(25, 135, 84, 0.15) !important;
+  }
+</style>
 
-    <style>
-        /* កំណត់ផ្ទៃខាងក្រោយឱ្យរាបស្មើ */
-        body { background-color: #fcfcfc; }
-
-        .blog-header {
-            padding-top: 50px;
-            padding-bottom: 30px;
-            text-align: center;
-        }
-
-        .blog-header h2 {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1c1c1c;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-
-        .blog-meta {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .blog-meta span { margin: 0 10px; }
-
-        /* ផ្នែករូបភាព - កែសម្រួលឱ្យទំហំសមល្មមនៅទីនេះ */
-        .image-wrapper {
-            max-width: 600px; /* កំណត់ទទឹងរូបភាពអតិបរមា */
-            margin: 0 auto 40px; /* រុញឱ្យនៅកណ្តាល */
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        }
-
-        .image-wrapper img {
-            width: 100%;
-            height: auto;
-            max-height: 600; /* កំណត់កម្ពស់អតិបរមាដើម្បីកុំឱ្យវាវែងពេក */
-            object-fit: cover; /* កាត់តម្រឹមរូបភាពឱ្យស្អាតក្នុងប្រអប់ */
-            display: block;
-        }
-
-        /* ផ្នែកអត្ថបទ */
-        .content-body {
-            max-width: 600px; /* កំណត់ទទឹងអត្ថបទឱ្យតូចជាងរូបភាពបន្តិច ដើម្បីងាយស្រួលអាន */
-            margin: 0 auto;
-            font-size: 18px;
-            line-height: 1.8;
-            color: #333;
-            padding-bottom: 60px;
-        }
-
-        .content-body p {
-            margin-bottom: 25px;
-            text-align: justify;
-        }
-
-        /* ប៊ូតុងត្រឡប់ក្រោយ */
-        .btn-back {
-            display: inline-block;
-            margin-top: 20px;
-            color: #7fad39;
-            font-weight: 600;
-            text-decoration: none;
-            border-bottom: 2px solid transparent;
-            transition: 0.3s;
-        }
-
-        .btn-back:hover {
-            border-bottom-color: #7fad39;
-        }
-    </style>
-</head>
-<body>
-    <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
-
-    <!-- Header Section -->
-    {% include 'accounts/includes/HeaderSection.html' %}
-
-    <div class="container">
-        <!-- ចំណងជើង និង កាលបរិច្ឆេទ -->
-        <div class="blog-header">
-            <div class="blog-meta">
-                <span><i class="fa fa-calendar-o"></i> {{ blog.date_added|date:"d M Y" }}</span>
-                <span><i class="fa fa-user-o"></i> Admin</span>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-lg-9">
-                    <h2>{{ blog.title }}</h2>
-                </div>
-            </div>
-        </div>
-
-        <!-- រូបភាពអត្ថបទ -->
-        <div class="image-wrapper">
-            <img src="{{ blog.image.url }}" alt="{{ blog.title }}">
-        </div>
-
-        <!-- ខ្លឹមសារអត្ថបទ -->
-        <div class="content-body">
-            {{ blog.description|linebreaks }}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 col-md-10">
             
-            <div class="text-center">
-                <a href="{% url 'blog_page' %}" class="btn-back">
-                    <i class="fa fa-arrow-left"></i> ត្រឡប់ទៅកាន់ Blog ទាំងអស់
+            <!-- BACK BUTTON & BREADCRUMB -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <a href="{% url 'shop:blog_page' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-semibold">
+                    <i class="bi bi-arrow-left me-1"></i> ត្រឡប់ទៅ Blog វិញ
                 </a>
+                <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2 fw-semibold">
+                    <i class="bi bi-tag-fill me-1"></i> ព័ត៌មានបច្ចេកវិទ្យា
+                </span>
             </div>
+
+            <!-- CARD CONTAINER -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white p-3 p-md-4 mb-4">
+                
+                <!-- HERO IMAGE - OPTIMIZED PHONE FIT ON ALL SCREENS -->
+                <div class="blog-hero-img-wrap mb-4">
+                    {% if blog.image %}
+                    <img src="{{ blog.image.url }}" alt="{{ blog.name }}" class="blog-hero-img">
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center text-white-50 p-5">
+                        <i class="bi bi-phone fs-1"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- ARTICLE HEADER METADATA -->
+                <div class="px-md-3">
+                    <div class="d-flex flex-wrap align-items-center gap-3 text-muted small mb-3">
+                        <span class="d-inline-flex align-items-center gap-1">
+                            <i class="bi bi-calendar3 text-success"></i> {{ blog.created_at|date:"d F Y" }}
+                        </span>
+                        <span class="d-inline-flex align-items-center gap-1">
+                            <i class="bi bi-person-circle text-success"></i> និពន្ធដោយ៖ PNK Team
+                        </span>
+                        <span class="d-inline-flex align-items-center gap-1">
+                            <i class="bi bi-eye text-success"></i> ព័ត៌មានផ្លូវការ
+                        </span>
+                    </div>
+
+                    <!-- ARTICLE TITLE -->
+                    <h1 class="fw-bold text-dark mb-4 blog-title-main" style="font-size: 2rem; line-height: 1.4;">
+                        {{ blog.name }}
+                    </h1>
+
+                    <hr class="my-4 text-secondary opacity-25">
+
+                    <!-- ARTICLE CONTENT BODY -->
+                    <div class="blog-body-text text-dark fs-5 mb-4" style="line-height: 1.85;">
+                        {{ blog.description|safe }}
+                    </div>
+
+                    <!-- PHONE 4-ANGLE DESIGN SHOWCASE SECTION -->
+                    <div class="my-5 p-4 rounded-4 bg-light border shadow-sm">
+                        <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                                    <i class="bi bi-phone-vibrate text-success fs-4"></i> ទិដ្ឋភាព ៤ ជ្រុងនៃការរចនាទូរស័ព្ទ (360° Phone Perspectives)
+                                </h5>
+                                <p class="text-muted small mb-0">ពិនិត្យមើលរូបរាង ផ្ទៃខាងមុខ ខ្នងខាងក្រោយ គែមចំហៀង និងរន្ធដុយសាក</p>
+                            </div>
+                            <span class="badge bg-success rounded-pill px-3 py-2 shadow-sm fs-7">
+                                <i class="bi bi-check-circle-fill me-1"></i> HD Specs
+                            </span>
+                        </div>
+
+                        <!-- 4 PERSPECTIVES GRID -->
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
+                            
+                            <!-- 1. FRONT VIEW (ផ្ទៃខាងមុខ) -->
+                            <div class="col">
+                                <div class="p-3 bg-white rounded-4 border h-100 shadow-sm perspective-card text-center">
+                                    <div class="bg-primary-subtle text-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                                        <i class="bi bi-phone fs-3"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">១. ផ្ទៃខាងមុខ (Front)</h6>
+                                    <div class="p-2 bg-light rounded-3 mb-2 text-center overflow-hidden" style="height: 130px;">
+                                        {% if blog.image %}
+                                        <img src="{{ blog.image.url }}" alt="Front Display" class="img-fluid h-100 object-fit-contain">
+                                        {% else %}
+                                        <i class="bi bi-phone text-muted fs-1 d-block mt-3"></i>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted d-block text-start" style="font-size: 12px; line-height: 1.6;">
+                                        • អេក្រង់ធំច្បាស់ OLED / Retina<br>
+                                        • គែមស្ដើងបំផុត Ultra-thin Bezels<br>
+                                        • កញ្ចក់ Cermaic Shield រឹងមាំ
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- 2. REAR / BACK VIEW (ខ្នងខាងក្រោយ) -->
+                            <div class="col">
+                                <div class="p-3 bg-white rounded-4 border h-100 shadow-sm perspective-card text-center">
+                                    <div class="bg-success-subtle text-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                                        <i class="bi bi-camera fs-3"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">២. ខ្នងខាងក្រោយ (Rear)</h6>
+                                    <div class="p-2 bg-light rounded-3 mb-2 text-center overflow-hidden" style="height: 130px;">
+                                        {% if blog.image %}
+                                        <img src="{{ blog.image.url }}" alt="Rear Camera Finish" class="img-fluid h-100 object-fit-contain" style="filter: contrast(1.08);">
+                                        {% else %}
+                                        <i class="bi bi-camera text-muted fs-1 d-block mt-3"></i>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted d-block text-start" style="font-size: 12px; line-height: 1.6;">
+                                        • កញ្ចក់ខ្នង Matte Glass ប្រណីត<br>
+                                        • បណ្តុំកាមេរ៉ា Pro HD Lens<br>
+                                        • ការពារស្នាមម្រាមដៃ ១០០%
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- 3. SIDE VIEW (ជ្រុងចំហៀង) -->
+                            <div class="col">
+                                <div class="p-3 bg-white rounded-4 border h-100 shadow-sm perspective-card text-center">
+                                    <div class="bg-warning-subtle text-warning rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                                        <i class="bi bi-sliders fs-3"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">៣. ជ្រុងចំហៀង (Side)</h6>
+                                    <div class="p-2 bg-light rounded-3 mb-2 text-center overflow-hidden" style="height: 130px;">
+                                        {% if blog.image %}
+                                        <img src="{{ blog.image.url }}" alt="Side Frame Controls" class="img-fluid h-100 object-fit-contain" style="transform: rotate(90deg) scale(0.85);">
+                                        {% else %}
+                                        <i class="bi bi-phone-landscape text-muted fs-1 d-block mt-3"></i>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted d-block text-start" style="font-size: 12px; line-height: 1.6;">
+                                        • គែម Aluminium / Titanium<br>
+                                        • ប៊ូតុង Volume & Power Button<br>
+                                        • កម្រាស់ស្ដើង កាន់ស្រួលដៃ
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- 4. BOTTOM / PORT VIEW (រន្ធដុយសាក & បំពងសំឡេង) -->
+                            <div class="col">
+                                <div class="p-3 bg-white rounded-4 border h-100 shadow-sm perspective-card text-center">
+                                    <div class="bg-danger-subtle text-danger rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                                        <i class="bi bi-usb-c fs-3"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">៤. រន្ធដុយសាក (Bottom Port)</h6>
+                                    <div class="p-2 bg-light rounded-3 mb-2 text-center overflow-hidden d-flex align-items-center justify-content-center" style="height: 130px;">
+                                        <div class="text-center">
+                                            <i class="bi bi-usb-c text-danger fs-1 d-block mb-1"></i>
+                                            <span class="badge bg-dark rounded-pill px-2 py-1 fs-7">USB-C / Lightning</span>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted d-block text-start" style="font-size: 12px; line-height: 1.6;">
+                                        • រន្ធសាក Type-C Fast Charging<br>
+                                        • រន្ធ Stereo Dual Speakers<br>
+                                        • រន្ធ Microphone កាត់ шум
+                                    </small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- SHARE & TAGS FOOTER -->
+                    <div class="p-3 bg-light rounded-4 d-flex flex-wrap align-items-center justify-content-between gap-3 mt-5">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-bold text-dark small">ចែករំលែក៖</span>
+                            <a href="#" class="btn btn-sm btn-primary rounded-circle" style="width:34px; height:34px;"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="btn btn-sm btn-info text-white rounded-circle" style="width:34px; height:34px;"><i class="bi bi-telegram"></i></a>
+                            <a href="#" class="btn btn-sm btn-success rounded-circle" style="width:34px; height:34px;"><i class="bi bi-whatsapp"></i></a>
+                        </div>
+                        <a href="{% url 'shop:blog_page' %}" class="btn btn-success btn-sm rounded-pill px-4 fw-bold shadow-sm">
+                            អានអត្ថបទផ្សេងទៀត <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
     </div>
-
-    <!-- Footer Section -->
-    {% include 'accounts/includes/FooterSection.html' %}
-
-    <!-- Js Plugins -->
-    {% include 'accounts/includes/JsPlugins.html' %}
-</body>
-</html>
+</div>
+{% endblock %}

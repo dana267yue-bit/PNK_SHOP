@@ -1,0 +1,12 @@
+[tool.pyrefly]
+# Django project root - tells Pyrefly where to find modules
+project_root = "."
+python_environment = "C:/Program Files/Python313"
+
+# Search paths for module resolution
+search_paths = [
+    ".",
+    "shop",
+    "accounts",
+    "core",
+]

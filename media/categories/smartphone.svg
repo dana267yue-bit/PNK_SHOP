@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="phoneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer Body -->
+  <rect x="24" y="10" width="52" height="80" rx="10" fill="url(#phoneGrad)" />
+  <!-- Inner Screen -->
+  <rect x="28" y="18" width="44" height="64" rx="6" fill="#FFFFFF" />
+  <rect x="30" y="20" width="40" height="60" rx="4" fill="url(#screenGrad)" opacity="0.15" />
+  <!-- Dynamic Island / Camera Notch -->
+  <rect x="42" y="13" width="16" height="4" rx="2" fill="#FFFFFF" />
+  <!-- Home Bar / Indicator -->
+  <rect x="40" y="84" width="20" height="3" rx="1.5" fill="#FFFFFF" />
+  <!-- Phone Sparkle/Icon in Center -->
+  <path d="M50 32 L53 41 L62 44 L53 47 L50 56 L47 47 L38 44 L47 41 Z" fill="url(#phoneGrad)"/>
+  <circle cx="50" cy="66" r="5" fill="url(#phoneGrad)"/>
+</svg>

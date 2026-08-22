@@ -1,0 +1,798 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %} 
+{% load static %}
+
+{% block header_title %}សារជជែកអតិថិជន - PNK MOBILE{% endblock %}
+
+{% block dashboard_content %}
+<style>
+  .chat-card {
+    background-color: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+  }
+
+  .chat-sidebar-header {
+    background-color: var(--bg-soft, #f8fafc);
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  .chat-user-item {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+    cursor: pointer;
+    text-decoration: none !important;
+    color: inherit;
+  }
+
+  .chat-user-item:hover {
+    background-color: rgba(25, 135, 84, 0.05) !important;
+  }
+
+  .chat-user-item.active-chat {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    border-left: 4px solid #198754 !important;
+  }
+
+  .chat-thread-box {
+    background-color: #f1f5f9;
+    background-image: radial-gradient(#cbd5e1 0.75px, transparent 0.75px);
+    background-size: 16px 16px;
+    height: 340px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    padding: 16px 20px;
+  }
+
+  /* CHAT BUBBLES */
+  .msg-bubble-wrapper {
+    display: flex;
+    margin-bottom: 16px;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .msg-bubble-wrapper.customer {
+    justify-content: flex-start;
+  }
+
+  .msg-bubble-wrapper.admin {
+    justify-content: flex-end;
+  }
+
+  .msg-bubble {
+    width: fit-content;
+    max-width: 75%;
+    padding: 10px 16px 8px 16px;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    word-break: break-word;
+    position: relative;
+  }
+
+  .msg-bubble-wrapper.customer .msg-bubble {
+    background-color: #ffffff;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px 18px 18px 4px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  }
+
+  .msg-bubble-wrapper.admin .msg-bubble {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: #ffffff;
+    border-radius: 18px 18px 4px 18px;
+    box-shadow: 0 4px 14px rgba(4, 120, 87, 0.22);
+  }
+
+  .msg-time {
+    font-size: 9.5px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .msg-bubble-wrapper.customer .msg-time {
+    color: #64748b;
+  }
+
+  .msg-bubble-wrapper.admin .msg-time {
+    justify-content: flex-end;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .quick-reply-pill {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .quick-reply-pill:hover {
+    background-color: #198754;
+    border-color: #198754;
+    color: #ffffff;
+  }
+
+  /* TOAST NOTIFICATION */
+  .chat-toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+  }
+</style>
+
+<!-- TOAST CONTAINER FOR POPUP MESSAGES -->
+<div class="chat-toast-container">
+  <div id="chatToast" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body d-flex align-items-center gap-2">
+        <i class="bi bi-bell-fill fs-5"></i>
+        <div>
+          <strong class="d-block" id="toastTitle">សារថ្មីពីអតិថិជន!</strong>
+          <small id="toastBody">អតិថិជនបានផ្ញើសារចូលមក...</small>
+        </div>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid p-0">
+
+  <!-- TOP TITLE HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2" data-aos="fade-down">
+    <div>
+      <h4 class="fw-bold text-dark mb-0" style="letter-spacing: -0.3px; font-size: 1.25rem;">
+        <i class="bi bi-chat-dots-fill text-success me-2"></i>សារទំនាក់ទំនង & ជជែកផ្ទាល់ជាមួយអតិថិជន 
+      </h4>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <button type="button" class="btn btn-success btn-sm rounded-3 d-flex align-items-center gap-1.5 fw-semibold shadow-xs" data-bs-toggle="modal" data-bs-target="#autoReplyModal" style="background: linear-gradient(135deg, #10b981, #059669); border: none;">
+        <i class="bi bi-robot fs-6"></i> កំណត់សារស្វ័យប្រវត្តិ 
+      </button>
+      <button type="button" class="btn btn-light border rounded-3 p-2 d-flex align-items-center justify-content-center shadow-xs" onclick="window.location.reload();" title="Refresh">
+        <i class="bi bi-arrow-clockwise fs-6 text-dark"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- CHAT CONTAINER ROW -->
+  <div class="row g-3 mb-4 pb-4" data-aos="fade-up">
+
+    <!-- LEFT COLUMN: CUSTOMER ACCOUNTS LIST (COL-12 COL-LG-4) -->
+    <div class="col-12 col-lg-4">
+      <div class="chat-card h-100">
+        <!-- SEARCH & HEADER -->
+        <div class="p-3 chat-sidebar-header">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="fw-bold text-dark mb-0"><i class="bi bi-people-fill text-primary me-2"></i>បញ្ជី Account អតិថិជន</h6>
+            <span class="badge bg-success-subtle text-success border font-monospace">{{ customers|length }} នាក់</span>
+          </div>
+          <div class="position-relative">
+            <input type="text" id="searchCustomerInput" class="form-control form-control-sm border shadow-none ps-4" placeholder="ស្វែងរកឈ្មោះ ឬអ៊ីមែលអតិថិជន..." style="font-size: 12px; height: 34px; border-radius: 8px;">
+            <i class="bi bi-search position-absolute text-muted" style="left: 10px; top: 9px; font-size: 11px;"></i>
+          </div>
+        </div>
+
+        <!-- CUSTOMERS SCROLL LIST -->
+        <div class="list-group list-group-flush overflow-auto" id="customerListGroup" style="max-height: 390px;">
+          {% for item in customers %}
+          <a href="{% url 'accounts:customer_messages' %}?user_id={{ item.user.id }}" class="list-group-item chat-user-item p-3 d-flex align-items-center justify-content-between {% if active_user and active_user.id == item.user.id %}active-chat{% endif %}" data-username="{{ item.user.username|lower }}" data-email="{{ item.user.email|lower }}">
+            <div class="d-flex align-items-center gap-3 overflow-hidden">
+              <div class="position-relative flex-shrink-0">
+                {% if item.user.profile and item.user.profile.image %}
+                  <img src="{{ item.user.profile.image.url }}" class="rounded-circle shadow-xs" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #198754;">
+                {% else %}
+                  <div class="avatar-circle bg-success-subtle text-success">
+                    {{ item.user.username|slice:":2"|upper }}
+                  </div>
+                {% endif %}
+                <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-light rounded-circle"></span>
+              </div>
+              <div class="overflow-hidden">
+                <h6 class="fw-bold text-dark mb-0 small text-truncate">{{ item.user.username }}</h6>
+                <small class="text-muted d-block text-truncate" style="font-size: 11.5px;">
+                  {% if item.last_msg %}
+                    {% if item.last_msg.sender == 'admin' %}<span class="text-success">អ្នក: </span>{% endif %}{{ item.last_msg.message }}
+                  {% else %}
+                    មិនទាន់មានសារសន្ទនា
+                  {% endif %}
+                </small>
+              </div>
+            </div>
+
+            <div class="text-end flex-shrink-0 ms-2">
+              <small class="text-muted d-block" style="font-size: 10px;">
+                {% if item.last_msg %}
+                  {{ item.last_msg.created_at|date:"H:i" }}
+                {% else %}
+                  ថ្មីៗ
+                {% endif %}
+              </small>
+              {% if item.unread_cnt > 0 %}
+              <span class="badge bg-danger rounded-pill" style="font-size: 9.5px;">{{ item.unread_cnt }}</span>
+              {% endif %}
+            </div>
+          </a>
+          {% empty %}
+          <div class="p-4 text-center text-muted small">
+            <i class="bi bi-person-x fs-4 d-block mb-1"></i>
+            គ្មាន Account អតិថិជនក្នុងប្រព័ន្ធឡើយ
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: CHAT THREAD & CUSTOMER PROFILE (COL-12 COL-LG-8) -->
+    <div class="col-12 col-lg-8">
+      <div class="chat-card h-100 d-flex flex-column">
+
+        {% if active_user %}
+        <!-- ACTIVE CUSTOMER PROFILE HEADER -->
+        <div class="p-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color: var(--bg-card, #ffffff);">
+          <div class="d-flex align-items-center gap-3">
+            {% if active_user.profile and active_user.profile.image %}
+              <img src="{{ active_user.profile.image.url }}" class="rounded-circle shadow-xs flex-shrink-0" style="width: 44px; height: 44px; object-fit: cover; border: 2px solid #198754;">
+            {% else %}
+              <div class="avatar-circle bg-primary-subtle text-primary fw-bold flex-shrink-0" style="width: 44px; height: 44px; font-size: 16px;">
+                {{ active_user.username|slice:":2"|upper }}
+              </div>
+            {% endif %}
+            <div>
+              <h6 class="fw-bold text-dark mb-0">{{ active_user.username }}</h6>
+              <div class="d-flex align-items-center gap-2 text-muted small" style="font-size: 11.5px;">
+                <span><i class="bi bi-envelope me-1 text-primary"></i>{{ active_user.email|default:"គ្មានអ៊ីមែល" }}</span>
+                <span>•</span>
+                <span><i class="bi bi-telephone me-1 text-success"></i>{{ active_user_phone }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1" style="font-size: 11px;">
+              <i class="bi bi-cart-check me-1"></i> {{ active_user_order_cnt }} កម្មង់ទិញ
+            </span>
+            <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 11px;">
+              <i class="bi bi-calendar me-1"></i> ចូលរួម: {{ active_user.date_joined|date:"d M Y" }}
+            </span>
+          </div>
+        </div>
+
+        <!-- CHAT THREAD CONVERSATION WINDOW -->
+        <div class="p-3 chat-thread-box flex-grow-1" id="chatThreadBox">
+          {% for msg in messages_list %}
+          <div class="msg-bubble-wrapper {% if msg.sender == 'admin' %}admin{% else %}customer{% endif %}">
+            {% if msg.sender != 'admin' %}
+              {% if active_user.profile and active_user.profile.image %}
+                <img src="{{ active_user.profile.image.url }}" class="rounded-circle flex-shrink-0" style="width: 32px; height: 32px; object-fit: cover;">
+              {% else %}
+                <div class="avatar-circle bg-success-subtle text-success flex-shrink-0" style="width: 32px; height: 32px; font-size: 12px;">
+                  {{ active_user.username|slice:":2"|upper }}
+                </div>
+              {% endif %}
+            {% endif %}
+
+            <div class="msg-bubble">
+              <div>{{ msg.message }}</div>
+              {% if msg.sender == 'admin' %}
+              <span class="msg-time">{{ msg.created_at|date:"H:i" }} <i class="bi bi-check2-all text-warning"></i></span>
+              {% else %}
+              <span class="msg-time">{{ msg.created_at|date:"H:i" }}</span>
+              {% endif %}
+            </div>
+
+            {% if msg.sender == 'admin' %}
+              {% if request.user.profile and request.user.profile.image %}
+                <img src="{{ request.user.profile.image.url }}" class="rounded-circle flex-shrink-0 shadow-xs border border-success" style="width: 32px; height: 32px; object-fit: cover;" title="{{ request.user.username }}">
+              {% elif store_settings.logo %}
+                <img src="{{ store_settings.logo.url }}" class="rounded-circle flex-shrink-0 shadow-xs border border-success" style="width: 32px; height: 32px; object-fit: cover;" title="Admin">
+              {% else %}
+                <div class="avatar-circle bg-success text-white flex-shrink-0 shadow-xs" style="width: 32px; height: 32px; font-size: 11px;">
+                  ADMIN
+                </div>
+              {% endif %}
+            {% endif %}
+          </div>
+          {% empty %}
+          <div class="text-center text-muted py-5 my-5">
+            <i class="bi bi-chat-square-text fs-1 text-success opacity-50 d-block mb-2"></i>
+            <h6>មិនទាន់មានសារសន្ទនានៅឡើយទេ</h6>
+            <small>អ្នកអាចចាប់ផ្តើមផ្ញើសារទៅកាន់អតិថិជនបានតាមប្រអប់ខាងក្រោម</small>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- QUICK REPLIES BAR -->
+        <div class="px-3 py-1.5 bg-light border-top border-bottom d-flex align-items-center gap-2 overflow-auto" style="scrollbar-width: thin; min-height: 42px;">
+          <small class="text-muted fw-bold me-1 flex-shrink-0" style="font-size: 11px;"><i class="bi bi-lightning-fill text-warning me-1"></i>ឆ្លើយតបរហ័ស:</small>
+          <span class="quick-reply-pill bg-success text-white border-0 fw-bold shadow-xs" data-reply="{{ store_settings.chat_auto_reply|default:'សូមអរគុណសម្រាប់ការផ្ញើសារ! ក្រុមការងារ PNK SHOP បានទទួលសាររបស់អ្នកហើយ។ លោកអ្នកក៏អាចឆាតផ្ទាល់តាម Telegram:' }} {{ store_settings.telegram_link|default:'https://t.me/pnkmobile' }}" onclick="useQuickReply(this.getAttribute('data-reply'))" title="ចុចដើម្បីដាក់សារទទួលស្គាល់ និង Telegram Support">🤖 សារទទួលស្គាល់ + Telegram</span>
+          <span class="quick-reply-pill" onclick="useQuickReply('ជម្រាបសួរ! ទូរស័ព្ទនេះមានស្តុកស្រាប់នៅហាងបង អាចមកមើលផ្ទាល់បាន!')">📱 មានស្តុកនៅហាង</span>
+          <span class="quick-reply-pill" onclick="useQuickReply('បង! ហាងយើងខ្ញុំមានសេវាដឹកជញ្ជូនរហ័ស 25 ខេត្ត/ក្រុង!')">🚚 មានសេវាដឹកជូន</span>
+          <span class="quick-reply-pill" onclick="useQuickReply('ហាង PNK Mobile បើកដំណើរការរៀងរាល់ថ្ងៃ ម៉ោង 8:00 AM ដល់ 8:00 PM បង!')">⏰ ម៉ោងធ្វើការ</span>
+          <span class="quick-reply-pill" onclick="useQuickReply('បងអាចធ្វើការបង់រំលស់បានយ៉ាងងាយស្រួល ជាមួយអត្រាការប្រាក់ទាប!')">💳 សេវាបង់រំលស់</span>
+          <span class="quick-reply-pill" onclick="useQuickReply('សូមអរគុណច្រើនបងសម្រាប់ការគាំទ្រហាង PNK Mobile!')">🙏 សូមអរគុណ!</span>
+        </div>
+
+        <!-- CHAT INPUT FORM AREA (TELEGRAM STYLE WITH EMOJI PICKER) -->
+        <div class="p-2 px-3 position-relative" style="background-color: var(--bg-card, #ffffff);">
+          
+          <!-- TELEGRAM-STYLE EMOJI PICKER POPUP (HIDDEN BY DEFAULT) -->
+          <div id="emojiPickerPopup" class="card shadow-lg border-0 rounded-4 position-absolute bottom-100 start-0 mb-3 ms-3 d-none" style="width: 320px; z-index: 1050; overflow: hidden; animation: fadeInUp 0.2s ease;">
+            <div class="card-header bg-light border-bottom p-2 d-flex justify-content-between align-items-center">
+              <small class="fw-bold text-dark"><i class="bi bi-emoji-smile-fill text-warning me-1"></i> ជ្រើសរើស Emoji</small>
+              <button type="button" class="btn-close btn-close-xs shadow-none" id="closeEmojiPickerBtn" aria-label="Close"></button>
+            </div>
+            <div class="card-body p-2" style="max-height: 220px; overflow-y: auto; scrollbar-width: thin;">
+              <!-- CATEGORY 1: POPULAR & EXPRESSIONS -->
+              <div class="mb-2">
+                <small class="text-muted d-block px-1 mb-1 fw-semibold" style="font-size: 10px;">😊 សារប្រចាំថ្ងៃ</small>
+                <div class="d-flex flex-wrap gap-1">
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">😊</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">😀</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">😂</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">😍</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">🥰</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">🤩</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">😎</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">👍</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">🙏</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">❤️</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">🔥</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">✨</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">🎉</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">👏</button>
+                </div>
+              </div>
+
+              <!-- CATEGORY 2: STORE & TECH -->
+              <div>
+                <small class="text-muted d-block px-1 mb-1 fw-semibold" style="font-size: 10px;">📱 ហាង & ទូរស័ព្ទ</small>
+                <div class="d-flex flex-wrap gap-1">
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">📱</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">📲</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">💻</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">🎧</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">🔌</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">🔋</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">🛍️</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">📦</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">🚚</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">💳</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">💰</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">⏰</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">✅</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 emoji-btn p-1.5 fs-5 rounded-2">✈️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INPUT FORM -->
+          <form id="chatSendForm" onsubmit="handleSendChat(event)">
+            {% csrf_token %}
+            <input type="hidden" id="activeUserIdInput" value="{{ active_user.id }}">
+            <div class="input-group align-items-center bg-light rounded-pill border p-1 shadow-xs">
+              
+              <!-- EMOJI TOGGLE BUTTON -->
+              <button type="button" class="btn btn-link text-muted p-2 rounded-circle hover-bg shadow-none text-decoration-none" id="toggleEmojiPickerBtn" title="បន្ថែម Emoji">
+                <i class="bi bi-emoji-smile fs-5 text-warning"></i>
+              </button>
+
+              <!-- TEXT INPUT -->
+              <input type="text" id="chatMessageInput" class="form-control border-0 bg-transparent shadow-none px-2" placeholder="សរសេរសារឆ្លើយតបទៅកាន់ {{ active_user.username }}..." style="font-size: 0.9rem;" required autocomplete="off">
+              
+              <!-- SEND BUTTON -->
+              <button class="btn btn-success rounded-pill px-4 py-2 fw-semibold d-flex align-items-center gap-2 shadow-xs ms-1" type="submit" id="sendBtn" style="background: linear-gradient(135deg, #198754, #146c43); border: none;">
+                <i class="bi bi-send-fill"></i> <span class="d-none d-sm-inline">ផ្ញើចេញ</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {% else %}
+        <!-- NO ACTIVE CUSTOMER SELECTED -->
+        <div class="p-5 text-center text-muted my-auto">
+          <i class="bi bi-chat-left-dots fs-1 text-muted d-block mb-3"></i>
+          <h5>សូមជ្រើសរើស Account អតិថិជន</h5>
+          <p class="small">ជ្រើសរើសអតិថិជនពីបញ្ជីខាងឆ្វេង ដើម្បីមើលសារសន្ទនា និងឆ្លើយតប។</p>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- JAVASCRIPT LOGIC FOR REAL-TIME CHAT & TOAST NOTIFICATIONS -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Scroll chat thread to bottom on page load
+    scrollToBottom();
+
+    // Telegram-style Emoji Picker handlers
+    const toggleEmojiBtn = document.getElementById("toggleEmojiPickerBtn");
+    const emojiPickerPopup = document.getElementById("emojiPickerPopup");
+    const closeEmojiBtn = document.getElementById("closeEmojiPickerBtn");
+    const mainChatInput = document.getElementById("chatMessageInput");
+
+    if (toggleEmojiBtn && emojiPickerPopup) {
+      toggleEmojiBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        emojiPickerPopup.classList.toggle("d-none");
+      });
+    }
+
+    if (closeEmojiBtn && emojiPickerPopup) {
+      closeEmojiBtn.addEventListener("click", function() {
+        emojiPickerPopup.classList.add("d-none");
+      });
+    }
+
+    document.addEventListener("click", function(e) {
+      if (emojiPickerPopup && !emojiPickerPopup.contains(e.target) && e.target !== toggleEmojiBtn) {
+        emojiPickerPopup.classList.add("d-none");
+      }
+    });
+
+    document.querySelectorAll(".emoji-btn").forEach(function(btn) {
+      btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        const emoji = this.innerText.trim();
+        if (!mainChatInput) return;
+
+        const start = mainChatInput.selectionStart || mainChatInput.value.length;
+        const end = mainChatInput.selectionEnd || mainChatInput.value.length;
+        const text = mainChatInput.value;
+
+        mainChatInput.value = text.substring(0, start) + emoji + text.substring(end);
+        mainChatInput.focus();
+        mainChatInput.setSelectionRange(start + emoji.length, start + emoji.length);
+      });
+    });
+
+    // Customer search filter logic
+    const searchInput = document.getElementById("searchCustomerInput");
+    if (searchInput) {
+      searchInput.addEventListener("input", function () {
+        const query = this.value.toLowerCase().trim();
+        const items = document.querySelectorAll("#customerListGroup .chat-user-item");
+        items.forEach(item => {
+          const name = item.getAttribute("data-username") || "";
+          const email = item.getAttribute("data-email") || "";
+          if (name.includes(query) || email.includes(query)) {
+            item.style.display = "flex";
+          } else {
+            item.style.display = "none";
+          }
+        });
+      });
+    }
+  });
+
+  function scrollToBottom() {
+    const threadBox = document.getElementById("chatThreadBox");
+    if (threadBox) {
+      threadBox.scrollTop = threadBox.scrollHeight;
+    }
+  }
+
+  function useQuickReply(text) {
+    const input = document.getElementById("chatMessageInput");
+    if (input) {
+      input.value = text;
+      input.focus();
+    }
+  }
+
+  function showToastNotification(title, message) {
+    const toastEl = document.getElementById("chatToast");
+    if (toastEl) {
+      document.getElementById("toastTitle").innerText = title;
+      document.getElementById("toastBody").innerText = message;
+      const bsToast = new bootstrap.Toast(toastEl, { delay: 4000 });
+      bsToast.show();
+    }
+  }
+
+  function handleSendChat(e) {
+    e.preventDefault();
+    const userId = document.getElementById("activeUserIdInput").value;
+    const inputEl = document.getElementById("chatMessageInput");
+    const message = inputEl.value.trim();
+
+    if (!userId || !message) return;
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // Immediately render optimism bubble on chat screen
+    appendBubble('admin', message, 'ឥឡូវនេះ');
+    inputEl.value = '';
+    scrollToBottom();
+
+    // AJAX POST request to backend API
+    fetch("{% url 'accounts:send_chat_message_api' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": csrfToken
+      },
+      body: new URLSearchParams({
+        "user_id": userId,
+        "message": message,
+        "sender": "admin"
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status !== "success") {
+        console.error("Error sending message:", data);
+      }
+    })
+    .catch(err => console.error("API error:", err));
+  }
+
+  function appendBubble(sender, messageText, timeStr) {
+    const threadBox = document.getElementById("chatThreadBox");
+    if (!threadBox) return;
+
+    const activeUsername = "{{ active_user.username|default:'U' }}";
+    const initials = activeUsername.slice(0, 2).toUpperCase();
+
+    const wrapper = document.createElement("div");
+    wrapper.className = `msg-bubble-wrapper ${sender}`;
+
+    if (sender === "admin") {
+      const adminAvatarUrl = "{% if request.user.profile and request.user.profile.image %}{{ request.user.profile.image.url }}{% elif store_settings.logo %}{{ store_settings.logo.url }}{% endif %}";
+      const adminAvatarHtml = adminAvatarUrl
+        ? `<img src="${adminAvatarUrl}" class="rounded-circle flex-shrink-0 shadow-xs border border-success" style="width: 32px; height: 32px; object-fit: cover;" title="Admin">`
+        : `<div class="avatar-circle bg-success text-white flex-shrink-0 shadow-xs" style="width: 32px; height: 32px; font-size: 11px;">ADMIN</div>`;
+
+      wrapper.innerHTML = `
+        <div class="msg-bubble">
+          <div>${escapeHtml(messageText)}</div>
+          <span class="msg-time">${timeStr} <i class="bi bi-check2-all text-warning"></i></span>
+        </div>
+        ${adminAvatarHtml}
+      `;
+    } else {
+      const profileImgUrl = "{% if active_user and active_user.profile and active_user.profile.image %}{{ active_user.profile.image.url }}{% endif %}";
+      const avatarHtml = profileImgUrl
+        ? `<img src="${profileImgUrl}" class="rounded-circle flex-shrink-0" style="width: 32px; height: 32px; object-fit: cover;">`
+        : `<div class="avatar-circle bg-success-subtle text-success flex-shrink-0" style="width: 32px; height: 32px; font-size: 12px;">${initials}</div>`;
+
+      wrapper.innerHTML = `
+        ${avatarHtml}
+        <div class="msg-bubble">
+          <div>${escapeHtml(messageText)}</div>
+          <span class="msg-time">${timeStr}</span>
+        </div>
+      `;
+    }
+
+    threadBox.appendChild(wrapper);
+    scrollToBottom();
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.innerText = text;
+    return div.innerHTML;
+  }
+
+  // Live polling for new incoming customer messages every 4 seconds
+  let lastMessageId = parseInt("{{ messages_list.last.id|default:0 }}", 10) || 0;
+  let lastOverallMsgId = lastMessageId;
+  setInterval(pollNewMessages, 3500);
+
+  function pollNewMessages() {
+    const userId = document.getElementById("activeUserIdInput") ? document.getElementById("activeUserIdInput").value : null;
+
+    fetch(`{% url 'accounts:get_latest_messages_api' %}?user_id=${userId || ''}&last_msg_id=${lastMessageId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          if (data.new_messages && data.new_messages.length > 0) {
+            data.new_messages.forEach(msg => {
+              if (msg.id > lastMessageId) {
+                lastMessageId = msg.id;
+                if (msg.id > lastOverallMsgId) lastOverallMsgId = msg.id;
+                if (msg.sender === "customer") {
+                  appendBubble("customer", msg.message, msg.created_at);
+                  showToastNotification("🔔 សារថ្មីពីអតិថិជន!", msg.message);
+                }
+              }
+            });
+          } else if (data.latest_info && data.latest_info.id > lastOverallMsgId) {
+            lastOverallMsgId = data.latest_info.id;
+            showToastNotification(`🔔 សារថ្មីពី ${data.latest_info.username}!`, data.latest_info.message);
+          }
+        }
+      })
+      .catch(err => console.error("Polling error:", err));
+  }
+</script>
+
+<!-- MODAL: AUTO-REPLY SETTINGS FOR ADMIN -->
+<div class="modal fade" id="autoReplyModal" tabindex="-1" aria-labelledby="autoReplyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      <div class="modal-header text-white p-3.5" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #064e3b 100%); border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <div class="d-flex align-items-center gap-2.5">
+          <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px;">
+            <i class="bi bi-robot fs-5"></i>
+          </div>
+          <div>
+            <h5 class="modal-title fw-bold text-white mb-0" id="autoReplyModalLabel" style="font-size: 1.05rem;">
+              កំណត់សារឆ្លើយតបស្វ័យប្រវត្តិ 
+            </h5>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form id="autoReplyForm" onsubmit="handleSaveAutoReply(event)">
+        <div class="modal-body p-4 bg-white">
+          
+          <!-- TOGGLE SWITCH ENABLE/DISABLE -->
+          <div class="p-3 bg-light rounded-3 border mb-3 d-flex align-items-center justify-content-between">
+            <div>
+              <h6 class="fw-bold text-dark mb-1">
+                <i class="bi bi-power text-success me-1.5"></i> បើក/បិទ ការឆ្លើយតបស្វ័យប្រវត្តិ 
+              </h6>
+              <small class="text-muted d-block" style="font-size: 0.8rem;">
+                នៅពេលបើកមុខងារនេះ ប្រព័ន្ធនឹងផ្ញើសារខាងក្រោមទៅកាន់អតិថិជនស្វ័យប្រវត្តិពេលគេឆាតមក
+              </small>
+            </div>
+            <div class="form-check form-switch fs-4 mb-0">
+              <input class="form-check-input ms-0 shadow-none cursor-pointer" type="checkbox" id="enableAutoReplyToggle" {% if store_settings.enable_auto_reply %}checked{% endif %}>
+            </div>
+          </div>
+
+          <!-- AUTO REPLY TEXT INPUT -->
+          <div class="mb-3">
+            <label class="form-label fw-bold text-dark small mb-1">
+              <i class="bi bi-chat-left-dots-fill text-success me-1"></i> អត្ថបទសារឆ្លើយតបស្វ័យប្រវត្តិ 
+            </label>
+            <textarea class="form-control rounded-3 border shadow-none py-2.5 px-3" id="chatAutoReplyInput" rows="3" placeholder="វាយបញ្ចូលសារឆ្លើយតបស្វ័យប្រវត្តិ..." style="font-size: 0.9rem;" required>{{ store_settings.chat_auto_reply|default:'សូមអរគុណសម្រាប់ការផ្ញើសារ! ក្រុមការងារ PNK SHOP បានទទួលសាររបស់អ្នកហើយ។ លោកអ្នកក៏អាចឆាតផ្ទាល់តាម Telegram:' }}</textarea>
+            <div class="form-text text-muted small mt-1">
+              💡 សារនេះនឹងបង្ហាញទៅកាន់អតិថិជនពេលគេឆាតមកកាន់ Website
+            </div>
+          </div>
+
+          <!-- TELEGRAM SUPPORT LINK -->
+          <div class="mb-4">
+            <label class="form-label fw-bold text-dark small mb-1">
+              <i class="bi bi-telegram text-primary me-1"></i> តំណភ្ជាប់ Telegram Support:
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 text-primary"><i class="bi bi-telegram"></i></span>
+              <input type="url" class="form-control border shadow-none rounded-end-3" id="telegramLinkInput" value="{{ store_settings.telegram_link|default:'https://t.me/pnkmobile' }}" placeholder="https://t.me/pnkmobile">
+            </div>
+          </div>
+
+          <!-- LIVE PREVIEW CARD -->
+          <div class="p-3 rounded-4 border bg-soft shadow-xs">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <small class="text-muted fw-bold" style="font-size: 0.78rem;">
+                <i class="bi bi-eye-fill text-success me-1"></i> គំរូសារដែលអតិថិជននឹងឃើញ 
+              </small>
+              <span class="badge bg-success-subtle text-success border px-2 py-0.5" style="font-size: 10px;">Live Preview</span>
+            </div>
+            
+            <div class="d-flex align-items-start gap-2 p-3 bg-white rounded-3 border">
+              <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px; font-size: 0.85rem;">
+                <i class="bi bi-robot"></i>
+              </div>
+              <div class="lh-base text-dark" style="font-size: 0.88rem;">
+                <span id="previewMessageText"></span>
+                <a href="#" id="previewTelegramBtn" target="_blank" class="fw-bold text-success text-decoration-none ms-1">
+                  <i class="bi bi-telegram me-1"></i> Telegram Support
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer bg-light border-top p-3 d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary rounded-3 px-4 btn-sm fw-semibold" data-bs-dismiss="modal">
+            បោះបង់
+          </button>
+          <button type="submit" class="btn btn-success rounded-3 px-4 btn-sm fw-bold d-flex align-items-center gap-2" id="saveAutoReplyBtn" style="background: linear-gradient(135deg, #10b981, #059669); border: none;">
+            <i class="bi bi-check-circle-fill"></i> រក្សាទុកការកំណត់
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const autoReplyInput = document.getElementById("chatAutoReplyInput");
+    const telegramInput = document.getElementById("telegramLinkInput");
+    const previewText = document.getElementById("previewMessageText");
+    const previewTelegramBtn = document.getElementById("previewTelegramBtn");
+
+    function updateAutoReplyPreview() {
+      if (previewText && autoReplyInput) {
+        previewText.innerText = autoReplyInput.value.trim();
+      }
+      if (previewTelegramBtn && telegramInput) {
+        previewTelegramBtn.href = telegramInput.value.trim() || "#";
+      }
+    }
+
+    if (autoReplyInput) autoReplyInput.addEventListener("input", updateAutoReplyPreview);
+    if (telegramInput) telegramInput.addEventListener("input", updateAutoReplyPreview);
+    updateAutoReplyPreview();
+  });
+
+  function handleSaveAutoReply(e) {
+    e.preventDefault();
+    const isEnabled = document.getElementById("enableAutoReplyToggle").checked;
+    const msgText = document.getElementById("chatAutoReplyInput").value.trim();
+    const teleLink = document.getElementById("telegramLinkInput").value.trim();
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const saveBtn = document.getElementById("saveAutoReplyBtn");
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> កំពុងរក្សាទុក...`;
+
+    fetch("{% url 'accounts:update_auto_reply_settings_api' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": csrfToken
+      },
+      body: new URLSearchParams({
+        "chat_auto_reply": msgText,
+        "enable_auto_reply": isEnabled ? "true" : "false",
+        "telegram_link": teleLink
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = `<i class="bi bi-check-circle-fill"></i> រក្សាទុកការកំណត់`;
+      if (data.status === "success") {
+        const modalEl = document.getElementById("autoReplyModal");
+        const bsModal = bootstrap.Modal.getInstance(modalEl);
+        if (bsModal) bsModal.hide();
+        showToastNotification("✅ ជោគជ័យ!", data.message);
+      }
+    })
+    .catch(err => {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = `<i class="bi bi-check-circle-fill"></i> រក្សាទុកការកំណត់`;
+      console.error("Save error:", err);
+    });
+  }
+</script>
+{% endblock %}

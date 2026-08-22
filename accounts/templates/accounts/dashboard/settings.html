@@ -1,0 +1,181 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block header_title %}ការកំណត់ប្រព័ន្ធ {% endblock %}
+
+{% block dashboard_content %}
+<style>
+  .settings-card {
+    background-color: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+  }
+</style>
+
+<div class="container-fluid p-0">
+
+  <!-- TOP TITLE & BREADCRUMB -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2" data-aos="fade-down">
+    <div>
+      <h4 class="fw-bold text-dark mb-0" style="letter-spacing: -0.3px; font-size: 1.25rem;">
+        ការកំណត់ប្រព័ន្ធ & ព័ត៌មានហាង 
+      </h4>
+      <p class="text-muted small mb-0" style="font-size: 0.8rem;">កំណត់ឈ្មោះហាង លេខទូរស័ព្ទ អ៊ីមែល អាសយដ្ឋាន រូបិយប័ណ្ណ និងបណ្តាញសង្គម</p>
+    </div>
+
+    <div class="d-none d-sm-flex align-items-center gap-1.5 text-muted small" style="font-size: 0.8rem;">
+      <a href="{% url 'accounts:dashboard' %}" class="text-decoration-none text-muted d-inline-flex align-items-center hover-primary">
+        <i class="bi bi-house me-1 text-success"></i> Dashboard
+      </a>
+      <i class="bi bi-chevron-right mx-1 text-muted" style="font-size: 9px;"></i>
+      <span class="text-dark fw-semibold">Settings</span>
+    </div>
+  </div>
+
+  <div class="settings-card p-4 p-md-5 mb-4" data-aos="fade-up">
+    <h5 class="fw-bold text-dark mb-4 pb-2 border-bottom d-flex align-items-center gap-2">
+      <i class="bi bi-shop text-success fs-4"></i> ព័ត៌មានទូទៅរបស់ហាង 
+    </h5>
+
+    <form action="{% url 'accounts:settings_page' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- Store Logo Image Upload -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-12">
+          <label class="form-label text-secondary fw-semibold small">Store Logo</label>
+          <div class="d-flex align-items-center gap-3">
+            <div class="logo-preview-wrapper border rounded-3 p-2 bg-light d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+              {% if store_settings.logo %}
+                <img src="{{ store_settings.logo.url }}" alt="Store Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+              {% else %}
+                <img src="{% static 'img/photologo.JPG' %}" alt="Default Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+              {% endif %}
+            </div>
+            <div class="flex-grow-1">
+              <input type="file" name="logo" accept="image/*" class="form-control rounded-3 shadow-xs">
+              <div class="form-text small text-muted">ប្រភេទឯកសាររូបភាព៖ JPG, PNG, WebP (ទំហំសមស្រប៖ រូបរាងការ៉េ)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label text-secondary fw-semibold small">ឈ្មោះហាង  <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shop"></i></span>
+            <input type="text" name="store_name" class="form-control rounded-end-3" value="{{ store_settings.store_name|default:'PNK SHOP' }}" required>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label text-secondary fw-semibold small">លេខទូរស័ព្ទហាង  <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone-fill text-success"></i></span>
+            <input type="text" name="phone" class="form-control rounded-end-3" value="{{ store_settings.phone|default:'096 29 647 13' }}" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label text-secondary fw-semibold small">អាសយដ្ឋានអ៊ីមែល  <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope-at-fill text-primary"></i></span>
+            <input type="email" name="email" class="form-control rounded-end-3" value="{{ store_settings.email|default:'dana267yue@gmail.com' }}" required>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label text-secondary fw-semibold small">រូបិយប័ណ្ណសំខាន់ </label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-currency-dollar text-success"></i></span>
+            <select name="currency" class="form-select rounded-end-3">
+              <option value="USD" {% if store_settings.currency == 'USD' or not store_settings.currency %}selected{% endif %}>USD ($) - ប្រាក់ដុល្លារ</option>
+              <option value="KHR" {% if store_settings.currency == 'KHR' %}selected{% endif %}>KHR (៛) - ប្រាក់រៀល</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-secondary fw-semibold small">អាសយដ្ឋានហាង  <span class="text-danger">*</span></label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-geo-alt-fill text-danger"></i></span>
+          <input type="text" name="address" class="form-control rounded-end-3" value="{{ store_settings.address|default:'ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ, ព្រះរាជាណាចក្រកម្ពុជា' }}" required>
+        </div>
+      </div>
+
+      <!-- Store Location Google Map Embed Iframe -->
+      <div class="mb-4">
+        <label class="form-label text-secondary fw-semibold small">កូដផែនទី Google Map Embed </label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-map-fill text-primary"></i></span>
+          <textarea name="map_iframe" class="form-control rounded-end-3" rows="3" placeholder="សូមចម្លងកូដ <iframe> ចេញពី Google Maps រួចយកមកផាសទីនេះ...">{{ store_settings.map_iframe|default:'' }}</textarea>
+        </div>
+        <div class="form-text small text-muted">
+          របៀបយកកូដ៖ ចូលទៅ Google Maps ស្វែងរកទីតាំងហាង -> ចុច Share -> ជ្រើសរើស Embed a map -> ចុច Copy HTML រួចយកមកផាសក្នុងប្រអប់ខាងលើ។
+        </div>
+      </div>
+
+      <!-- Live Chat Auto-Reply Setting -->
+      <h5 class="fw-bold text-dark mb-4 pt-3 pb-2 border-bottom d-flex align-items-center gap-2">
+        <i class="bi bi-chat-dots-fill text-success fs-4"></i> សារឆ្លើយតបស្វ័យប្រវត្តិក្នុងប្រព័ន្ធ Chat 
+      </h5>
+
+      <div class="mb-3 p-3 bg-light rounded-3 border d-flex align-items-center justify-content-between">
+        <div>
+          <h6 class="fw-bold text-dark mb-1"><i class="bi bi-robot text-success me-1.5"></i> បើក/បិទ ការឆ្លើយតបស្វ័យប្រវត្តិ </h6>
+          <small class="text-muted">នៅពេលអតិថិជនផ្ញើសារតាម Website ប្រព័ន្ធនឹងផ្ញើសារឆ្លើយតបស្វ័យប្រវត្តិទៅកាន់គេ</small>
+        </div>
+        <div class="form-check form-switch fs-4 mb-0">
+          <input class="form-check-input ms-0 shadow-none cursor-pointer" type="checkbox" name="enable_auto_reply" {% if store_settings.enable_auto_reply %}checked{% endif %}>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label text-secondary fw-semibold small">សារឆ្លើយតបស្វ័យប្រវត្តិទៅកាន់អតិថិជន (Auto-Reply Text)</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-robot text-success"></i></span>
+          <textarea name="chat_auto_reply" class="form-control rounded-end-3" rows="3" placeholder="វាយបញ្ចូលសារឆ្លើយតបស្វ័យប្រវត្តិនៅពេលអតិថិជនឆាតមក...">{{ store_settings.chat_auto_reply|default:'សូមអរគុណសម្រាប់ការផ្ញើសារ! ក្រុមការងារ PNK SHOP បានទទួលសាររបស់អ្នកហើយ។ លោកអ្នកក៏អាចឆាតផ្ទាល់តាម Telegram:' }}</textarea>
+        </div>
+        <div class="form-text small text-muted">
+          សារនេះនឹងបង្ហាញស្វ័យប្រវត្តិទៅកាន់អតិថិជននៅពេលពួកគេផ្ញើសារតាមប្រអប់ Chat នៅលើ Website។
+        </div>
+      </div>
+
+      <h5 class="fw-bold text-dark mb-4 pt-3 pb-2 border-bottom d-flex align-items-center gap-2">
+        <i class="bi bi-share-fill text-primary fs-4"></i> តំណភ្ជាប់បណ្តាញសង្គម 
+      </h5>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label text-secondary fw-semibold small">Facebook Link</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-facebook text-primary"></i></span>
+            <input type="url" name="facebook_link" class="form-control rounded-end-3" value="{{ store_settings.facebook_link|default:'https://facebook.com/pnkmobile' }}">
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label text-secondary fw-semibold small">Telegram Link</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telegram text-info"></i></span>
+            <input type="url" name="telegram_link" class="form-control rounded-end-3" value="{{ store_settings.telegram_link|default:'https://t.me/pnkmobile' }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-success px-4 py-2 rounded-3 fw-semibold shadow-sm d-inline-flex align-items-center gap-2" style="background: linear-gradient(135deg, #198754, #146c43); border: none;">
+          <i class="bi bi-floppy-fill fs-6"></i> រក្សាទុកការកំណត់
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+{% endblock %}

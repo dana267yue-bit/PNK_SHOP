@@ -1,215 +1,569 @@
 {% extends 'accounts/dashboard/base_dashboard.html' %} 
 {% load static %} 
 
+{% block extra_css %}
+<style>
+  .product-kpi-card {
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    transition: all 0.25s ease;
+  }
+
+  .product-kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  }
+
+  .kpi-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .btn-action-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 12.5px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-action-circle:hover {
+    transform: scale(1.1);
+  }
+
+  .table-custom-product th {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 0.3px;
+    padding: 12px 10px;
+    background-color: var(--bg-soft, #f8fafc);
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+  }
+
+  .table-custom-product td {
+    padding: 10px 8px;
+    vertical-align: middle;
+  }
+
+  .product-card-container {
+    border-radius: 16px;
+    background-color: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  }
+
+  .filter-select-compact {
+    height: 38px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 10px !important;
+    padding-right: 24px !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+    text-align-last: center !important;
+  }
+
+  .search-input-compact {
+    height: 38px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 38px !important;
+    padding-right: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .filter-select-compact option {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    text-align: center !important;
+  }
+
+  .filter-label {
+    font-size: 11px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .product-img-box {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+  }
+
+  .product-img-box:hover {
+    transform: scale(1.1);
+  }
+
+  .alert-success-border {
+    border-left: 4px solid #198754 !important;
+  }
+  .alert-danger-border {
+    border-left: 4px solid #dc3545 !important;
+  }
+</style>
+{% endblock %}
+
 {% block dashboard_content %}
-<div class="container-fluid py-2">
-  <!-- Header Section -->
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="d-flex align-items-center justify-content-between bg-white p-3 shadow-sm" style="border-radius: 15px">
-        <div class="d-flex align-items-center">
-          <a href="{% url 'ProductsManagementActions' %}" class="btn btn-light rounded-circle mr-3 shadow-sm border">
-            <i class="fas fa-arrow-left text-muted"></i>
-          </a>
-          <div>
-            <h4 class="font-weight-bold mb-0" style="font-family: 'Kantumruy Pro', sans-serif">គ្រប់គ្រងបញ្ជីទូរស័ព្ទ</h4>
-            <small class="text-muted">បង្ហាញទិន្នន័យទូរស័ព្ទទាំងអស់ក្នុងហាង</small>
-          </div>
-        </div>
-        <a href="{% url 'add_product' %}" class="btn btn-success px-4 shadow-sm" style="border-radius: 10px; font-weight: 600">
-          <i class="fas fa-plus-circle mr-2"></i> បន្ថែមថ្មី
+<div class="container-fluid p-0">
+
+  <!-- 1. TOP HEADER & BREADCRUMB -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2" data-aos="fade-down">
+    <div>
+      <h4 class="fw-bold text-dark mb-0" style="letter-spacing: -0.3px; font-size: 1.25rem;">
+        គ្រប់គ្រងបញ្ជីទូរស័ព្ទ 
+      </h4>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <div class="d-none d-sm-flex align-items-center gap-1.5 text-muted small me-2" style="font-size: 0.8rem;">
+        <a href="{% url 'accounts:dashboard' %}" class="text-decoration-none text-muted d-inline-flex align-items-center hover-primary">
+          <i class="bi bi-house me-1 text-success"></i> Dashboard
         </a>
+        <i class="bi bi-chevron-right mx-1 text-muted" style="font-size: 9px;"></i>
+        <span class="text-dark fw-semibold">Products</span>
+      </div>
+
+      <button type="button" id="addProductBtn" data-bs-toggle="modal" data-bs-target="#addProductModal" class="btn btn-success px-3.5 rounded-3 shadow-sm d-flex align-items-center gap-1.5 fw-semibold border-0" style="background: linear-gradient(135deg, #198754, #146c43); height: 38px; font-size: 0.85rem;">
+        <i class="bi bi-plus-circle-fill fs-6"></i> បន្ថែមទូរស័ព្ទថ្មី
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. 4 KPI STAT CARDS -->
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-2.5 mb-3" data-aos="fade-up">
+    <!-- TOTAL PRODUCTS -->
+    <div class="col">
+      <div class="product-kpi-card d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">ផលិតផលសរុប</small>
+          <h4 class="fw-bold text-dark mb-0">{{ total_count }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-success-subtle text-success">
+          <i class="bi bi-phone"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- IN STOCK -->
+    <div class="col">
+      <div class="product-kpi-card d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">ក្នុងស្តុក </small>
+          <h4 class="fw-bold text-dark mb-0">{{ in_stock_count }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-primary-subtle text-primary">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUT OF STOCK -->
+    <div class="col">
+      <div class="product-kpi-card d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">អស់ពីស្តុក</small>
+          <h4 class="fw-bold text-dark mb-0">{{ out_of_stock_count }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-danger-subtle text-danger">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOTAL BRANDS -->
+    <div class="col">
+      <div class="product-kpi-card d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">ម៉ាកសរុប </small>
+          <h4 class="fw-bold text-dark mb-0">{{ brands_count }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-warning-subtle text-warning">
+          <i class="bi bi-tag-fill"></i>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Alert Messages -->
   {% if messages %}
   <div id="alert-container">
     {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 mb-4" role="alert" style="border-radius: 12px">
-      <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} mr-2"></i>
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 mb-3 p-3 {% if message.tags == 'success' %}alert-success-border{% else %}alert-danger-border{% endif %}" role="alert" style="border-radius: 12px; background-color: var(--bg-card, #fff);">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill text-success{% else %}bi-exclamation-triangle-fill text-danger{% endif %} fs-5"></i>
+        <span class="fw-semibold">{{ message }}</span>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endfor %}
   </div>
   {% endif %}
 
-  <!-- Table Section -->
-  <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden">
-    <div class="card-header bg-white border-0 py-3">
-      <div class="row align-items-center">
-        <div class="col">
-          <h6 class="text-uppercase text-muted ls-1 mb-1">បញ្ជីទិន្នន័យ</h6>
-        </div>
-        <div class="col text-right">
-          <div class="position-relative d-inline-block" style="width: 250px">
-            <input type="text" id="productSearch" class="form-control form-control-sm border-light shadow-none" placeholder="ស្វែងរក..." style="border-radius: 20px; padding-left: 35px; background: #f8f9fa;" />
-            <i class="fas fa-search position-absolute text-muted" style="left: 12px; top: 10px"></i>
+  <!-- 3. TOOLBAR & PRODUCT TABLE CONTAINER -->
+  <div class="product-card-container overflow-hidden mb-4" data-aos="fade-up">
+    <!-- TOOLBAR ROW -->
+    <div class="p-3 border-bottom" style="background-color: var(--bg-card, #ffffff);">
+      <form method="GET" action="{% url 'shop:product_list' %}">
+        <div class="row g-2 align-items-end">
+          <!-- 1. Search Box -->
+          <div class="col-lg-4 col-md-4 col-12">
+            <label class="form-label text-muted fw-bold mb-1 filter-label">ស្វែងរក </label>
+            <div class="position-relative">
+              <input type="text" id="productSearch" name="search" value="{{ search_query }}" class="form-control border shadow-none search-input-compact" placeholder="ស្វែងរកតាមឈ្មោះទូរស័ព្ទ ឬ ម៉ាក..." style="background-color: var(--bg-soft, #f8fafc); color: var(--text);" />
+              <i class="bi bi-search position-absolute text-muted" style="left: 12px; top: 10px; font-size: 0.9rem; pointer-events: none; z-index: 5;"></i>
+            </div>
+          </div>
+
+          <!-- 2. Category Filter (Phone / Accessory) -->
+          <div class="col-lg-2 col-md-2 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label">ប្រភេទ</label>
+            <select name="category" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if category_filter == 'all' %}selected{% endif %}>គ្រប់ប្រភេទ</option>
+              {% for c in all_categories %}
+              <option value="{{ c.id }}" {% if category_filter == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- 3. Brand Filter -->
+          <div class="col-lg-2 col-md-2 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label">ម៉ាក</label>
+            <select name="brand" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if brand_filter == 'all' %}selected{% endif %}>គ្រប់ម៉ាក</option>
+              {% for b in all_brands %}
+              <option value="{{ b.id }}" {% if brand_filter == b.id|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- 4. Stock Status Filter -->
+          <div class="col-lg-3 col-md-3 col-4">
+            <label class="form-label text-muted fw-bold mb-1 filter-label">ស្ថានភាពស្តុក</label>
+            <select name="stock" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if stock_filter == 'all' %}selected{% endif %}>គ្រប់ស្តុក </option>
+              <option value="in_stock" {% if stock_filter == 'in_stock' %}selected{% endif %}>🟢 ក្នុងស្តុក </option>
+              <option value="out_of_stock" {% if stock_filter == 'out_of_stock' %}selected{% endif %}>🔴 អស់ពីស្តុក</option>
+            </select>
+          </div>
+
+          <!-- 5. Refresh Button -->
+          <div class="col-lg-1 col-md-1 col-2 d-flex justify-content-end">
+            <button type="button" class="btn btn-light border rounded-3 d-flex align-items-center justify-content-center shadow-sm w-100" style="height: 38px;" onclick="window.location.href=this.dataset.url;" data-url="{% url 'shop:product_list' %}" title="Refresh / Reset">
+              <i class="bi bi-arrow-clockwise fs-5 text-dark"></i>
+            </button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
+
+    <!-- PRODUCT TABLE -->
     <div class="table-responsive">
-      <table class="table align-items-center table-flush mb-0">
-        <thead class="thead-light">
+      <table class="table table-hover table-custom-product align-middle mb-0" style="width: 100%;">
+        <thead>
           <tr>
-            <th class="border-0 px-4">ល.រ</th>
-            <th class="border-0">រូបភាព</th>
-            <th class="border-0">ឈ្មោះម៉ូដែល</th>
-            <th class="border-0">ម៉ាក</th>
-            <th class="border-0">តម្លៃលក់</th>
-            <th class="border-0 text-center">ស្តុក</th>
-            <th class="border-0 text-center">សកម្មភាព</th>
+            <th class="text-center text-nowrap" style="width: 60px;">ល.រ</th>
+            <th class="text-nowrap" style="width: 80px;">រូបភាព</th>
+            <th class="text-nowrap">ឈ្មោះម៉ូដែល</th>
+            <th class="text-nowrap" style="width: 150px;">ម៉ាក</th>
+            <th class="text-nowrap" style="width: 110px;">តម្លៃលក់</th>
+            <th class="text-center text-nowrap" style="width: 140px;">ស្តុក</th>
+            <th class="text-center text-nowrap" style="width: 120px;">សកម្មភាព</th>
           </tr>
         </thead>
         <tbody id="productTable">
           {% for product in products %}
           <tr class="hover-row">
-            <td class="px-4 font-weight-bold text-muted">{{ forloop.counter }}</td>
+            <!-- NO. -->
+            <td class="text-center fw-bold text-muted small">
+              {{ forloop.counter }}
+            </td>
+
+            <!-- IMAGE -->
             <td>
               {% if product.image %}
-                <img src="{{ product.image.url }}" class="rounded shadow-sm border" style="width: 45px; height: 45px; object-fit: cover" />
+              <img src="{{ product.image.url }}" class="product-img-box border shadow-xs" alt="{{ product.name }}" onclick="previewImage('{{ product.image.url }}', '{{ product.name|escapejs }}')" title="ចុចដើម្បីមើលរូបធំ" />
               {% else %}
-                <div class="bg-light rounded border text-center" style="width: 45px; height: 45px; line-height: 45px;"><i class="fas fa-image text-muted"></i></div>
+              <div class="product-img-box bg-light border d-flex align-items-center justify-content-center text-muted">
+                <i class="bi bi-phone fs-5"></i>
+              </div>
               {% endif %}
             </td>
+
+            <!-- PRODUCT NAME & CODE -->
             <td>
-              <span class="d-block font-weight-bold text-dark">{{ product.name }}</span>
-              <small class="text-muted font-italic">#PNK-{{ product.id }}</small>
+              <span class="product-name fw-bold d-block text-dark" style="font-size: 13.5px;">{{ product.name }}</span>
+              <small class="badge bg-light text-secondary border font-monospace mt-0.5" style="font-size: 9.5px;">#PNK-{{ product.id }}</small>
             </td>
-            <td><span class="badge badge-pill badge-primary-soft px-3">{{ product.brand.name }}</span></td>
-            <td class="font-weight-bold text-success">${{ product.price }}</td>
-            <td class="text-center">
-              {% if product.stock > 0 %}
-                <span class="badge badge-success-soft">{{ product.stock }} គ្រឿង</span>
+
+            <!-- BRAND -->
+            <td>
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill fw-semibold" style="font-size: 11px;">
+                <i class="bi bi-tag-fill me-1"></i> {{ product.brand.name|default:"Unbranded" }}
+              </span>
+            </td>
+
+            <!-- PRICE -->
+            <td class="text-nowrap">
+              <span class="fw-bold text-success fs-6">${{ product.price }}</span>
+            </td>
+
+            <!-- STOCK STATUS -->
+            <td class="text-center text-nowrap">
+              {% if product.stock > 10 %}
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill fw-semibold" style="font-size: 10.5px;">
+                <i class="bi bi-check-circle-fill me-1"></i> {{ product.stock }} គ្រឿង
+              </span>
+              {% elif product.stock > 0 %}
+              <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2.5 py-1 rounded-pill fw-semibold" style="font-size: 10.5px;">
+                <i class="bi bi-exclamation-circle-fill me-1"></i> នៅសល់ {{ product.stock }} គ្រឿង
+              </span>
               {% else %}
-                <span class="badge badge-danger-soft">អស់ស្តុក</span>
+              <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1 rounded-pill fw-semibold" style="font-size: 10.5px;">
+                <i class="bi bi-x-circle-fill me-1"></i> អស់ស្តុក
+              </span>
               {% endif %}
             </td>
-            <td class="text-center">
-              <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-white shadow-sm border text-primary edit-product-btn" data-id="{{ product.id }}" title="កែសម្រួល">
-                  <i class="fas fa-edit"></i>
+
+            <!-- ACTION BUTTONS -->
+            <td class="text-center text-nowrap">
+              <div class="d-flex justify-content-center gap-1">
+                <!-- Preview Image -->
+                {% if product.image %}
+                <button type="button" class="btn btn-outline-info btn-action-circle" onclick="previewImage('{{ product.image.url }}', '{{ product.name|escapejs }}')" title="👁 មើលរូបថត">
+                  <i class="bi bi-eye"></i>
                 </button>
-                <a href="{% url 'delete_product' product.id %}" class="btn btn-sm btn-white shadow-sm border text-danger ml-2" title="លុប" onclick="return confirm('តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ?');">
-                  <i class="fas fa-trash-alt"></i>
-                </a>
+                {% endif %}
+                <!-- Edit -->
+                <button type="button" class="btn btn-outline-success btn-action-circle edit-product-btn" data-id="{{ product.id }}" data-bs-toggle="modal" data-bs-target="#editProductModal" title="✏️ កែសម្រួល">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <!-- Delete -->
+                <button type="button" class="btn btn-outline-danger btn-action-circle delete-product-btn" data-id="{{ product.id }}" title="🗑 លុបទិន្នន័យ">
+                  <i class="bi bi-trash3"></i>
+                </button>
               </div>
             </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="7" class="text-center py-5 text-muted">មិនមានទិន្នន័យផលិតផលនៅឡើយទេ</td>
+            <td colspan="7" class="text-center text-muted py-5">
+              <i class="bi bi-phone-vibrate fs-1 d-block mb-2 text-secondary"></i>
+              មិនទាន់មានទិន្នន័យទូរស័ព្ទនៅក្នុងប្រព័ន្ធនៅឡើយទេ។
+            </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
+
+    <!-- 4. PAGINATION FOOTER -->
+    {% if page_obj.has_other_pages %}
+    <div class="p-2.5 border-top d-flex justify-content-between align-items-center flex-wrap gap-2" style="background-color: var(--bg-card, #fff);">
+      <small class="text-muted" style="font-size: 0.8rem;">បង្ហាញ {{ page_obj.start_index }} ដល់ {{ page_obj.end_index }} ក្នុងចំណោម {{ page_obj.paginator.count }} ផលិតផល</small>
+
+      <div class="d-flex align-items-center gap-2">
+        <nav aria-label="Page navigation">
+          <ul class="pagination pagination-sm m-0">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link rounded-2" href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&category={{ category_filter }}&brand={{ brand_filter }}&stock={{ stock_filter }}">«</a></li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link rounded-2">«</span></li>
+            {% endif %}
+
+            {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+            <li class="page-item active"><span class="page-link bg-success border-success rounded-2">{{ i }}</span></li>
+            {% else %}
+            <li class="page-item"><a class="page-link rounded-2" href="?page={{ i }}&search={{ search_query }}&category={{ category_filter }}&brand={{ brand_filter }}&stock={{ stock_filter }}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link rounded-2" href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&category={{ category_filter }}&brand={{ brand_filter }}&stock={{ stock_filter }}">»</a></li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link rounded-2">»</span></li>
+            {% endif %}
+          </ul>
+        </nav>
+        <span class="badge bg-light text-dark border px-2 py-1">ទំព័រ</span>
+      </div>
+    </div>
+    {% endif %}
   </div>
+
 </div>
 
-<!-- Modal សម្រាប់ Edit -->
-<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content" style="border-radius: 15px; border: none">
-      <div class="modal-header border-0">
-        <h5 class="modal-title font-weight-bold">កែសម្រួលព័ត៌មានទូរស័ព្ទ</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<!-- 1. IMAGE LIGHTBOX MODAL -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow-lg">
+      <div class="modal-header border-bottom p-3">
+        <h5 class="modal-title fw-bold text-dark"><i class="bi bi-image text-success me-2"></i>រូបថត៖ <span id="previewTitle"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" id="editModalBody">
-        <!-- កន្លែងបង្ហាញ Form ចេញពី AJAX -->
+      <div class="modal-body text-center p-4">
+        <img id="previewImgSrc" src="" class="img-fluid rounded-3 border shadow-sm bg-dark" style="max-height: 500px; object-fit: contain;">
       </div>
     </div>
   </div>
 </div>
 
-<style>
-  .hover-row:hover { background-color: #fbfcfe !important; transition: 0.2s ease; }
-  .badge-primary-soft { background-color: rgba(127, 173, 57, 0.1); color: #7fad39; border: 1px solid rgba(127, 173, 57, 0.2); }
-  .badge-success-soft { background-color: rgba(40, 167, 69, 0.1); color: #28a745; }
-  .badge-danger-soft { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
-  .btn-white { background-color: white; border-radius: 8px; }
-  .btn-white:hover { background-color: #f8f9fa; }
-  .thead-light th { background-color: #f8f9fa !important; color: #8898aa !important; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; padding: 1rem; }
-  .table td { vertical-align: middle; }
-  .edit-product-btn:hover { background-color: #e7f1ff !important; color: #0d6efd !important; }
-</style>
+<!-- 2. ADD PRODUCT MODAL -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom p-4">
+        <h5 class="modal-title fw-bold text-dark"><i class="bi bi-plus-circle-fill text-success me-2"></i>បន្ថែមទូរស័ព្ទថ្មី</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4" id="addModalBody"></div>
+    </div>
+  </div>
+</div>
 
+<!-- 3. EDIT PRODUCT MODAL -->
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom p-4">
+        <h5 class="modal-title fw-bold text-dark"><i class="bi bi-pencil-square text-success me-2"></i>កែសម្រួលព័ត៌មានទូរស័ព្ទ</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4" id="editModalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  $.ajaxSetup({
-    headers: { "X-CSRFToken": '{{ csrf_token }}' }
-});
-$(document).ready(function () {
-    // ១. បើក Modal និងទាញយក Form (GET)
-    $(document).on("click", ".edit-product-btn", function (e) {
-        e.preventDefault();
-        var productId = $(this).data("id");
-        // បង្កើត URL ដោយប្តូរលេខ 0 ទៅជា ID ពិតប្រាកដ
-        var editUrl = "{% url 'edit_product' 0 %}".replace('0', productId);
+  $.ajaxSetup({ headers: { "X-CSRFToken": "{{ csrf_token }}" } });
 
-        $("#editModalBody").html('<div class="text-center py-5"><div class="spinner-border text-success"></div><p class="mt-2 text-muted">កំពុងទាញយកទិន្នន័យ...</p></div>');
-        $("#editProductModal").modal("show");
+  function previewImage(url, name) {
+    document.getElementById("previewImgSrc").src = url;
+    document.getElementById("previewTitle").innerText = name;
+    const modal = new bootstrap.Modal(document.getElementById("imagePreviewModal"));
+    modal.show();
+  }
 
-        $.ajax({
-            url: editUrl,
-            type: "GET",
-            success: function (data) {
-                $("#editModalBody").html(data);
-            },
-            error: function (xhr) {
-                $("#editModalBody").html('<p class="text-danger text-center p-3">មិនអាចទាញយកទិន្នន័យបានទេ! (Error ' + xhr.status + ')</p>');
-            }
-        });
+  $(document).ready(function () {
+    const loadingHtml = '<div class="text-center py-5"><div class="spinner-border text-success"></div><p class="text-muted mt-2 small">កំពុងទាញយកទិន្នន័យ...</p></div>';
+
+    $("#addProductBtn").on("click", function () {
+      $("#addModalBody").html(loadingHtml);
+      $.get("{% url 'shop:add_product' %}", function(data) { $("#addModalBody").html(data); });
     });
 
-    // ២. រក្សាទុកការកែសម្រួល (POST) តាមរយៈ AJAX
+    $(document).on("click", ".edit-product-btn", function () {
+      var id = $(this).data("id");
+      $("#editModalBody").html(loadingHtml);
+      $.get("{% url 'shop:edit_product' 0 %}".replace("0", id), function(data) { $("#editModalBody").html(data); });
+    });
+
+    // Intercept Add Product form submit
+    $(document).on("submit", "#addProductForm", function (e) {
+      e.preventDefault();
+      if (typeof syncRichText === 'function') syncRichText();
+      var formData = new FormData(this);
+      $.ajax({
+        url: $(this).attr("action"),
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+          if (response.success) {
+            location.reload();
+          } else {
+            $("#addModalBody").html(response.html_form);
+          }
+        },
+        error: function () {
+          alert("មានកំហុសក្នុងការរក្សាទុក!");
+        }
+      });
+    });
+
+    // Intercept Edit Product form submit
     $(document).on("submit", "#editProductForm", function (e) {
-        e.preventDefault();
-        var form = $(this);
-        var actionUrl = form.attr("action");
-        var formData = new FormData(this);
+      e.preventDefault();
+      if (typeof syncEditRichText === 'function') syncEditRichText();
+      var formData = new FormData(this);
+      $.ajax({
+        url: $(this).attr("action"),
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+          if (response.success) {
+            location.reload();
+          } else {
+            $("#editModalBody").html(response.html_form);
+          }
+        },
+        error: function () {
+          alert("មានកំហុសក្នុងការកែសម្រួល!");
+        }
+      });
+    });
 
-        // ប្តូរប៊ូតុងទៅជា Loading
-        var submitBtn = form.find('button[type="submit"]');
-        var originalText = submitBtn.html();
-        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> កំពុងរក្សាទុក...');
+    $(document).on("click", ".delete-product-btn", function (e) {
+      e.preventDefault();
+      var productId = $(this).data("id");
+      var deleteUrl = "{% url 'shop:delete_product' 0 %}".replace("0", productId);
 
+      if (confirm("តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ?")) {
         $.ajax({
-            url: actionUrl,
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                if (response.success) {
-                    $("#editProductModal").modal("hide");
-                    location.reload(); // ជោគជ័យគឺទាញទំព័រថ្មី
-                } else {
-                    // បើ Validation ខុស ឱ្យបង្ហាញ Form ជាមួយ Error ឡើងវិញ
-                    $("#editModalBody").html(response.html_form);
-                }
-            },
-            error: function () {
-                alert("មានបញ្ហាក្នុងការតភ្ជាប់ទៅកាន់ Server!");
-                submitBtn.prop('disabled', false).html(originalText);
-            }
+          url: deleteUrl,
+          type: "POST",
+          success: function(response) {
+            if (response.success) { location.reload(); }
+            else { alert("មិនអាចលុបបាន៖ " + response.error); }
+          },
+          error: function() { alert("មានកំហុសជាមួយ Server!"); }
         });
+      }
     });
 
-    // ៣. មុខងារ Search ក្នុងតារាង
-    $("#productSearch").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#productTable tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
+    // Instant live search filter
+    $("#productSearch").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#productTable tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+      });
     });
-});
 
+    // Auto dismiss alert notifications after 3.5s
+    setTimeout(function () {
+      $("#alert-container .alert").fadeOut(500, function () {
+        $(this).remove();
+      });
+    }, 3500);
+  });
 </script>
 {% endblock %}

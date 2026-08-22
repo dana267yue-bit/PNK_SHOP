@@ -1,101 +1,356 @@
-{% extends 'base.html' %} <!-- ប្តូរតាមឈ្មោះ file មេរបស់បង -->
+{% extends 'accounts/dashboard/base_dashboard.html' %}
 {% load static %}
 
-{% block content %}
-<!-- Hero Section Begin (កែសម្រួលចំណងជើងទំព័រ) -->
-<section class="breadcrumb-section set-bg" data-setbg="{% static 'img/breadcrumb.jpg' %}">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <div class="breadcrumb__text">
-                    <h2>Blog</h2>
-                    <div class="breadcrumb__option">
-                        <a href="{% url 'home' %}">Home</a>
-                        <span>Blog</span>
-                    </div>
-                </div>
-            </div>
+{% block header_title %}ព័ត៌មានលម្អិតអត្ថបទ Blog - {{ blog.name }}{% endblock %}
+
+{% block dashboard_content %}
+<style>
+  .blog-detail-container {
+    background-color: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+  }
+
+  .blog-cover-img {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .blog-meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background-color: var(--bg-soft, #f8fafc);
+    color: var(--text-muted, #64748b);
+    border: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  .recent-blog-thumb {
+    width: 64px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .blog-desc-content {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text, #1e293b);
+  }
+
+  .blog-desc-content h2, .blog-desc-content h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+    color: var(--text-dark, #0f172a);
+  }
+
+  .blog-desc-content ul, .blog-desc-content ol {
+    padding-left: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .blog-desc-content blockquote {
+    border-left: 4px solid #198754;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #475569;
+    background-color: #f1f5f9;
+    padding: 10px 15px;
+    border-radius: 0 8px 8px 0;
+  }
+</style>
+
+<div class="container-fluid p-0">
+  
+  <!-- 1. TOP HEADER NAVIGATION & ACTIONS -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2" data-aos="fade-down">
+    <div class="d-flex align-items-center gap-2">
+      <a href="{% url 'accounts:manage_blog' %}" class="btn btn-light border rounded-3 d-flex align-items-center justify-content-center shadow-xs" style="width: 38px; height: 38px;" title="ត្រឡប់ទៅការគ្រប់គ្រង Blog">
+        <i class="bi bi-arrow-left fs-5"></i>
+      </a>
+      <div>
+        <h4 class="fw-bold text-dark mb-0" style="letter-spacing: -0.3px; font-size: 1.25rem;">
+          {{ blog.name }}
+        </h4>
+        <div class="d-flex align-items-center gap-2 mt-0.5">
+          <small class="text-muted" style="font-size: 0.78rem;">អត្ថបទ Blog ID #{{ blog.id }}</small>
+          <span class="badge bg-light text-muted border font-monospace" style="font-size: 10px;">@{{ blog.slug }}</span>
         </div>
+      </div>
     </div>
-</section>
 
-<!-- Blog Section Begin -->
-<section class="blog spad">
-    <div class="container">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-4 col-md-5">
-                <div class="blog__sidebar">
-                    <div class="blog__sidebar__search">
-                        <form action="#">
-                            <input type="text" placeholder="Search...">
-                            <button type="submit"><span class="icon_search"></span></button>
-                        </form>
-                    </div>
-                    <div class="blog__sidebar__item">
-                        <h4>Categories</h4>
-                        <ul>
-                            <li><a href="#">All</a></li>
-                            <li><a href="#">Technology</a></li>
-                            <li><a href="#">Lifestyle</a></li>
-                        </ul>
-                    </div>
-                    <div class="blog__sidebar__item">
-                        <h4>Recent News</h4>
-                        <div class="blog__sidebar__recent">
-                            {% for recent in blogs|slice:":3" %}
-                            <a href="#" class="blog__sidebar__recent__item">
-                                <div class="blog__sidebar__recent__item__pic">
-                                    <img src="{{ recent.image.url }}" alt="" style="width: 70px; height: 70px; object-fit: cover;">
-                                </div>
-                                <div class="blog__sidebar__recent__item__text">
-                                    <h6>{{ recent.title }}</h6>
-                                    <span>{{ recent.date_added|date:"M d, Y" }}</span>
-                                </div>
-                            </a>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- ACTION BUTTONS -->
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-light border text-success rounded-3 d-flex align-items-center gap-1.5 fw-semibold shadow-xs" data-bs-toggle="modal" data-bs-target="#editBlogModal" style="height: 38px; font-size: 0.82rem;">
+        <i class="bi bi-pencil-square fs-6"></i> កែប្រែអត្ថបទ
+      </button>
 
-            <!-- Main Blog Content -->
-            <div class="col-lg-8 col-md-7">
-                <div class="row">
-                    {% for blog in blogs %}
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="blog__item">
-                            <div class="blog__item__pic">
-                                <img src="{{ blog.image.url }}" alt="{{ blog.title }}" style="height: 250px; object-fit: cover;">
-                            </div>
-                            <div class="blog__item__text">
-                                <ul>
-                                    <li><i class="fa fa-calendar-o"></i> {{ blog.date_added|date:"M d, Y" }}</li>
-                                    <li><i class="fa fa-comment-o"></i> 5</li>
-                                </ul>
-                                <h5><a href="#">{{ blog.title }}</a></h5>
-                                <p>{{ blog.description|truncatewords:20 }}</p>
-                                <a href="{% url 'blog_detail' blog.slug %}">{{ blog.title }}</a>READ MORE <span class="arrow_right"></span></a>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="col-lg-12">
-                        <p class="text-center">មិនទាន់មានអត្ថបទប្លុកនៅឡើយទេ។</p>
-                    </div>
-                    {% endfor %}
+      <a href="{% url 'shop:blog_detail' blog.slug %}" target="_blank" class="btn btn-primary rounded-3 d-flex align-items-center gap-1.5 fw-semibold shadow-xs" style="height: 38px; font-size: 0.82rem; background: linear-gradient(135deg, #0d6efd, #0b5ed7); border: none;">
+        <i class="bi bi-globe fs-6"></i> មើលលើ Website
+      </a>
 
-                    <!-- Pagination (ផ្នែកប្តូរទំព័រ) -->
-                    <div class="col-lg-12">
-                        <div class="product__pagination blog__pagination">
-                            <a href="#">1</a>
-                            <a href="#">2</a>
-                            <a href="#"><i class="fa fa-long-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <a href="{% url 'accounts:delete_blog' blog.id %}" class="btn btn-outline-danger rounded-3 d-flex align-items-center gap-1.5 fw-semibold" onclick="return confirm('តើអ្នកពិតជាចង់លុបអត្ថបទ [{{ blog.name|escapejs }}] នេះមែនទេ?');" style="height: 38px; font-size: 0.82rem;">
+        <i class="bi bi-trash-fill fs-6"></i> លុប
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. MAIN DETAILS LAYOUT -->
+  <div class="row g-3">
+    
+    <!-- LEFT COLUMN: MAIN ARTICLE CONTENT -->
+    <div class="col-lg-8 col-xl-9">
+      <div class="blog-detail-container p-4" data-aos="fade-up">
+        
+        <!-- COVER IMAGE -->
+        {% if blog.image %}
+          <div class="mb-4 text-center bg-light rounded-3 p-2 border">
+            <img src="{{ blog.image.url }}" alt="{{ blog.name }}" class="blog-cover-img shadow-xs">
+          </div>
+        {% endif %}
+
+        <!-- METADATA BAR -->
+        <div class="d-flex align-items-center gap-2 flex-wrap mb-3 border-bottom pb-3">
+          <div class="blog-meta-pill">
+            <i class="bi bi-calendar3 text-success"></i>
+            <span>{{ blog.created_at|date:"d F Y, H:i" }}</span>
+          </div>
+
+          <div class="blog-meta-pill">
+            <i class="bi bi-person-fill text-primary"></i>
+            <span>អ្នកបង្កើត៖ Admin</span>
+          </div>
+
+          <div class="blog-meta-pill">
+            <i class="bi bi-tag-fill text-info"></i>
+            <span>ចំណាត់ថ្នាក់៖ iPhone Specs</span>
+          </div>
+
+          <div class="blog-meta-pill bg-success-subtle text-success border-success-subtle ms-auto">
+            <i class="bi bi-broadcast"></i>
+            <span>ផ្សាយផ្ទាល់ 100%</span>
+          </div>
         </div>
+
+        <!-- ARTICLE TITLE -->
+        <h2 class="fw-bold text-dark mb-3" style="font-size: 1.5rem; line-height: 1.35;">
+          {{ blog.name }}
+        </h2>
+
+        <!-- ARTICLE BODY / DESCRIPTION -->
+        <div class="blog-desc-content border-top pt-3">
+          {{ blog.description|safe }}
+        </div>
+
+      </div>
     </div>
-</section>
+
+    <!-- RIGHT COLUMN: SIDEBAR INFO & RECENT BLOGS -->
+    <div class="col-lg-4 col-xl-3">
+      
+      <!-- QUICK INFO CARD -->
+      <div class="blog-detail-container p-3 mb-3" data-aos="fade-up" data-aos-delay="100">
+        <h6 class="fw-bold text-dark border-bottom pb-2 mb-3" style="font-size: 0.9rem;">
+          <i class="bi bi-info-circle-fill text-success me-1.5"></i> ព័ត៌មានបច្ចេកទេស
+        </h6>
+
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+          <small class="text-muted">Slug តំណភ្ជាប់</small>
+          <span class="badge bg-light text-dark border font-monospace" style="font-size: 10.5px;">@{{ blog.slug }}</span>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+          <small class="text-muted">ថ្ងៃបង្កើត</small>
+          <small class="fw-semibold text-dark">{{ blog.created_at|date:"d-m-Y" }}</small>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+          <small class="text-muted">រូបភាព Cover</small>
+          {% if blog.image %}
+            <span class="badge bg-success-subtle text-success border border-success-subtle">មានរូបភាព</span>
+          {% else %}
+            <span class="badge bg-secondary-subtle text-secondary border">គ្មានរូប</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- RECENT BLOGS LIST -->
+      <div class="blog-detail-container p-3" data-aos="fade-up" data-aos-delay="200">
+        <h6 class="fw-bold text-dark border-bottom pb-2 mb-3" style="font-size: 0.9rem;">
+          <i class="bi bi-journal-richtext text-primary me-1.5"></i> អត្ថបទផ្សេងទៀត
+        </h6>
+
+        <div class="d-flex flex-column gap-2.5">
+          {% for r in recent_blogs %}
+          <a href="{% url 'accounts:dashboard_blog_detail' r.id %}" class="d-flex align-items-center gap-2.5 text-decoration-none p-2 rounded-3 hover-row border border-transparent transition-all">
+            {% if r.image %}
+              <img src="{{ r.image.url }}" class="recent-blog-thumb border" alt="{{ r.name }}">
+            {% else %}
+              <div class="recent-blog-thumb bg-light border d-flex align-items-center justify-content-center text-muted">
+                <i class="bi bi-newspaper fs-5"></i>
+              </div>
+            {% endif %}
+
+            <div class="overflow-hidden">
+              <h6 class="fw-bold text-dark small mb-1 text-truncate" style="font-size: 0.82rem; line-height: 1.3;">{{ r.name }}</h6>
+              <small class="text-muted d-block" style="font-size: 11px;">
+                <i class="bi bi-calendar3 me-1"></i>{{ r.created_at|date:"d-m-Y" }}
+              </small>
+            </div>
+          </a>
+          {% empty %}
+            <p class="text-muted small mb-0 text-center py-2">គ្មានអត្ថបទផ្សេងទៀតទេ</p>
+          {% endfor %}
+        </div>
+
+        <div class="pt-3 border-top mt-3">
+          <a href="{% url 'accounts:manage_blog' %}" class="btn btn-light border w-100 btn-sm rounded-3 fw-semibold text-secondary">
+            <i class="bi bi-list-stars me-1"></i> មើលអត្ថបទទាំងអស់
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- EDIT BLOG MODAL -->
+<div class="modal fade" id="editBlogModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom p-4">
+        <h5 class="modal-title fw-bold text-dark"><i class="bi bi-pencil-square text-success me-2"></i>កែប្រែអត្ថបទព័ត៌មាន</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form action="{% url 'accounts:edit_blog' blog.id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label text-secondary fw-semibold small">ចំណងជើងអត្ថបទ (Title) <span class="text-danger">*</span></label>
+              <input type="text" name="name" class="form-control rounded-3" value="{{ blog.name }}" required>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label text-secondary fw-semibold small">URL Slug (តំណភ្ជាប់)</label>
+              <input type="text" name="slug" class="form-control rounded-3 font-monospace" value="{{ blog.slug }}">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label text-secondary fw-semibold small">រូបភាព Cover អត្ថបទ (ជ្រើសរើសបើចង់ប្តូរ)</label>
+              <input type="file" name="image" class="form-control rounded-3" accept="image/*">
+              {% if blog.image %}
+              <div class="mt-2">
+                <small class="text-muted d-block mb-1">រូបភាពបច្ចុប្បន្ន៖</small>
+                <img src="{{ blog.image.url }}" class="rounded-3 border" style="max-height: 80px;">
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="col-12">
+              <label class="form-label text-secondary fw-semibold small">ខ្លឹមសារអត្ថបទ (Description) <span class="text-danger">*</span></label>
+              <div class="rich-editor-wrapper rounded-3 overflow-hidden border">
+                <!-- RICH TOOLBAR -->
+                <div class="rich-toolbar d-flex align-items-center gap-1 p-2 border-bottom flex-wrap" style="background-color: var(--bg-soft, #f8fafc);">
+                  <button type="button" class="btn btn-sm btn-light border-0 fw-bold px-2 py-1 shadow-xs" onclick="formatBlogDoc('bold')" title="Bold (B)"><b>B</b></button>
+                  <button type="button" class="btn btn-sm btn-light border-0 fst-italic px-2 py-1 shadow-xs" onclick="formatBlogDoc('italic')" title="Italic (I)"><i>I</i></button>
+                  <button type="button" class="btn btn-sm btn-light border-0 text-decoration-underline px-2 py-1 shadow-xs" onclick="formatBlogDoc('underline')" title="Underline (U)"><u>U</u></button>
+                  <button type="button" class="btn btn-sm btn-light border-0 text-decoration-line-through px-2 py-1 shadow-xs" onclick="formatBlogDoc('strikeThrough')" title="Strikethrough (S)"><s>S</s></button>
+                  
+                  <div class="vr mx-1 my-1"></div>
+                  
+                  <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatBlogDoc('createLink')" title="Insert Link"><i class="bi bi-link-45deg fs-6"></i></button>
+                  <button type="button" class="btn btn-sm btn-light border-0 fw-bold px-2 py-1 shadow-xs" onclick="formatBlogDoc('formatBlock', 'h2')" title="Heading 2">H₂</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 fw-bold px-2 py-1 shadow-xs" onclick="formatBlogDoc('formatBlock', 'h3')" title="Heading 3">H₃</button>
+                  <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatBlogDoc('formatBlock', 'blockquote')" title="Quote"><i class="bi bi-chat-square-quote"></i></button>
+                  <button type="button" class="btn btn-sm btn-light border-0 font-monospace px-2 py-1 shadow-xs" onclick="formatBlogDoc('formatBlock', 'pre')" title="Code">&lt;/&gt;</button>
+                  
+                  <div class="vr mx-1 my-1"></div>
+                  
+                  <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatBlogDoc('insertUnorderedList')" title="Bullet List"><i class="bi bi-list-ul"></i></button>
+                  <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatBlogDoc('insertOrderedList')" title="Numbered List"><i class="bi bi-list-ol"></i></button>
+                  <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatBlogDoc('insertImage')" title="Insert Image"><i class="bi bi-image"></i></button>
+                  
+                  <div class="vr mx-1 my-1"></div>
+                  
+                  <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatBlogDoc('undo')" title="Undo"><i class="bi bi-arrow-counterclockwise"></i></button>
+                  <button type="button" class="btn btn-sm btn-light border-0 px-2 py-1 shadow-xs" onclick="formatBlogDoc('redo')" title="Redo"><i class="bi bi-arrow-clockwise"></i></button>
+                </div>
+                
+                <!-- EDITABLE AREA -->
+                <div id="detailBlogEditor" contenteditable="true" class="p-3 bg-white text-dark" style="min-height: 180px; max-height: 350px; overflow-y: auto; outline: none; font-size: 0.9rem;" oninput="syncDetailRichText()">
+                  {{ blog.description|safe }}
+                </div>
+                
+                <textarea id="detailBlogDescInput" name="description" class="d-none" required>{{ blog.description }}</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer border-top p-3">
+          <button type="button" class="btn btn-light rounded-3 px-4 fw-semibold border" data-bs-dismiss="modal">បោះបង់</button>
+          <button type="submit" class="btn btn-success rounded-3 px-4 fw-semibold text-white" style="background: linear-gradient(135deg, #198754, #146c43); border: none;">
+            <i class="bi bi-check-lg me-1"></i> រក្សាទុកការកែប្រែ
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function formatBlogDoc(cmd, value = null) {
+    const editor = document.getElementById('detailBlogEditor');
+    if (!editor) return;
+    editor.focus();
+    
+    if (cmd === 'createLink') {
+      const url = prompt('បញ្ចូល URL តំណភ្ជាប់ (Link URL):', 'https://');
+      if (url) document.execCommand(cmd, false, url);
+    } else if (cmd === 'insertImage') {
+      const url = prompt('បញ្ចូល URL រូបភាព (Image URL):', 'https://');
+      if (url) document.execCommand(cmd, false, url);
+    } else if (cmd === 'formatBlock') {
+      document.execCommand(cmd, false, value);
+    } else {
+      document.execCommand(cmd, false, null);
+    }
+    syncDetailRichText();
+  }
+
+  function syncDetailRichText() {
+    const editor = document.getElementById('detailBlogEditor');
+    const hiddenInput = document.getElementById('detailBlogDescInput');
+    if (editor && hiddenInput) {
+      hiddenInput.value = editor.innerHTML;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', function() {
+        const editor = document.getElementById('detailBlogEditor');
+        const hiddenInput = document.getElementById('detailBlogDescInput');
+        if (editor && hiddenInput) {
+          hiddenInput.value = editor.innerHTML;
+        }
+      });
+    });
+  });
+</script>
+
 {% endblock %}

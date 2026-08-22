@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="accGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+  </defs>
+  <!-- Headphone Arc -->
+  <path d="M22 50 C22 24, 78 24, 78 50" stroke="url(#accGrad)" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <!-- Headphone Cushion Left -->
+  <rect x="16" y="46" width="14" height="26" rx="7" fill="url(#accGrad)"/>
+  <!-- Headphone Cushion Right -->
+  <rect x="70" y="46" width="14" height="26" rx="7" fill="url(#accGrad)"/>
+  <!-- Inner Detail Left -->
+  <rect x="20" y="50" width="6" height="18" rx="3" fill="#FFFFFF" opacity="0.9"/>
+  <!-- Inner Detail Right -->
+  <rect x="74" y="50" width="6" height="18" rx="3" fill="#FFFFFF" opacity="0.9"/>
+  <!-- Lightning Bolt / Cable Accent -->
+  <path d="M52 50 L46 62 L51 62 L48 74 L58 60 L53 60 Z" fill="url(#accGrad)"/>
+</svg>

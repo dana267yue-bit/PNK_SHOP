@@ -1,61 +1,406 @@
-{% extends 'accounts/shop/index.html' %} <!-- ប្តូរទៅតាម Base Template របស់បង -->
-{% load static %}
+{% extends 'accounts/shop/index.html' %} 
+{% load static %} 
+
+{% block title %}គណនីរបស់ខ្ញុំ | PNK Mobile Store{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0" style="border-radius: 20px;">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <div class="bg-light d-inline-block p-4 rounded-circle mb-3">
-                            <i class="fa fa-user-circle-o fa-5x text-primary"></i>
-                        </div>
-                        <h3 class="font-weight-bold">ប្រវត្តិរូបរបស់ខ្ញុំ</h3>
-                        <p class="text-muted">លោកអ្នកអាចធ្វើបច្ចុប្បន្នភាពព័ត៌មានផ្ទាល់ខ្លួននៅទីនេះ</p>
-                    </div>
+<!-- Font & Icon Libraries -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        {% endfor %}
+<style>
+    .profile-hero-card {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        border-radius: 24px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .profile-avatar-wrap {
+        position: relative;
+        display: inline-block;
+    }
+
+    .profile-avatar-img {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        border: 4px solid #10b981;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+    }
+
+    .camera-upload-btn {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background: #10b981;
+        color: white;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        transition: all 0.25s ease;
+        border: 2px solid #ffffff;
+    }
+
+    .camera-upload-btn:hover {
+        background: #059669;
+        transform: scale(1.1);
+    }
+
+    .profile-input-group {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #cbd5e1;
+        transition: all 0.2s ease;
+    }
+
+    .profile-input-group:focus-within {
+        border-color: #10b981 !important;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+    }
+
+    .profile-input-group .input-group-text {
+        background-color: #f8fafc;
+        border: none;
+        color: #64748b;
+    }
+
+    .profile-input-group .form-control {
+        border: none;
+        box-shadow: none !important;
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+
+    .quick-link-card {
+        transition: all 0.25s ease;
+        border: 1px solid #e2e8f0;
+    }
+
+    .quick-link-card:hover {
+        transform: translateY(-3px);
+        border-color: #10b981 !important;
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.1) !important;
+    }
+
+    /* Toast styling */
+    .toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 1090;
+    }
+</style>
+
+<div class="container py-4" style="font-family: 'Kantumruy Pro', sans-serif;">
+
+    <!-- 1. PROFILE HERO HEADER CARD -->
+    <div class="profile-hero-card p-4 p-md-5 mb-4 text-white shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md-auto text-center text-md-start mb-3 mb-md-0">
+                <div class="profile-avatar-wrap">
+                    {% if profile.image %}
+                        <img src="{{ profile.image.url }}" class="rounded-circle profile-avatar-img" id="profileImage" alt="User Profile">
+                    {% else %}
+                        <img src="{% static 'img/default-avatar.png' %}" class="rounded-circle profile-avatar-img" id="profileImage" alt="User Profile" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=10b981&color=fff';">
                     {% endif %}
-
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label class="font-weight-bold">ឈ្មោះអ្នកប្រើ (Username)</label>
-                                <input type="text" class="form-control bg-light" value="{{ user.username }}" readonly>
-                                <small class="text-muted">មិនអាចផ្លាស់ប្តូរឈ្មោះអ្នកប្រើបានទេ</small>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label class="font-weight-bold">អាសយដ្ឋានអ៊ីមែល</label>
-                                <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
-                            </div>
-                            <div class="col-md-6 form-group mt-3">
-                                <label class="font-weight-bold">នាមត្រកូល</label>
-                                <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
-                            </div>
-                            <div class="col-md-6 form-group mt-3">
-                                <label class="font-weight-bold">នាមខ្លួន</label>
-                                <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
-                            </div>
-                            <div class="col-12 text-center mt-4">
-                                <button type="submit" class="btn btn-primary px-5 py-2 shadow-sm" style="border-radius: 10px; font-weight: bold;">
-                                    <i class="fa fa-save mr-2"></i> រក្សាទុកការផ្លាស់ប្តូរ
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    
+                    <label for="imageUpload" class="camera-upload-btn" title="ប្តូររូបថត Profile">
+                        <i class="bi bi-camera-fill fs-5"></i>
+                    </label>
+                    <input type="file" id="imageUpload" name="image" class="d-none" accept="image/*" form="profileForm">
                 </div>
+            </div>
+
+            <div class="col-md text-center text-md-start">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-start gap-2 mb-2">
+                    <h2 class="fw-bold mb-0 text-white">
+                        {% if user.last_name or user.first_name %}{{ user.last_name }} {{ user.first_name }}{% else %}{{ user.username }}{% endif %}
+                    </h2>
+                    <span class="badge bg-success rounded-pill px-3 py-1.5 fs-7 fw-semibold shadow-xs">
+                        <i class="bi bi-check-circle-fill me-1"></i> សមាជិកសកម្ម
+                    </span>
+                </div>
+                <p class="text-white-50 mb-2" style="font-size: 14px;">
+                    <i class="bi bi-at text-success me-1"></i>{{ user.username }} &nbsp;|&nbsp; 
+                    <i class="bi bi-envelope text-info me-1"></i>{{ user.email|default:"គ្មានអ៊ីមែល" }}
+                </p>
+                <small class="text-white-50" style="font-size: 12px;">
+                    <i class="bi bi-calendar-check text-warning me-1"></i> ចុះឈ្មោះនៅ៖ {{ user.date_joined|date:"d F Y" }}
+                </small>
+            </div>
+
+            <div class="col-md-auto text-center text-md-end mt-3 mt-md-0">
+                <a href="{% url 'shop:shop' %}" class="btn btn-outline-light rounded-pill px-4 btn-sm fw-semibold">
+                    <i class="bi bi-shop me-1"></i> ទៅកាន់ហាងទំនិញ
+                </a>
             </div>
         </div>
     </div>
+
+    <!-- 2. MAIN CONTENT GRID -->
+    <div class="row g-4 mb-5">
+        
+        <!-- LEFT COLUMN: EDIT PROFILE FORM -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                            <i class="bi bi-person-gear text-success"></i> ព័ត៌មានគណនីផ្ទាល់ខ្លួន
+                        </h4>
+                        <p class="text-muted small mb-0">ធ្វើបច្ចុប្បន្នភាពឈ្មោះ អ៊ីមែល និងលេខទូរស័ព្ទរបស់អ្នក</p>
+                    </div>
+                    <span class="badge bg-light text-secondary border rounded-pill px-3 py-1.5 font-monospace">Profile Settings</span>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" id="profileForm">
+                    {% csrf_token %}
+                    
+                    <div class="row g-3">
+                        <!-- LAST NAME -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark small mb-1">នាមត្រកូល </label>
+                            <div class="input-group profile-input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}" placeholder="នាមត្រកូល...">
+                            </div>
+                        </div>
+
+                        <!-- FIRST NAME -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark small mb-1">នាមខ្លួន </label>
+                            <div class="input-group profile-input-group">
+                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" placeholder="នាមខ្លួន...">
+                            </div>
+                        </div>
+
+                        <!-- EMAIL ADDRESS -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark small mb-1">អាសយដ្ឋានអ៊ីមែល </label>
+                            <div class="input-group profile-input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" name="email" class="form-control" value="{{ user.email }}" placeholder="example@email.com">
+                            </div>
+                        </div>
+
+                        <!-- PHONE NUMBER -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark small mb-1">លេខទូរស័ព្ទ </label>
+                            <div class="input-group profile-input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input type="text" name="phone" class="form-control" value="{{ user.profile.phone }}" placeholder="012 345 678">
+                            </div>
+                        </div>
+
+                        <!-- USERNAME (READONLY) -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold text-dark small mb-1">ឈ្មោះអ្នកប្រើប្រាស់ </label>
+                            <div class="input-group profile-input-group bg-light">
+                                <span class="input-group-text bg-light"><i class="bi bi-shield-lock"></i></span>
+                                <input type="text" class="form-control bg-light text-muted" value="{{ user.username }}" readonly>
+                            </div>
+                        </div>
+
+                        <!-- SAVE BUTTON -->
+                        <div class="col-12 pt-3 text-end">
+                            <button type="submit" class="btn btn-success rounded-pill px-5 py-2.5 fw-bold shadow-sm">
+                                <i class="bi bi-floppy-fill me-1.5"></i> រក្សាទុកការផ្លាស់ប្តូរ
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: QUICK NAVIGATION & ACCOUNT LINKS -->
+        <div class="col-lg-4">
+            <div class="d-flex flex-column gap-3 h-100">
+                
+                <!-- MY ORDERS QUICK LINK -->
+                <a href="{% url 'shop:latest_order_shortcut' %}" class="card border-0 shadow-sm rounded-4 p-3.5 bg-white text-decoration-none quick-link-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="bi bi-bag-check-fill fs-4"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold text-dark mb-0">ការបញ្ជាទិញចុងក្រោយ</h6>
+                            <small class="text-muted d-block" style="font-size: 12px;">ពិនិត្យមើលស្ថានភាព Order របស់អ្នក</small>
+                        </div>
+                        <i class="bi bi-chevron-right text-muted"></i>
+                    </div>
+                </a>
+
+                <!-- PURCHASE HISTORY QUICK LINK -->
+                <a href="{% url 'shop:order_history' %}" class="card border-0 shadow-sm rounded-4 p-3.5 bg-white text-decoration-none quick-link-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-info-subtle text-info d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="bi bi-clock-history fs-4"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold text-dark mb-0">ប្រវត្តិការទិញកន្លងមក</h6>
+                            <small class="text-muted d-block" style="font-size: 12px;">មើលរាល់ប្រវត្តិការទិញទំនិញទាំងអស់</small>
+                        </div>
+                        <i class="bi bi-chevron-right text-muted"></i>
+                    </div>
+                </a>
+
+                <!-- SHOPPING CART QUICK LINK -->
+                <a href="{% url 'shop:cart_view' %}" class="card border-0 shadow-sm rounded-4 p-3.5 bg-white text-decoration-none quick-link-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="bi bi-cart-fill fs-4"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold text-dark mb-0">កន្ត្រកទំនិញ</h6>
+                            <small class="text-muted d-block" style="font-size: 12px;">មើលទំនិញដែលបានជ្រើសរើស</small>
+                        </div>
+                        <i class="bi bi-chevron-right text-muted"></i>
+                    </div>
+                </a>
+
+                <!-- CHANGE PASSWORD LINK -->
+                <a href="{% url 'account_change_password' %}" class="card border-0 shadow-sm rounded-4 p-3.5 bg-white text-decoration-none quick-link-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                            <i class="bi bi-key-fill fs-4"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold text-dark mb-0">ផ្លាស់ប្តូរលេខសម្ងាត់</h6>
+                            <small class="text-muted d-block" style="font-size: 12px;">ការពារ និងប្តូរ Password គណនី</small>
+                        </div>
+                        <i class="bi bi-chevron-right text-muted"></i>
+                    </div>
+                </a>
+
+                <!-- CUSTOMER SUPPORT CARD -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 text-center mt-auto" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+                    <i class="bi bi-headset fs-1 mb-2 d-block text-white"></i>
+                    <h6 class="fw-bold mb-1">ត្រូវការជំនួយ?</h6>
+                    <p class="small text-white-50 mb-3" style="font-size: 12.5px;">ក្រុមការងារ PNK Mobile ព្រមរង់ចាំប្រឹក្សា និងបម្រើអតិថិជន ២៤/៧</p>
+                    <a href="tel:0962964713" class="btn btn-light text-success btn-sm rounded-pill fw-bold px-4 py-2">
+                        <i class="bi bi-telephone-fill me-1"></i> 096 29 647 13
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
 </div>
+
+<div class="toast-container"></div>
+
+<script>
+    // Real-time Avatar Preview on file select
+    const imageUpload = document.getElementById('imageUpload');
+    if (imageUpload) {
+        imageUpload.onchange = function (evt) {
+            const [file] = this.files;
+            if (file) {
+                const objectUrl = URL.createObjectURL(file);
+                document.getElementById('profileImage').src = objectUrl;
+                
+                // Trigger form submit automatically on avatar photo pick!
+                document.getElementById('profileForm').requestSubmit();
+            }
+        };
+    }
+
+    // AJAX Submission with SweetAlert2 & Toast Feedback
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById('profileForm');
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); 
+                const formData = new FormData(form);
+                const imageInput = document.getElementById('imageUpload');
+                if (imageInput && imageInput.files && imageInput.files[0]) {
+                    formData.set('image', imageInput.files[0]);
+                }
+                const csrftoken = getCookie('csrftoken');
+
+                fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        if (typeof showToast === 'function') {
+                            showToast(data.message || 'បានផ្លាស់ប្តូរព័ត៌មានគណនីដោយជោគជ័យ!', false, 'ជោគជ័យ');
+                        } else if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'ជោគជ័យ',
+                                html: `<div class="pnk-toast-body">${data.message || 'បានផ្លាស់ប្តូរព័ត៌មានគណនីដោយជោគជ័យ!'}</div>`,
+                                showConfirmButton: false,
+                                timer: 4000,
+                                timerProgressBar: true
+                            });
+                        }
+
+                        // Live Update all Avatars on Header navbar instantly!
+                        if (data.new_image_url) {
+                            const timestamp = new Date().getTime();
+                            const newUrl = data.new_image_url + '?t=' + timestamp; 
+                            
+                            document.querySelectorAll('.navbar-avatar, .dropdown-avatar, #profileImage').forEach(el => {
+                                if (el) el.src = newUrl;
+                            });
+                        }
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast(data.message || 'មិនអាចផ្លាស់ប្តូរព័ត៌មានបានទេ!', true, 'មានបញ្ហា');
+                        } else if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'មានបញ្ហា',
+                                html: `<div class="pnk-toast-body">${data.message || 'មិនអាចផ្លាស់ប្តូរព័ត៌មានបានទេ!'}</div>`,
+                                showConfirmButton: false,
+                                timer: 4000,
+                                timerProgressBar: true
+                            });
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Profile update error:', error);
+                });
+            });
+        }
+    });
+</script>
 {% endblock %}

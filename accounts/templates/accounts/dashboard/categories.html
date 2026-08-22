@@ -1,0 +1,170 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block header_title %}គ្រប់គ្រងប្រភេទ & ម៉ាកទូរស័ព្ទ {% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid p-0">
+
+  <!-- TOP TITLE & BUTTONS -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+      <h4 class="fw-bold text-dark mb-1">គ្រប់គ្រងប្រភេទ & ម៉ាកទូរស័ព្ទ </h4>
+    </div>
+    
+    <div class="d-flex gap-2">
+      <button class="btn btn-success rounded-pill px-3 shadow-sm d-flex align-items-center gap-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#addCatModal">
+        <i class="bi bi-plus-circle"></i> បន្ថែមប្រភេទ
+      </button>
+      <button class="btn btn-outline-success rounded-pill px-3 shadow-sm d-flex align-items-center gap-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#addBrandModal">
+        <i class="bi bi-plus-circle"></i> បន្ថែមម៉ាក
+      </button>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- CATEGORIES TABLE -->
+    <div class="col-lg-6">
+      <div class="data-card p-4">
+        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-tags-fill me-2 text-success"></i>បញ្ជីប្រភេទផលិតផល</h6>
+        
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>រូបភាព</th>
+                <th>ឈ្មោះប្រភេទ</th>
+                <th class="text-center">សកម្មភាព</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for cat in categories %}
+              <tr>
+                <td>
+                  {% if cat.image %}
+                    <img src="{{ cat.image.url }}" alt="{{ cat.name }}" class="rounded-3 border bg-white p-1 shadow-xs" style="width: 44px; height: 44px; object-fit: contain;">
+                  {% else %}
+                    <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border" style="width: 44px; height: 44px;"><i class="bi bi-image fs-5"></i></div>
+                  {% endif %}
+                </td>
+                <td class="fw-bold text-dark">{{ cat.name }}</td>
+                <td class="text-center">
+                  <a href="{% url 'accounts:delete_category' cat.id %}" class="btn btn-outline-danger btn-sm rounded-circle" onclick="return confirm('តើអ្នកប្រាកដថាចង់លុបប្រភេទនេះទេ?')" title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3" class="text-center text-muted py-3">មិនទាន់មានប្រភេទផលិតផលនៅឡើយ។</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANDS TABLE -->
+    <div class="col-lg-6">
+      <div class="data-card p-4">
+        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-award-fill me-2 text-primary"></i>បញ្ជីម៉ាកទូរស័ព្ទ</h6>
+        
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Logo</th>
+                <th>ឈ្មោះម៉ាក</th>
+                <th class="text-center">សកម្មភាព</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for brand in brands %}
+              <tr>
+                <td>
+                  {% if brand.logo %}
+                    <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="rounded-3 border bg-white p-1 shadow-xs" style="width: 44px; height: 44px; object-fit: contain;">
+                  {% else %}
+                    <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border" style="width: 44px; height: 44px;"><i class="bi bi-shield fs-5"></i></div>
+                  {% endif %}
+                </td>
+                <td class="fw-bold text-dark">{{ brand.name }}</td>
+                <td class="text-center">
+                  <a href="{% url 'accounts:delete_brand' brand.id %}" class="btn btn-outline-danger btn-sm rounded-circle" onclick="return confirm('តើអ្នកប្រាកដថាចង់លុបម៉ាកនេះទេ?')" title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3" class="text-center text-muted py-3">មិនទាន់មានម៉ាកទូរស័ព្ទនៅឡើយ។</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD CATEGORY MODAL -->
+<div class="modal fade" id="addCatModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-dark">បន្ថែមប្រភេទផលិតផល </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'accounts:add_category' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label text-secondary fw-semibold small">ឈ្មោះប្រភេទ</label>
+            <input type="text" name="name" class="form-control" placeholder="ឧទាហរណ៍៖ Smartphone, Tablet..." required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary fw-semibold small">រូបភាពប្រភេទ</label>
+            <input type="file" name="image" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">បោះបង់</button>
+          <button type="submit" class="btn btn-success rounded-pill px-4">រក្សាទុក</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ADD BRAND MODAL -->
+<div class="modal fade" id="addBrandModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-dark">បន្ថែមម៉ាកទូរស័ព្ទ</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'accounts:add_brand' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label text-secondary fw-semibold small">ឈ្មោះម៉ាក</label>
+            <input type="text" name="name" class="form-control" placeholder="ឧទាហរណ៍៖ Apple, Samsung, Xiaomi..." required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary fw-semibold small">Logo ម៉ាក</label>
+            <input type="file" name="logo" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">បោះបង់</button>
+          <button type="submit" class="btn btn-success rounded-pill px-4">រក្សាទុក</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

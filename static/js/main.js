@@ -1,4 +1,6 @@
 /*  ---------------------------------------------------
+    Template Name: Ogani
+    Description:  Ogani eCommerce  HTML Template
     Author: Colorlib
     Author URI: https://colorlib.com
     Version: 1.0
@@ -37,16 +39,16 @@
         $(this).css('background-image', 'url(' + bg + ')');
     });
 
-    //phone Menu
-    $(".phone__open").on('click', function () {
-        $(".phone__menu__wrapper").addClass("show__phone__menu__wrapper");
-        $(".phone__menu__overlay").addClass("active");
+    //Humberger Menu
+    $(".humberger__open").on('click', function () {
+        $(".humberger__menu__wrapper").addClass("show__humberger__menu__wrapper");
+        $(".humberger__menu__overlay").addClass("active");
         $("body").addClass("over_hid");
     });
 
-    $(".phone__menu__overlay").on('click', function () {
-        $(".phone__menu__wrapper").removeClass("show__phone__menu__wrapper");
-        $(".phone__menu__overlay").removeClass("active");
+    $(".humberger__menu__overlay").on('click', function () {
+        $(".humberger__menu__wrapper").removeClass("show__humberger__menu__wrapper");
+        $(".humberger__menu__overlay").removeClass("active");
         $("body").removeClass("over_hid");
     });
 
@@ -181,7 +183,9 @@
     /*--------------------------
         Select
     ----------------------------*/
-    $("select").niceSelect();
+    if ($.fn.niceSelect) {
+        $('select:not(.form-select):not(.no-nice-select)').niceSelect();
+    }
 
     /*------------------
 		Single Product

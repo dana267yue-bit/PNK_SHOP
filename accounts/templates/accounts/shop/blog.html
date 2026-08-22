@@ -1,244 +1,406 @@
+{% extends 'accounts/shop/index.html' %}
 {% load static %}
-<!doctype html>
-<html lang="zxx">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content="Phone Shop Blog - Latest Tech News" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Blog | Tech Insights</title>
 
-    <!-- Google Font -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
-      rel="stylesheet"
-    />
-    {% include 'accounts/includes/CssStyles.html' %}
-    <style>
-      /* បន្ថែម Shadow ឱ្យកាន់តែទន់ និង Border កោងជាងមុន */
-      .blog__card {
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-      }
+{% block title %}អត្ថបទ និង ព័ត៌មានបច្ចេកវិទ្យា | PNK Mobile Store{% endblock %}
 
-      /* ធ្វើឱ្យ Badge រាងមូល និងប្រើពណ៌ Gradient */
-      .tech-badge {
-        background: linear-gradient(45deg, #7fad39, #96c93d);
-        color: white;
-        padding: 3px 12px;
-        border-radius: 50px;
-        font-size: 10px;
-      }
+{% block content %}
+<style>
+  .blog-hero-wave-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 260px;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  }
 
-      /* ធ្វើឱ្យរូបភាពមានលក្ខណៈ Zoom បន្តិចពេល Hover */
-      .blog__card__pic img {
-        transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-      }
+  .blog-wave-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200% !important;
+    height: 220px !important;
+    pointer-events: none;
+  }
 
-      /* បន្ថែម Hover Effect លើ Title */
-      .blog__card__text h5 a:hover {
-        color: #7fad39;
-        padding-left: 5px; /* មានចលនារុញទៅមុខបន្តិច */
-      }
-      /* Modern Tech Blog Styling */
-      .blog-section {
-        padding: 60px 0;
-        background: #f8f9fa;
-      }
+  .blog-wave-layer-1 {
+    animation: blogWaveAnim1 9s ease-in-out infinite alternate !important;
+  }
 
-      .blog__card {
-        background: #fff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        border: none;
-        margin-bottom: 30px;
-      }
+  .blog-wave-layer-2 {
+    animation: blogWaveAnim2 6s ease-in-out infinite alternate !important;
+  }
 
-      .blog__card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
-      }
+  @keyframes blogWaveAnim1 {
+    0% { transform: translateX(0) scaleY(1); }
+    100% { transform: translateX(-40%) scaleY(1.2); }
+  }
 
-      .blog__card__pic {
-        position: relative;
-        height: 200px;
-        overflow: hidden;
-      }
+  @keyframes blogWaveAnim2 {
+    0% { transform: translateX(-35%) scaleY(1.1); }
+    100% { transform: translateX(0) scaleY(0.85); }
+  }
 
-      .blog__card__pic img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: 0.5s;
-      }
+  /* 3D FLOATING PHONE ANIMATION STYLES */
+  .floating-phone-wrap {
+    position: relative;
+    display: inline-block;
+    animation: floatPhoneAnim 4s ease-in-out infinite alternate;
+  }
 
-      .blog__card:hover .blog__card__pic img {
-        transform: scale(1.05);
-      }
+  .floating-phone-img {
+    width: 220px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(16, 185, 129, 0.35);
+    transform: perspective(700px) rotateY(-12deg) rotateX(6deg);
+    transition: all 0.35s ease;
+  }
 
-      .blog__card__date {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: #7fad39;
-        color: #fff;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-      }
+  .floating-phone-img:hover {
+    transform: perspective(700px) rotateY(0deg) rotateX(0deg) scale(1.06);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 35px rgba(16, 185, 129, 0.5);
+  }
 
-      .blog__card__text {
-        padding: 20px;
-      }
+  .phone-glow-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 240px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(15, 23, 42, 0) 70%);
+    animation: glowPulseAnim 3s ease-in-out infinite alternate;
+    z-index: 0;
+  }
 
-      .tech-badge {
-        background: rgba(127, 173, 57, 0.1);
-        color: #7fad39;
-        padding: 2px 10px;
-        border-radius: 4px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        margin-bottom: 10px;
-        display: inline-block;
-      }
+  .floating-badge-1 {
+    top: -12px;
+    right: -15px;
+    font-size: 11px;
+    padding: 6px 12px;
+    z-index: 2;
+  }
 
-      .blog__card__text h5 a {
-        color: #252525;
-        font-weight: 700;
-        text-decoration: none;
-        display: block;
-        margin-bottom: 10px;
-        transition: 0.3s;
-      }
+  .floating-badge-2 {
+    bottom: -10px;
+    left: -20px;
+    font-size: 11px;
+    padding: 6px 12px;
+    z-index: 2;
+  }
 
-      .blog__card__text h5 a:hover {
-        color: #7fad39;
-      }
+  .floating-badge-3 {
+    top: 50%;
+    right: -28px;
+    transform: translateY(-50%);
+    font-size: 11px;
+    padding: 6px 12px;
+    z-index: 2;
+  }
 
-      .blog__card__text p {
-        font-size: 14px;
-        color: #6f6f6f;
-        line-height: 1.6;
-      }
+  @keyframes floatPhoneAnim {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-12px) rotate(1.5deg); }
+  }
 
-      .read-more-btn {
-        color: #252525;
-        font-weight: 700;
-        font-size: 13px;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: 0.3s;
-      }
+  @keyframes glowPulseAnim {
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  }
 
-      .read-more-btn:hover {
-        color: #7fad39;
-      }
-    </style>
-  </head>
+  .animate-float-delay-1 { animation: floatBadge 3.5s ease-in-out infinite alternate; }
+  .animate-float-delay-2 { animation: floatBadge 4.2s ease-in-out infinite alternate-reverse; }
+  .animate-float-delay-3 { animation: floatBadge 3.8s ease-in-out 0.5s infinite alternate; }
 
-  <body>
-    <!-- Page Preloder -->
-    <div id="preloder">
-      <div class="loader"></div>
+  /* NEON WAVE THREADS STYLES */
+  .neon-wave-threads-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .neon-wave-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .wave-thread-1 {
+    animation: waveThreadMove1 12s ease-in-out infinite alternate;
+  }
+
+  .wave-thread-2 {
+    animation: waveThreadMove2 8s ease-in-out infinite alternate-reverse;
+  }
+
+  .wave-thread-3 {
+    animation: waveThreadMove3 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes waveThreadMove1 {
+    0% { transform: translateX(0) scaleY(1); }
+    100% { transform: translateX(-35%) scaleY(1.25); }
+  }
+
+  @keyframes waveThreadMove2 {
+    0% { transform: translateX(-30%) scaleY(1.1); }
+    100% { transform: translateX(0) scaleY(0.85); }
+  }
+
+  @keyframes waveThreadMove3 {
+    0% { transform: translateX(0) translateY(0); }
+    100% { transform: translateX(-25%) translateY(-10px); }
+  }
+</style>
+
+<div class="position-relative overflow-hidden bg-white">
+    <!-- BACKGROUND ANIMATED WATER WAVE BANNER -->
+    <div class="blog-hero-wave-container">
+        <svg class="blog-wave-svg blog-wave-layer-1" viewBox="0 0 1200 220" preserveAspectRatio="none">
+            <path d="M0,0 L1200,0 L1200,140 C1050,60 850,200 600,100 C350,200 150,50 0,140 Z" fill="rgba(16, 185, 129, 0.22)"></path>
+        </svg>
+        <svg class="blog-wave-svg blog-wave-layer-2" viewBox="0 0 1200 220" preserveAspectRatio="none">
+            <path d="M0,0 L1200,0 L1200,100 C1000,180 750,45 500,150 C250,45 100,160 0,100 Z" fill="rgba(5, 150, 105, 0.15)"></path>
+        </svg>
     </div>
 
-    <!-- Header Section Begin -->
-    {% include 'accounts/includes/HeaderSection.html' %}
+    <div class="container py-4 position-relative" style="z-index: 2;">
 
-    <!-- Blog Section Begin -->
-    <section class="blog-section">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center mb-5">
-            <div class="section-title">
-              <h2 style="font-weight: 900; color: #252525">
-                Latest Phone Insights
-              </h2>
-              <p class="text-muted">
-              </p>
-            </div>
-          </div>
+    <!-- HERO / BREADCRUMB HEADER WITH ANIMATED FLOATING PHONE & NEON WAVE THREADS -->
+    <div class="p-4 p-md-5 mb-4 rounded-4 text-white shadow-sm position-relative overflow-hidden" 
+         style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.08);">
+        
+        <!-- ANIMATED NEON WAVE THREADS BACKGROUND -->
+        <div class="neon-wave-threads-container">
+            <svg class="neon-wave-svg wave-thread-1" viewBox="0 0 1440 320" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="neonGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#10b981" stop-opacity="0.65"/>
+                        <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.85"/>
+                        <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.25"/>
+                    </linearGradient>
+                </defs>
+                <path fill="none" stroke="url(#neonGrad1)" stroke-width="2.5" d="M0,160 C320,300 420,0 720,160 C1020,320 1120,20 1440,160"></path>
+            </svg>
+            <svg class="neon-wave-svg wave-thread-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="neonGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35"/>
+                        <stop offset="50%" stop-color="#10b981" stop-opacity="0.75"/>
+                        <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.45"/>
+                    </linearGradient>
+                </defs>
+                <path fill="none" stroke="url(#neonGrad2)" stroke-width="2.2" d="M0,96 C240,220 480,40 720,120 C960,200 1200,80 1440,192"></path>
+            </svg>
+            <svg class="neon-wave-svg wave-thread-3" viewBox="0 0 1440 320" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="neonGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ec4899" stop-opacity="0.25"/>
+                        <stop offset="50%" stop-color="#10b981" stop-opacity="0.65"/>
+                        <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.55"/>
+                    </linearGradient>
+                </defs>
+                <path fill="none" stroke="url(#neonGrad3)" stroke-width="1.8" stroke-dasharray="8 4" d="M0,224 C360,60 600,280 960,100 C1200,20 1350,180 1440,140"></path>
+            </svg>
         </div>
 
-        <div class="row">
-          {% for blog in blogs %}
-          <div class="col-lg-4 col-md-6">
-            <div class="blog__card">
-              <div class="blog__card__pic">
-                <img src="{{ blog.image.url }}" alt="{{ blog.title }}" />
-                <div class="blog__card__date">
-                  {{ blog.date_added|date:"d M, Y" }}
+        <div class="row align-items-center position-relative z-1">
+            <div class="col-lg-7 col-md-7">
+                <span class="badge bg-success rounded-pill px-3 py-2 fs-6 mb-3 fw-bold shadow-sm d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-newspaper"></i> PNK Tech Insights
+                </span>
+                <h1 class="display-5 fw-bold mb-2">ព័ត៌មាន & បច្ចេកវិទ្យាទូរស័ព្ទ</h1>
+                <p class="fs-6 text-white-50 mb-0">ចែករំលែកចំណេះដឹង គន្លឹះប្រើប្រាស់ និងការវាយតម្លៃទូរស័ព្ទដៃស៊េរីថ្មីៗចុងក្រោយបង្អស់</p>
+            </div>
+            
+            <!-- RIGHT SIDE ANIMATED FLOATING PHONE SHOWCASE -->
+            <div class="col-lg-5 col-md-5 text-center d-none d-md-block position-relative my-2 my-md-0">
+                <div class="floating-phone-wrap">
+                    <div class="phone-glow-ring"></div>
+                    {% if blogs.first and blogs.first.image %}
+                    <img src="{{ blogs.first.image.url }}" class="floating-phone-img" alt="PNK Phone Tech">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&q=80" class="floating-phone-img" alt="PNK Phone Tech">
+                    {% endif %}
+
+                    <!-- FLOATING TECH BADGES -->
+                    <span class="badge bg-success shadow-lg rounded-pill position-absolute floating-badge-1 animate-float-delay-1">
+                        <i class="bi bi-cpu-fill text-warning me-1"></i> AI Bionic Pro
+                    </span>
+                    <span class="badge bg-primary shadow-lg rounded-pill position-absolute floating-badge-2 animate-float-delay-2">
+                        <i class="bi bi-wifi text-info me-1"></i> 5G Ultra Fast
+                    </span>
+                    <span class="badge bg-dark border border-secondary shadow-lg rounded-pill position-absolute floating-badge-3 animate-float-delay-3">
+                        <i class="bi bi-camera-fill text-danger me-1"></i> 200MP Lens
+                    </span>
                 </div>
-              </div>
-              <div class="blog__card__text">
-                <span class="tech-badge">Smartphone</span>
-                <h5>
-                  <a href="{% url 'blog_detail' blog.slug %}"
-                    >{{ blog.title }}</a
-                  >
-                </h5>
-                <p>{{ blog.description|truncatewords:12 }}</p>
-                <hr style="border-top: 1px solid #eee; margin: 15px 0" />
-                <a href="{% url 'blog_detail' blog.slug %}">Read More</a>
-              </div>
             </div>
-          </div>
-          {% empty %}
-          <div class="col-lg-12 text-center py-5">
-            <div class="card p-5 border-0 shadow-sm">
-              <i class="fa fa-newspaper-o fa-3x text-muted mb-3"></i>
-              <h4 class="text-muted">មិនទាន់មានអត្ថបទនៅឡើយទេ។</h4>
-            </div>
-          </div>
-          {% endfor %}
         </div>
-      </div>
-    </section>
+    </div>
 
-    <!-- Footer Section Begin -->
-    <footer class="footer spad">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-3 col-md-6">
-            <div class="footer__about">
-              <div class="footer__about__logo">
-                <a href="/"
-                  ><img src="{% static 'img/logo.png' %}" alt="Logo"
-                /></a>
-              </div>
-              <ul>
-                <li>Address: Phnom Penh, Cambodia</li>
-                <li>Phone: +855 12 345 678</li>
-                <li>Email: info@phoneshop.com</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-12 text-center mt-4">
-            <div class="footer__copyright__text">
-              <p>
-                Copyright &copy;
-                <script>
-                  document.write(new Date().getFullYear());
-                </script>
-                All rights reserved
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
+    <div class="row g-4">
+        <!-- SIDEBAR -->
+        <div class="col-lg-4 col-md-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 sticky-lg-top" style="top: 100px; z-index: 10;">
+                
+                <!-- SEARCH FORM -->
+                <div class="mb-4">
+                    <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-search text-success"></i> ស្វែងរកអត្ថបទ
+                    </h6>
+                    <form action="{% url 'shop:blog_page' %}" method="GET">
+                        <div class="input-group">
+                            <input type="text" name="search" value="{{ search_query }}" class="form-control rounded-start-pill ps-3" placeholder="ស្វែងរកប្រធានបទ...">
+                            <button type="submit" class="btn btn-success rounded-end-pill px-3">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-    <!-- Js Plugins -->
-    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-  </body>
-</html>
+                <!-- CATEGORY FILTER -->
+                <div class="mb-4">
+                    <h6 class="fw-bold text-dark mb-3 pb-2 border-bottom d-flex align-items-center gap-2">
+                        <i class="bi bi-tags-fill text-success"></i> ប្រភេទអត្ថបទ
+                    </h6>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'shop:blog_page' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center border-0 px-0 py-2 text-dark font-medium">
+                            <span><i class="bi bi-phone me-2 text-success"></i> អត្ថបទទាំងអស់</span>
+                            <span class="badge bg-success-subtle text-success rounded-pill">{{ blogs.count }}</span>
+                        </a>
+                        <a href="{% url 'shop:blog_page' %}?search=iPhone" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center border-0 px-0 py-2 text-dark">
+                            <span><i class="bi bi-apple me-2 text-muted"></i> Apple iPhone</span>
+                        </a>
+                        <a href="{% url 'shop:blog_page' %}?search=Samsung" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center border-0 px-0 py-2 text-dark">
+                            <span><i class="bi bi-phone me-2 text-muted"></i> Samsung Galaxy</span>
+                        </a>
+                        <a href="{% url 'shop:blog_page' %}?search=OPPO" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center border-0 px-0 py-2 text-dark">
+                            <span><i class="bi bi-phone me-2 text-muted"></i> OPPO Series</span>
+                        </a>
+                        <a href="{% url 'shop:blog_page' %}?search=Vivo" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center border-0 px-0 py-2 text-dark">
+                            <span><i class="bi bi-phone me-2 text-muted"></i> Vivo Mobile</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- RECENT POSTS -->
+                <div class="mb-4">
+                    <h6 class="fw-bold text-dark mb-3 pb-2 border-bottom d-flex align-items-center gap-2">
+                        <i class="bi bi-clock-history text-success"></i> អត្ថបទថ្មីៗ
+                    </h6>
+                    <div class="d-flex flex-column gap-3">
+                        {% for recent in blogs|slice:":3" %}
+                        <a href="{% url 'shop:blog_detail' recent.slug %}" class="d-flex align-items-center gap-3 text-decoration-none">
+                            <div class="rounded-3 overflow-hidden flex-shrink-0 bg-light" style="width: 65px; height: 65px;">
+                                {% if recent.image %}
+                                <img src="{{ recent.image.url }}" alt="{{ recent.name }}" class="w-100 h-100 object-fit-cover">
+                                {% else %}
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-secondary-subtle">
+                                    <i class="bi bi-phone text-muted fs-4"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="overflow-hidden">
+                                <h6 class="fw-bold text-dark small text-truncate mb-1 hover-success">{{ recent.name }}</h6>
+                                <small class="text-muted d-block" style="font-size: 11px;">
+                                    <i class="bi bi-calendar3 me-1"></i> {{ recent.created_at|date:"d M Y" }}
+                                </small>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- POPULAR TAGS -->
+                <div>
+                    <h6 class="fw-bold text-dark mb-3 pb-2 border-bottom d-flex align-items-center gap-2">
+                        <i class="bi bi-hash text-success"></i> Tags ពេញនិយម
+                    </h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'shop:blog_page' %}?search=iPhone" class="btn btn-sm btn-light rounded-pill border text-muted px-3">#iPhone</a>
+                        <a href="{% url 'shop:blog_page' %}?search=Samsung" class="btn btn-sm btn-light rounded-pill border text-muted px-3">#Samsung</a>
+                        <a href="{% url 'shop:blog_page' %}?search=OPPO" class="btn btn-sm btn-light rounded-pill border text-muted px-3">#OPPO</a>
+                        <a href="{% url 'shop:blog_page' %}?search=Vivo" class="btn btn-sm btn-light rounded-pill border text-muted px-3">#Vivo</a>
+                        <a href="{% url 'shop:blog_page' %}?search=Huawei" class="btn btn-sm btn-light rounded-pill border text-muted px-3">#Huawei</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- BLOG CARDS GRID -->
+        <div class="col-lg-8 col-md-7">
+            <div class="row row-cols-1 row-cols-sm-2 g-4">
+                {% for blog in blogs %}
+                <div class="col">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 card-product">
+                        <!-- BLOG THUMBNAIL (OPTIMIZED MOBILE & DESKTOP SIZE) -->
+                        <div class="position-relative bg-light overflow-hidden text-center" style="height: 190px;">
+                            {% if blog.image %}
+                            <img src="{{ blog.image.url }}" alt="{{ blog.name }}" class="w-100 h-100 object-fit-cover">
+                            {% else %}
+                            <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-secondary-subtle">
+                                <i class="bi bi-phone text-muted fs-1"></i>
+                            </div>
+                            {% endif %}
+                            <span class="badge bg-success rounded-pill position-absolute top-0 start-0 m-3 px-3 py-1 shadow-sm fs-7">
+                                <i class="bi bi-phone me-1"></i> Mobile
+                            </span>
+                        </div>
+
+                        <!-- BLOG CARD BODY -->
+                        <div class="card-body p-4 d-flex flex-column justify-content-between">
+                            <div>
+                                <small class="text-muted d-block mb-2">
+                                    <i class="bi bi-calendar3 text-success me-1"></i> {{ blog.created_at|date:"d M Y" }}
+                                </small>
+                                <h5 class="fw-bold text-dark card-title mb-2 text-truncate-2">
+                                    <a href="{% url 'shop:blog_detail' blog.slug %}" class="text-decoration-none text-dark hover-success">
+                                        {{ blog.name }}
+                                    </a>
+                                </h5>
+                                <p class="card-text text-secondary small text-truncate-2 mb-4" style="font-size: 13px;">
+                                    {{ blog.description|striptags|truncatechars:90 }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <a href="{% url 'shop:blog_detail' blog.slug %}" class="btn btn-outline-success btn-sm rounded-pill fw-bold w-100 py-2">
+                                    អានអត្ថបទពេញ <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="p-5 bg-white rounded-4 shadow-sm border text-center">
+                        <i class="bi bi-journal-x fs-1 text-muted d-block mb-3"></i>
+                        <h5 class="fw-bold text-dark">មិនទាន់មានអត្ថបទព័ត៌មាននៅឡើយទេ</h5>
+                        <p class="text-muted small mb-3">សូមព្យាយាមស្វែងរកជាមួយពាក្យគន្លឹះផ្សេងទៀត</p>
+                        <a href="{% url 'shop:blog_page' %}" class="btn btn-success rounded-pill px-4 btn-sm fw-bold">បង្ហាញទាំងអស់</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

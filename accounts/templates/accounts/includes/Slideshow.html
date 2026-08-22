@@ -1,75 +1,225 @@
 {% load static %}
 
-<!-- បន្ថែម Library CSS សម្រាប់ចលនា (Animate.css) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
+<!-- HERO SLIDESHOW COMPONENT WITH VIBRANT ANIMATIONS -->
 <style>
-    /* រចនាអក្សរ និងប៊ូតុងឱ្យមានចលនា និងបង្ហាញជាប់ */
-    .slider-title, .slider-sub, .btn-hero {
-        opacity: 0; /* លាក់នៅពេលដំបូង */
-        animation-fill-mode: forwards; /* រក្សាស្ថានភាពចុងក្រោយនៃចលនា (ឱ្យវានៅជាប់) */
+  .hero-slider-wrap {
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
+    position: relative;
+  }
+  .hero-slide-bg {
+    min-height: 460px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    transition: transform 6s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  @media (max-width: 768px) {
+    .hero-slide-bg {
+      min-height: 340px;
     }
+  }
 
-    /* បញ្ជាចលនាឱ្យដំណើរការនៅពេល Slide កំពុងបង្ហាញ (Active) */
-    .active .slider-sub {
-        animation: fadeInUp 0.8s forwards;
-        animation-delay: 0.3s;
-    }
-    
-    .active .slider-title {
-        animation: fadeInLeft 0.8s forwards;
-        animation-delay: 0.6s;
-    }
+  /* KEN BURNS SLIDE IMAGE ZOOM */
+  .carousel-item.active .hero-slide-bg {
+    transform: scale(1.08);
+  }
 
-    /* កែសម្រួលត្រង់នេះ៖ ឱ្យប៊ូតុងរីកធំមកហើយនៅជាប់រហូត */
-    .active .btn-hero {
-        animation: zoomIn 0.8s forwards;
-        animation-delay: 1s;
-        opacity: 1 !important; /* បង្ខំឱ្យវាបង្ហាញចេញមក */
-    }
+  /* SOFT GRADIENT OVERLAY WITH SHIMMER LIGHT ORBS */
+  .hero-slide-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.55) 50%, rgba(15, 23, 42, 0.1) 90%);
+    display: flex;
+    align-items: center;
+  }
 
-    /* បន្ថែមស្ទីលឱ្យប៊ូតុងមើលទៅលេចធ្លោជាងមុន */
-    .btn-hero {
-        background-color: #7fad39;
-        color: white !important;
-        padding: 15px 40px;
-        border-radius: 50px;
-        font-weight: 700;
-        border: 2px solid transparent;
-        display: inline-block; /* ធានាថាវាមិនបាត់រូបរាង */
-        transition: all 0.3s ease;
-    }
+  .hero-content-box {
+    max-width: 620px;
+    padding: 2rem 0;
+    position: relative;
+    z-index: 2;
+  }
 
-    .btn-hero:hover {
-        background-color: white;
-        color: #7fad39 !important;
-        border: 2px solid #7fad39;
-        transform: scale(1.1) !important; /* ពេលដាក់ Mouse លើ វារីកធំបន្តិច */
-    }
+  /* STAGGERED ENTRANCE ANIMATIONS FOR SLIDE CONTENT */
+  .carousel-item.active .slide-badge {
+    animation: slideFadeDown 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  }
+  .carousel-item.active .hero-slide-title {
+    animation: slideFadeRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+  }
+  .carousel-item.active .hero-slide-desc {
+    animation: slideFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+  }
+  .carousel-item.active .slide-btn-group {
+    animation: slideFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+  }
+
+  @keyframes slideFadeDown {
+    0% { opacity: 0; transform: translateY(-30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideFadeRight {
+    0% { opacity: 0; transform: translateX(-40px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideFadeUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-slide-title {
+    color: var(--slide-title-color, #ffffff) !important;
+    text-shadow: 0 4px 15px var(--slide-shadow-color, rgba(0,0,0,0.8));
+    line-height: 1.15;
+  }
+  .hero-slide-desc {
+    color: var(--slide-desc-color, #e2e8f0) !important;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  }
+
+  /* CTA SHIMMER BUTTON */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4) !important;
+    transition: all 0.3s ease !important;
+    border: none !important;
+  }
+  .btn-shimmer:hover {
+    transform: translateY(-2px) scale(1.03) !important;
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.6) !important;
+  }
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(60deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+    transform: rotate(30deg);
+    animation: shimmerPass 3s infinite;
+  }
+  @keyframes shimmerPass {
+    0% { transform: translateX(-100%) rotate(30deg); }
+    100% { transform: translateX(100%) rotate(30deg); }
+  }
+
+  .hero-indicators [data-bs-target] {
+    width: 28px;
+    height: 8px;
+    border-radius: 4px;
+    margin: 0 4px;
+    border: none;
+    transition: all 0.4s ease;
+    opacity: 0.4;
+    background-color: #ffffff;
+  }
+  .hero-indicators .active {
+    width: 52px;
+    background-color: #10b981;
+    opacity: 1;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+  }
+  .hero-nav-btn {
+    width: 50px;
+    height: 50px;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0 15px;
+    transition: all 0.3s ease;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    opacity: 0.85;
+  }
+  .hero-nav-btn:hover {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+    opacity: 1;
+    transform: translateY(-50%) scale(1.12);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+  }
 </style>
 
-<div id="modernHero" class="carousel slide hero-slider carousel-fade" data-ride="carousel">
+<div id="modernHero" class="carousel slide hero-slider-wrap carousel-fade m-0" data-bs-ride="carousel" data-bs-interval="4500">
+    
+    {% if slides %}
+    <div class="carousel-indicators hero-indicators mb-3">
+        {% for slide in slides %}
+        <button type="button" data-bs-target="#modernHero" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %} aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="carousel-inner">
         {% for slide in slides %}
-        <div class="carousel-item {% if forloop.first %}active{% endif %}" style="background-image: url('{{ slide.image.url }}');">
-            <div class="container h-100">
-                <div class="carousel-caption d-none d-md-block">
-                    <span class="slider-sub">PNK Mobile Promotion</span>
-                    <h2 class="slider-title text-uppercase">{{ slide.title }}</h2>
-                    <a href="{% if slide.link %}{{ slide.link }}{% else %}{% url 'shop' %}{% endif %}" class="btn btn-hero">
-                        ទិញឥឡូវនេះ <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <div class="hero-slide-bg" style="background-image: url('{{ slide.image.url }}');">
+                <div class="hero-slide-overlay">
+                    <div class="container px-4 px-md-5">
+                        <div class="hero-content-box text-start" style="--slide-title-color: {{ slide.title_color|default:'#ffffff' }}; --slide-desc-color: {{ slide.desc_color|default:'#e2e8f0' }}; --slide-shadow-color: {{ slide.shadow_color|default:'rgba(0,0,0,0.8)' }};">
+                            
+                            <span class="badge bg-success rounded-pill px-3 py-2 fs-6 mb-3 fw-bold shadow-sm d-inline-flex align-items-center gap-1.5 slide-badge">
+                                <i class="bi bi-stars text-warning fs-5"></i> PROMOTION ពិសេសថ្ងៃនេះ
+                            </span>
+            
+                            <h1 class="display-4 fw-bold mb-3 text-uppercase hero-slide-title">
+                                {{ slide.title }}
+                            </h1>
+
+                            {% if slide.description %}
+                            <p class="fs-5 mb-4 hero-slide-desc lh-base">
+                                {{ slide.description }}
+                            </p>
+                            {% endif %}
+            
+                            <div class="slide-btn-group">
+                              <a href="{% if slide.link %}{{ slide.link }}{% else %}{% url 'shop:shop' %}{% endif %}" class="btn btn-success btn-lg rounded-pill px-4 py-2.5 btn-shimmer fw-bold d-inline-flex align-items-center gap-2">
+                                  <span>ទិញឥឡូវនេះ (Shop Now)</span> <i class="bi bi-arrow-right fs-5"></i>
+                              </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="carousel-item active">
+            <div class="hero-slide-bg" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+                <div class="hero-slide-overlay">
+                    <div class="container px-4 px-md-5">
+                        <div class="hero-content-box text-start">
+                            <span class="badge bg-success rounded-pill px-3 py-2 fs-6 mb-3 fw-bold d-inline-flex align-items-center gap-1.5 slide-badge">
+                                <i class="bi bi-phone-vibrate text-warning fs-5"></i> PNK SHOP
+                            </span>
+                            <h1 class="display-4 fw-bold text-white mb-3 hero-slide-title">ស្វាគមន៍មកកាន់ PNK SHOP</h1>
+                            <p class="fs-5 text-white-50 mb-4 hero-slide-desc">មជ្ឈមណ្ឌលលក់ទូរស័ព្ទដៃទំនើប គុណភាពខ្ពស់ តម្លៃសមរម្យ និងមានការធានាត្រឹមត្រូវ ១០០%</p>
+                            <div class="slide-btn-group">
+                              <a href="{% url 'shop:shop' %}" class="btn btn-success btn-lg rounded-pill px-4 py-2.5 btn-shimmer fw-bold d-inline-flex align-items-center gap-2">
+                                  <span>ទិញទំនិញឥឡូវនេះ</span> <i class="bi bi-arrow-right fs-5"></i>
+                              </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- ប៊ូតុងបញ្ជា -->
-    <a class="carousel-control-prev" href="#modernHero" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-    </a>
-    <a class="carousel-control-next" href="#modernHero" role="button" data-slide="next">
-        <span class="carousel-control-next-icon"></span>
-    </a>
+    {% if slides %}
+    <button class="carousel-control-prev hero-nav-btn" type="button" data-bs-target="#modernHero" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next hero-nav-btn" type="button" data-bs-target="#modernHero" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+    {% endif %}
 </div>

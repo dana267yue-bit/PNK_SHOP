@@ -1,0 +1,174 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %} 
+{% load static %}
+
+{% block title %}បង្ហោះផលិតផលថ្មី - PNK MOBILE{% endblock %}
+
+{% block dashboard_content %}
+<style>
+    /* ==========================================
+       THEME ADAPTIVE FOR UPLOAD PRODUCT PAGE
+    ========================================== */
+    .upload-title {
+        color: var(--text) !important;
+        font-family: 'Kantomruy Pro', sans-serif;
+    }
+
+    .upload-card {
+        background-color: var(--bg) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 15px;
+    }
+
+    /* ស្ទីលស្លាកអក្សរ (Label) */
+    .form-label-theme {
+        font-weight: 700;
+        color: var(--text) !important;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    /* ស្ទីលប្រអប់ Inputs / Select / Textarea */
+    .form-control-theme {
+        background-color: var(--bg-soft) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 10px !important;
+        font-size: 15px;
+        transition: all 0.2s ease;
+    }
+
+    .form-control-theme:focus {
+        background-color: var(--bg-soft) !important;
+        color: var(--text) !important;
+        border-color: #7fad39 !important;
+        box-shadow: 0 0 0 0.2rem rgba(127, 173, 57, 0.15) !important;
+    }
+
+    .form-control-theme::placeholder {
+        color: var(--text-light) !important;
+        opacity: 0.6;
+    }
+
+    /* ស្ទីលប្រអប់ជ្រើសរើសរូបភាព */
+    .image-upload-box {
+        background-color: var(--bg-soft) !important;
+        border: 2px dashed var(--border) !important;
+        border-radius: 15px;
+        min-height: 230px;
+        transition: all 0.3s ease;
+    }
+
+    .image-upload-box:hover {
+        border-color: #7fad39 !important;
+    }
+
+    .text-muted-theme {
+        color: var(--text-light) !important;
+    }
+
+    /* បន្ទាត់ខណ្ឌចែកកូឡោន (Desktop Only) */
+    @media (min-width: 992px) {
+        .sidebar-divider {
+            border-left: 1px solid var(--border) !important;
+        }
+    }
+
+    /* បន្ទាត់ផ្តេក HR */
+    .hr-theme {
+        border-top: 1px solid var(--border) !important;
+    }
+
+    /* ប៊ូតុងសម្អាត (Reset Button) */
+    .btn-reset-theme {
+        background-color: var(--bg-soft) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 10px;
+        transition: 0.2s;
+    }
+
+    .btn-reset-theme:hover {
+        background-color: var(--border) !important;
+        color: var(--text) !important;
+    }
+</style>
+
+<div class="container-fluid p-0">
+    <!-- HEADER -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h4 class="mb-0 font-weight-bold upload-title">
+            <i class="fa-solid fa-cloud-arrow-up text-success mr-2"></i>បង្ហោះផលិតផលថ្មី
+        </h4>
+        <nav aria-label="shop">
+            <ol class="shop bg-transparent p-0 m-0" style="font-size: 14px;">
+                <li class="shop-item"><a href="{% url 'accounts:dashboard' %}" class="text-success" style="font-weight: 500;">Dashboard</a></li>
+                <li class="shop-item active text-muted-theme" aria-current="page">បង្ហោះផលិតផល</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="card border-0 shadow-sm upload-card">
+        <div class="card-body p-4">
+            <form action="#" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <!-- LEFT COLUMN: PRODUCT INFO -->
+                    <div class="col-lg-8">
+                        <div class="form-group mb-4">
+                            <label class="form-label-theme">ឈ្មោះទូរស័ព្ទ / ផលិតផល</label>
+                            <input type="text" class="form-control form-control-lg form-control-theme" placeholder="ឧទាហរណ៍៖ iPhone 15 Pro Max">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-4">
+                                <label class="form-label-theme">តម្លៃលក់ ($)</label>
+                                <input type="number" class="form-control form-control-lg form-control-theme" placeholder="0.00" step="0.01">
+                            </div>
+                            <div class="col-md-6 form-group mb-4">
+                                <label class="form-label-theme">ម៉ាកយីហោ (Brand)</label>
+                                <select class="form-control form-control-lg form-control-theme">
+                                    <option value="" style="background: var(--bg); color: var(--text);">-- ជ្រើសរើសម៉ាក --</option>
+                                    <option value="apple" style="background: var(--bg); color: var(--text);">Apple</option>
+                                    <option value="samsung" style="background: var(--bg); color: var(--text);">Samsung</option>
+                                    <option value="oppo" style="background: var(--bg); color: var(--text);">OPPO</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label-theme">ការពិពណ៌នាផលិតផល</label>
+                            <textarea class="form-control form-control-theme" rows="5" placeholder="រៀបរាប់ពីលក្ខណៈសម្បត្តិរបស់ទូរស័ព្ទ..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: IMAGE UPLOAD -->
+                    <div class="col-lg-4 sidebar-divider">
+                        <div class="form-group mb-4 text-center">
+                            <label class="form-label-theme d-block text-left">រូបភាពផលិតផល</label>
+                            <div class="d-flex flex-column align-items-center justify-content-center p-5 image-upload-box">
+                                <i class="fa-solid fa-images text-muted-theme fa-3x mb-3" style="opacity: 0.5;"></i>
+                                <span class="text-muted-theme d-block small mb-3">សូមជ្រើសរើសរូបភាពទូរស័ព្ទ</span>
+                                <input type="file" class="form-control-file d-none" id="productImage">
+                                <button type="button" class="btn btn-outline-success btn-sm font-weight-bold" onclick="document.getElementById('productImage').click();" style="border-radius: 8px;">
+                                    <i class="fa-solid fa-plus mr-1"></i>ជ្រើសរើសរូបភាព
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="hr-theme my-4">
+                
+                <!-- ACTION BUTTONS -->
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="reset" class="btn btn-reset-theme font-weight-bold px-4 py-2 mr-2">សម្អាត</button>
+                    <button type="submit" class="btn btn-success font-weight-bold px-5 py-2" style="border-radius: 10px; background-color: #7fad39; border: none; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                        <i class="fa-solid fa-paper-plane mr-2"></i>បង្ហោះចេញផ្សាយ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

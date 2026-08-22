@@ -1,0 +1,15 @@
+{
+  "include": ["."],
+  "extraPaths": [
+    ".",
+    "shop",
+    "accounts",
+    "core"
+  ],
+  "pythonVersion": "3.13",
+  "pythonPlatform": "Windows",
+  "typeCheckingMode": "off",
+  "useLibraryCodeForTypes": true,
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none"
+}

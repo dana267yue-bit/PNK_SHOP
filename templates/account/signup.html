@@ -1,0 +1,435 @@
+{% load static %}
+<!doctype html>
+<html lang="km">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>បង្កើតគណនីថ្មី | PNK SHOP</title>
+
+    {% include 'accounts/includes/CssStyles.html' %}
+
+    <style>
+      :root {
+        --pnk-primary: #16a34a;
+        --pnk-primary-dark: #15803d;
+        --pnk-primary-light: #dcfce7;
+        --pnk-accent: #22c55e;
+      }
+
+      html, body {
+        height: 100vh;
+        max-height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: 'Kantumruy Pro', sans-serif;
+        background: radial-gradient(circle at 15% 15%, #0d3822 0%, #081e14 45%, #040d08 100%);
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Animated mesh background blobs */
+      .blob-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(70px);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .blob-1 {
+        width: 380px;
+        height: 380px;
+        background: radial-gradient(circle, rgba(34, 197, 94, 0.28) 0%, rgba(0, 0, 0, 0) 70%);
+        top: -100px;
+        left: -100px;
+        animation: floatMesh 8s ease-in-out infinite alternate;
+      }
+
+      .blob-2 {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(0, 0, 0, 0) 70%);
+        bottom: -120px;
+        right: -120px;
+        animation: floatMesh 10s ease-in-out infinite alternate-reverse;
+      }
+
+      @keyframes floatMesh {
+        0% { transform: scale(1) translate(0, 0); opacity: 0.6; }
+        50% { transform: scale(1.15) translate(25px, -15px); opacity: 0.85; }
+        100% { transform: scale(1.05) translate(-15px, 20px); opacity: 0.7; }
+      }
+
+      .signup-container {
+        max-width: 750px;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+        margin: auto;
+      }
+
+      @media (max-height: 640px) {
+        .signup-container {
+          transform: scale(0.9);
+          transform-origin: center center;
+        }
+      }
+
+      .main-glass-card {
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 20px;
+        box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34, 197, 94, 0.12);
+        overflow: hidden;
+      }
+
+      .hero-section {
+        background: linear-gradient(150deg, #0f3924 0%, #0a2517 55%, #05160d 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .tech-grid-pattern {
+        position: absolute;
+        inset: 0;
+        opacity: 0.05;
+        background-image: linear-gradient(#22c55e 1px, transparent 1px), linear-gradient(90deg, #22c55e 1px, transparent 1px);
+        background-size: 30px 30px;
+        pointer-events: none;
+      }
+
+      .logo-wrapper {
+        position: relative;
+        display: inline-block;
+      }
+
+      .logo-ring-pulse {
+        position: absolute;
+        inset: -6px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #22c55e, #10b981, #059669);
+        filter: blur(10px);
+        opacity: 0.7;
+        animation: pulseRing 3.5s ease-in-out infinite alternate;
+      }
+
+      @keyframes pulseRing {
+        0% { opacity: 0.5; transform: scale(0.96); filter: blur(8px); }
+        100% { opacity: 0.9; transform: scale(1.04); filter: blur(14px); }
+      }
+
+      .logo-img {
+        width: 86px;
+        height: 86px;
+        object-fit: cover;
+        border-radius: 20px;
+        position: relative;
+        border: 2.5px solid rgba(255, 255, 255, 0.35);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
+
+      .custom-input-box {
+        position: relative;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 10px;
+        background: #f8fafc;
+        transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+      }
+
+      .custom-input-box:focus-within {
+        border-color: var(--pnk-primary);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.14);
+      }
+
+      .custom-input-box .input-icon {
+        color: #64748b;
+        font-size: 0.95rem;
+        padding-left: 12px;
+        transition: color 0.25s ease;
+      }
+
+      .custom-input-box:focus-within .input-icon {
+        color: var(--pnk-primary);
+      }
+
+      .custom-input-box .form-control {
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        padding: 7px 10px 7px 6px;
+        font-size: 0.84rem;
+        color: #0f172a;
+        font-weight: 500;
+      }
+
+      .custom-input-box .form-control::placeholder {
+        color: #94a3b8;
+      }
+
+      .toggle-pass-btn {
+        background: transparent;
+        border: none;
+        color: #64748b;
+        padding-right: 12px;
+        font-size: 0.95rem;
+        transition: color 0.2s ease;
+      }
+
+      .toggle-pass-btn:hover {
+        color: var(--pnk-primary);
+      }
+
+      .btn-pnk-gradient {
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 50%, #166534 100%);
+        background-size: 200% auto;
+        border: none;
+        color: #ffffff;
+        font-weight: 700;
+        padding: 9px 12px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        box-shadow: 0 5px 14px -3px rgba(22, 163, 74, 0.4);
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-pnk-gradient:hover {
+        background-position: right center;
+        box-shadow: 0 8px 18px -3px rgba(34, 197, 94, 0.5);
+        transform: translateY(-1px);
+        color: #ffffff;
+      }
+
+      .back-home-pill {
+        color: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 30px;
+        padding: 4px 12px;
+        font-size: 0.78rem;
+        text-decoration: none;
+        transition: all 0.25s ease;
+      }
+
+      .back-home-pill:hover {
+        color: #ffffff;
+        background: rgba(34, 197, 94, 0.35);
+        border-color: rgba(34, 197, 94, 0.6);
+        transform: translateX(-2px);
+      }
+    </style>
+  </head>
+  <body class="d-flex align-items-center justify-content-center position-relative h-100 p-0 m-0 overflow-hidden">
+    
+    <!-- Ambient Background Blobs -->
+    <div class="blob-glow blob-1"></div>
+    <div class="blob-glow blob-2"></div>
+
+    <div class="container px-3 px-sm-4 signup-container">
+      <div class="main-glass-card animate__animated animate__fadeInUp">
+        <div class="row g-0">
+          
+          <!-- LEFT HERO PANEL -->
+          <div class="col-lg-5 hero-section text-white p-3.5 p-md-4 d-flex flex-column justify-content-between position-relative text-center">
+            <div class="tech-grid-pattern"></div>
+            
+            <!-- Top bar -->
+            <div class="d-flex justify-content-between align-items-center mb-3 position-relative z-1">
+              <a href="{% url 'core:home' %}" class="back-home-pill d-inline-flex align-items-center gap-1.5">
+                <i class="bi bi-arrow-left"></i>
+                <span>ទំព័រដើម</span>
+              </a>
+              <span class="badge bg-success bg-opacity-25 border border-success border-opacity-40 text-success-light px-2.5 py-1 rounded-pill x-small" style="font-size: 0.75rem;">
+                <i class="bi bi-patch-check-fill me-1"></i> PNK SHOP
+              </span>
+            </div>
+
+            <!-- Hero Center -->
+            <div class="my-auto py-3 text-center position-relative z-1">
+              <div class="mb-2.5 d-inline-block text-center">
+                <div class="logo-wrapper">
+                  <div class="logo-ring-pulse"></div>
+                  <img src="{% if store_settings.logo %}{{ store_settings.logo.url }}{% else %}{% static 'img/photologo.JPG' %}{% endif %}" alt="{{ store_settings.store_name|default:'PNK Shop Logo' }}" class="logo-img" />
+                </div>
+              </div>
+
+              <h4 class="fw-bold mb-1 text-white">PNK SHOP</h4>
+              <p class="text-success-light opacity-90 small mb-0 fw-normal leading-relaxed mx-auto" style="max-width: 280px; font-size: 0.82rem;">
+                ហាងលក់ទូរសព្ទដៃទំនើប និងឯកទេសជួសជុលទូរសព្ទដៃគ្រប់ប្រភេទ
+              </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="pt-2.5 border-top border-white border-opacity-10 d-flex justify-content-between align-items-center position-relative z-1" style="font-size: 0.78rem;">
+              <small class="text-white-50">© 2026 PNK SHOP</small>
+              <small class="text-white-50"><i class="bi bi-heart-fill text-danger me-1"></i> សូមស្វាគមន៍</small>
+            </div>
+
+          </div>
+
+          <!-- RIGHT FORM PANEL -->
+          <div class="col-lg-7 p-3.5 p-sm-4 d-flex flex-column justify-content-center bg-white">
+            
+            <div class="mb-2.5">
+              <h5 class="fw-bold text-dark mb-2">បង្កើតគណនីថ្មី</h5>
+            </div>
+
+            <!-- SIGNUP FORM -->
+            <form id="signupForm" method="POST" class="needs-validation">
+              {% csrf_token %}
+
+              <!-- Username -->
+              <div class="mb-2">
+                <label class="form-label text-secondary fw-semibold x-small mb-1" style="font-size: 0.78rem;">ឈ្មោះអ្នកប្រើប្រាស់</label>
+                <div class="custom-input-box d-flex align-items-center">
+                  <i class="bi bi-person input-icon"></i>
+                  <input type="text" name="username" class="form-control" placeholder="បញ្ចូល Username..." required />
+                </div>
+              </div>
+
+              <!-- First & Last Name -->
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label text-secondary fw-semibold x-small mb-1" style="font-size: 0.78rem;">នាមខ្លួន</label>
+                  <div class="custom-input-box d-flex align-items-center ps-2">
+                    <input type="text" name="first_name" class="form-control" placeholder="First Name..." required />
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label class="form-label text-secondary fw-semibold x-small mb-1" style="font-size: 0.78rem;">គោត្តនាម</label>
+                  <div class="custom-input-box d-flex align-items-center ps-2">
+                    <input type="text" name="last_name" class="form-control" placeholder="Last Name..." required />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email & Phone -->
+              <div class="row g-2 mb-2">
+                <div class="col-md-6">
+                  <label class="form-label text-secondary fw-semibold x-small mb-1" style="font-size: 0.78rem;">អ៊ីមែល</label>
+                  <div class="custom-input-box d-flex align-items-center">
+                    <i class="bi bi-envelope input-icon"></i>
+                    <input type="email" name="email" class="form-control" placeholder="example@email.com" required />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-secondary fw-semibold x-small mb-1" style="font-size: 0.78rem;">លេខទូរស័ព្ទ</label>
+                  <div class="custom-input-box d-flex align-items-center">
+                    <i class="bi bi-telephone input-icon"></i>
+                    <input type="text" name="phone" class="form-control" placeholder="012 345 678" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Passwords -->
+              <div class="row g-2 mb-2.5">
+                <div class="col-md-6">
+                  <label class="form-label text-secondary fw-semibold x-small mb-1" style="font-size: 0.78rem;">លេខសម្ងាត់</label>
+                  <div class="custom-input-box d-flex align-items-center">
+                    <i class="bi bi-lock input-icon"></i>
+                    <input type="password" name="password" id="pass1" class="form-control" placeholder="••••••••" required />
+                    <button class="toggle-pass-btn" type="button" onclick="togglePass('pass1', 'eye1')">
+                      <i class="bi bi-eye" id="eye1"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-secondary fw-semibold x-small mb-1" style="font-size: 0.78rem;">បញ្ជាក់លេខសម្ងាត់</label>
+                  <div class="custom-input-box d-flex align-items-center">
+                    <i class="bi bi-shield-lock input-icon"></i>
+                    <input type="password" name="confirm_password" id="pass2" class="form-control" placeholder="••••••••" required />
+                    <button class="toggle-pass-btn" type="button" onclick="togglePass('pass2', 'eye2')">
+                      <i class="bi bi-eye" id="eye2"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit button -->
+              <button type="submit" class="btn btn-pnk-gradient w-100 d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-person-plus-fill fs-6"></i>
+                <span>បង្កើតគណនី</span>
+              </button>
+            </form>
+
+            <!-- LOGIN LINK -->
+            <div class="text-center mt-3 text-muted small" style="font-size: 0.78rem;">
+              មានគណនីរួចហើយមែនទេ?
+              <a href="{% url 'account_login' %}" class="text-success fw-bold text-decoration-none ms-1">
+                ចូលប្រើប្រាស់ <i class="bi bi-arrow-right small"></i>
+              </a>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function togglePass(inputId, eyeId) {
+        const input = document.getElementById(inputId);
+        const eye = document.getElementById(eyeId);
+        if (input.type === "password") {
+          input.type = "text";
+          eye.className = "bi bi-eye-slash";
+        } else {
+          input.type = "password";
+          eye.className = "bi bi-eye";
+        }
+      }
+
+      // SIGNUP AJAX
+      document.getElementById("signupForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch("{% url 'accounts:signup' %}", {
+          method: "POST",
+          headers: { "X-CSRFToken": "{{ csrf_token }}" },
+          body: formData,
+        })
+        .then(response => response.json().then(data => ({ status: response.status, body: data })))
+        .then(res => {
+          if (res.body.success) {
+            if (typeof showToast === 'function') {
+              showToast(res.body.message || "ចុះឈ្មោះជោគជ័យ! សូមស្វាគមន៍", false, "ចុះឈ្មោះជោគជ័យ");
+            }
+            setTimeout(() => {
+              window.location.href = "{% url 'core:home' %}";
+            }, 1200);
+          } else {
+            let errorMsg = "";
+            for (const key in res.body.errors) {
+              errorMsg += `${res.body.errors[key].join(", ")} `;
+            }
+            if (typeof showToast === 'function') {
+              showToast(errorMsg || "សូមពិនិត្យព័ត៌មានម្តងទៀត", true, "បរាជ័យ!");
+            } else if (typeof Swal !== 'undefined') {
+              Swal.fire({ icon: "error", title: "បរាជ័យ!", text: errorMsg, confirmButtonColor: "#16a34a" });
+            }
+          }
+        })
+        .catch(err => {
+          if (typeof showToast === 'function') {
+            showToast("សូមព្យាយាមម្តងទៀត", true, "មានបញ្ហា!");
+          } else if (typeof Swal !== 'undefined') {
+            Swal.fire({ icon: "error", title: "មានបញ្ហា!", text: "សូមព្យាយាមម្តងទៀត", confirmButtonColor: "#16a34a" });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+
+

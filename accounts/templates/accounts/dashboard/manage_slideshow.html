@@ -1,0 +1,505 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block header_title %}គ្រប់គ្រងរូបភាព Slideshow {% endblock %}
+
+{% block dashboard_content %}
+<style>
+  /* KPI STAT CARDS */
+  .slide-kpi-card {
+    background-color: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide-kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+  }
+
+  .slide-kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3.5px;
+  }
+
+  .kpi-slides::before { background: linear-gradient(90deg, #198754, #146c43); }
+  .kpi-links::before { background: linear-gradient(90deg, #0d6efd, #0b5ed7); }
+  .kpi-colors::before { background: linear-gradient(90deg, #ffc107, #fd7e14); }
+  .kpi-status::before { background: linear-gradient(90deg, #6f42c1, #59359a); }
+
+  .kpi-icon-box {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  /* DATA CONTAINER */
+  .slide-card-container {
+    background-color: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+  }
+
+  /* TABLE AESTHETICS */
+  .table-custom-slides thead th {
+    background-color: var(--bg-soft, #f8fafc);
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 14px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .table-custom-slides tbody td {
+    padding: 14px;
+    vertical-align: middle;
+  }
+
+  .hover-row {
+    transition: background-color 0.15s ease;
+  }
+
+  .hover-row:hover {
+    background-color: rgba(241, 245, 249, 0.6) !important;
+  }
+
+  .action-btn-circle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .action-btn-circle:hover {
+    transform: scale(1.1);
+  }
+
+  /* BANNER THUMBNAIL CONTAINER */
+  .banner-thumb-container {
+    position: relative;
+    width: 180px;
+    height: 95px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    cursor: pointer;
+    background-color: #f8fafc;
+  }
+
+  .banner-thumb-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .banner-thumb-container:hover img {
+    transform: scale(1.05);
+  }
+
+  .banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .banner-thumb-container:hover .banner-overlay {
+    opacity: 1;
+  }
+
+  .color-swatch-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    display: inline-block;
+  }
+</style>
+
+<div class="container-fluid p-0">
+
+  <!-- 1. TOP HEADER & BREADCRUMB -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2" data-aos="fade-down">
+    <div>
+      <h4 class="fw-bold text-dark mb-0" style="letter-spacing: -0.3px; font-size: 1.25rem;">
+        គ្រប់គ្រងរូបភាព Slideshow 
+      </h4>
+      <p class="text-muted small mb-0" style="font-size: 0.8rem;">គ្រប់គ្រងស្លាយរូបភាពប្រូម៉ូសិន កែប្រែព័ត៌មាន និងកំណត់ពណ៌អត្ថបទលើ Banner</p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-success px-3 rounded-3 d-flex align-items-center gap-1.5 fw-semibold text-white shadow-sm" data-bs-toggle="modal" data-bs-target="#addSlideshowModal" style="background: linear-gradient(135deg, #198754, #146c43); height: 38px; font-size: 0.82rem; border: none;">
+        <i class="bi bi-plus-circle-fill fs-6"></i> បន្ថែមស្លាយថ្មី 
+      </button>
+      
+      <button type="button" class="btn btn-light border rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px;" onclick="window.location.reload();" title="Refresh">
+        <i class="bi bi-arrow-clockwise fs-5 text-dark"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. SLIDESHOW DATA TABLE CONTAINER -->
+  <div class="slide-card-container overflow-hidden mb-4" data-aos="fade-up">
+    <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="background-color: var(--bg-card, #ffffff);">
+      <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+        <i class="bi bi-images text-success fs-5"></i> បញ្ជីស្លាយរូបភាព 
+      </h6>
+      <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill font-monospace" style="font-size: 11.5px;">
+        {{ slides|length }} Slide Banners
+      </span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover table-custom-slides align-middle mb-0" style="width: 100%;">
+        <thead>
+          <tr>
+            <th class="text-nowrap ps-3" style="width: 210px;">រូបភាពស្លាយ </th>
+            <th class="text-nowrap" style="width: 280px;">ព័ត៌មានចំណងជើង </th>
+            <th class="text-nowrap" style="width: 180px;">តំណភ្ជាប់ </th>
+            <th class="text-center text-nowrap" style="width: 140px;">ពណ៌អត្ថបទ </th>
+            <th class="text-center text-nowrap pe-3" style="width: 120px;">សកម្មភាព</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for slide in slides %}
+          <tr class="hover-row">
+            <!-- SLIDE IMAGE THUMBNAIL -->
+            <td class="ps-3">
+              {% if slide.image %}
+                <div class="banner-thumb-container view-image" data-img="{{ slide.image.url }}" title="ចុចដើម្បីមើលរូបធំ">
+                  <img src="{{ slide.image.url }}" alt="{{ slide.title }}">
+                  <div class="banner-overlay">
+                    <i class="bi bi-zoom-in text-white fs-4"></i>
+                  </div>
+                </div>
+              {% else %}
+                <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border" style="width: 180px; height: 95px;">
+                  <i class="bi bi-image fs-3"></i>
+                </div>
+              {% endif %}
+            </td>
+
+            <!-- TITLE & DESCRIPTION -->
+            <td>
+              <div class="pe-2">
+                <h6 class="fw-bold text-dark mb-1" style="font-size: 14px;">{{ slide.title }}</h6>
+                <p class="text-muted small mb-0 text-truncate-2" style="font-size: 11.5px; max-width: 280px; line-height: 1.4;">
+                  {{ slide.description|default:"គ្មានការពិពណ៌នា" }}
+                </p>
+              </div>
+            </td>
+
+            <!-- URL LINK -->
+            <td>
+              {% if slide.link %}
+                <a href="{{ slide.link }}" target="_blank" class="badge bg-primary-subtle text-primary border border-primary-subtle text-decoration-none px-2.5 py-1.5 rounded-pill d-inline-flex align-items-center gap-1.5" style="max-width: 170px;" title="{{ slide.link }}">
+                  <i class="bi bi-link-45deg fs-6"></i>
+                  <span class="text-truncate" style="max-width: 130px;">{{ slide.link }}</span>
+                </a>
+              {% else %}
+                <span class="badge bg-light text-secondary border font-monospace px-2 py-1" style="font-size: 10px;">គ្មាន Link</span>
+              {% endif %}
+            </td>
+
+            <!-- COLOR SWATCHES -->
+            <td class="text-center">
+              <div class="d-flex align-items-center justify-content-center gap-2">
+                <span class="color-swatch-badge color-swatch" data-color="{{ slide.title_color }}" title="ពណ៌ចំណងជើង: {{ slide.title_color }}"></span>
+                <span class="color-swatch-badge color-swatch" data-color="{{ slide.desc_color }}" title="ពណ៌ពិពណ៌នា: {{ slide.desc_color }}"></span>
+                <span class="color-swatch-badge color-swatch" data-color="{{ slide.shadow_color }}" title="ពណ៌ស្រមោល: {{ slide.shadow_color }}"></span>
+              </div>
+              <small class="text-muted d-block mt-1 font-monospace" style="font-size: 9.5px;">Title / Desc / Shadow</small>
+            </td>
+
+            <!-- ACTIONS -->
+            <td class="text-center pe-3">
+              <div class="d-flex justify-content-center align-items-center gap-2">
+                <!-- EDIT BUTTON -->
+                <button type="button" class="btn btn-light action-btn-circle text-success shadow-xs" data-bs-toggle="modal" data-bs-target="#editSlideModal{{ slide.pk }}" title="កែប្រែស្លាយ">
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+                
+                <!-- DELETE LINK -->
+                <a href="{% url 'accounts:delete_slideshow' slide.pk %}" class="btn btn-light action-btn-circle text-danger shadow-xs" onclick="return confirm('តើអ្នកពិតជាចង់លុបស្លាយនេះមែនទេ?');" title="លុបស្លាយ">
+                  <i class="bi bi-trash-fill"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-muted py-5">
+              <i class="bi bi-images fs-1 d-block mb-2 text-secondary opacity-50"></i>
+              <span class="fw-semibold">មិនទាន់មានរូបភាព Slideshow នៅក្នុងប្រព័ន្ធនៅឡើយ។</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- 4. EDIT SLIDESHOW MODALS -->
+{% for slide in slides %}
+<div class="modal fade" id="editSlideModal{{ slide.pk }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow-lg">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
+          <i class="bi bi-pencil-square text-success fs-4"></i> កែប្រែ៖ {{ slide.title }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'accounts:edit_slideshow' slide.pk %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label text-secondary fw-semibold small">ចំណងជើងស្លាយ  <span class="text-danger">*</span></label>
+              <input type="text" name="title" value="{{ slide.title }}" class="form-control rounded-3" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-secondary fw-semibold small">តំណភ្ជាប់ </label>
+              <input type="url" name="link" value="{{ slide.link|default:'' }}" class="form-control rounded-3" placeholder="https://...">
+            </div>
+            <div class="col-12">
+              <label class="form-label text-secondary fw-semibold small">ការពិពណ៌នាខ្លីៗ </label>
+              <textarea name="description" rows="3" class="form-control rounded-3" placeholder="ព័ត៌មានបន្ថែម...">{{ slide.description|default:'' }}</textarea>
+            </div>
+
+            <!-- COLOR SETTINGS -->
+            <div class="col-12">
+              <div class="p-3 rounded-3 bg-light border">
+                <label class="form-label text-dark fw-bold mb-3 small"><i class="bi bi-palette-fill text-success me-1"></i> កំណត់ពណ៌អត្ថបទ</label>
+                <div class="row g-3">
+                  <div class="col-4 text-center">
+                    <label class="form-label text-secondary small d-block mb-1">ពណ៌ចំណងជើង</label>
+                    <input type="color" name="title_color" value="{{ slide.title_color }}" class="form-control form-control-color border-0 mx-auto rounded-circle shadow-xs" style="width: 44px; height: 44px; cursor: pointer;">
+                  </div>
+                  <div class="col-4 text-center">
+                    <label class="form-label text-secondary small d-block mb-1">ពណ៌ពិពណ៌នា</label>
+                    <input type="color" name="desc_color" value="{{ slide.desc_color }}" class="form-control form-control-color border-0 mx-auto rounded-circle shadow-xs" style="width: 44px; height: 44px; cursor: pointer;">
+                  </div>
+                  <div class="col-4 text-center">
+                    <label class="form-label text-secondary small d-block mb-1">ពណ៌ស្រមោល</label>
+                    <input type="color" name="shadow_color" value="{{ slide.shadow_color }}" class="form-control form-control-color border-0 mx-auto rounded-circle shadow-xs" style="width: 44px; height: 44px; cursor: pointer;">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label text-secondary fw-semibold small">ជ្រើសរើសរូបភាពថ្មី </label>
+              <input type="file" name="image" class="form-control rounded-3" accept="image/*">
+              {% if slide.image %}
+              <small class="text-muted d-block mt-2">រូបភាពបច្ចុប្បន្ន៖ <a href="{{ slide.image.url }}" target="_blank" class="text-success fw-semibold">{{ slide.image.name }}</a></small>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">បោះបង់</button>
+          <button type="submit" class="btn btn-success rounded-3 px-4 fw-semibold" style="background: linear-gradient(135deg, #198754, #146c43);">រក្សាទុកការកែប្រែ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<!-- 5. ADD SLIDESHOW MODAL -->
+<div class="modal fade" id="addSlideshowModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow-lg">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
+          <i class="bi bi-plus-circle-fill text-success fs-4"></i> បន្ថែមរូបភាព Slideshow ថ្មី
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'accounts:add_slideshow' %}" method="POST" enctype="multipart/form-data" class="mb-0">
+        {% csrf_token %}
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label text-secondary fw-semibold small">ចំណងជើងស្លាយ  <span class="text-danger">*</span></label>
+              <input type="text" name="title" id="addTitleInput" class="form-control rounded-3" placeholder="បញ្ជាក់ចំណងជើងស្លាយ..." required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-secondary fw-semibold small">តំណភ្ជាប់</label>
+              <input type="url" name="link" class="form-control rounded-3" placeholder="ឧទាហរណ៍៖ https://...">
+            </div>
+            <div class="col-12">
+              <label class="form-label text-secondary fw-semibold small">ការពិពណ៌នាខ្លីៗ</label>
+              <textarea name="description" id="addDescInput" rows="3" class="form-control rounded-3" placeholder="ពណ៌នាខ្លីៗអំពីប្រូម៉ូសិន ឬស្លាយនេះ..."></textarea>
+            </div>
+
+            <!-- COLOR PALETTE SETUP -->
+            <div class="col-12">
+              <div class="p-3 rounded-3 bg-light border">
+                <label class="form-label text-dark fw-bold mb-3 small"><i class="bi bi-palette-fill text-success me-1"></i> កំណត់ពណ៌អត្ថបទ</label>
+                <div class="row g-3">
+                  <div class="col-4 text-center">
+                    <label class="form-label text-secondary small d-block mb-1">ពណ៌ចំណងជើង</label>
+                    <input type="color" name="title_color" id="addTitleColor" value="#ffffff" class="form-control form-control-color border-0 mx-auto rounded-circle shadow-xs" style="width: 44px; height: 44px; cursor: pointer;">
+                  </div>
+                  <div class="col-4 text-center">
+                    <label class="form-label text-secondary small d-block mb-1">ពណ៌ពិពណ៌នា</label>
+                    <input type="color" name="desc_color" id="addDescColor" value="#ffffff" class="form-control form-control-color border-0 mx-auto rounded-circle shadow-xs" style="width: 44px; height: 44px; cursor: pointer;">
+                  </div>
+                  <div class="col-4 text-center">
+                    <label class="form-label text-secondary small d-block mb-1">ពណ៌ស្រមោល</label>
+                    <input type="color" name="shadow_color" id="addShadowColor" value="#000000" class="form-control form-control-color border-0 mx-auto rounded-circle shadow-xs" style="width: 44px; height: 44px; cursor: pointer;">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LIVE TEXT PREVIEW CARD -->
+            <div class="col-12">
+              <label class="form-label text-secondary fw-semibold small"><i class="bi bi-eye-fill me-1 text-primary"></i>ការបង្ហាញសាកល្បងអត្ថបទ </label>
+              <div id="livePreviewBox" class="p-4 rounded-3 text-center border shadow-xs position-relative overflow-hidden" style="background-color: #212529; min-height: 120px; transition: background-color 0.3s ease;">
+                <h4 id="previewTitle" class="fw-bold m-0" style="color: #ffffff;">ចំណងជើងស្លាយ</h4>
+                <p id="previewDesc" class="m-0 mt-2" style="color: #ffffff; font-size: 14px;">នេះគឺជាការពិពណ៌នាខ្លីៗអំពីស្លាយរបស់អ្នក។</p>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label text-secondary fw-semibold small">ជ្រើសរើសរូបភាព  <span class="text-danger">*</span></label>
+              <input type="file" name="image" class="form-control rounded-3" accept="image/*" required>
+              <small class="text-muted d-block mt-2">អនុសាសន៍៖ ប្រើប្រាស់រូបភាពទទឹង (Ratio 16:9) ដើម្បីភាពស្រស់ស្អាតលើទំព័រមុខ។</small>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">បោះបង់</button>
+          <button type="submit" class="btn btn-success rounded-3 px-4 fw-semibold" style="background: linear-gradient(135deg, #198754, #146c43);">រក្សាទុកស្លាយ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 6. IMAGE LIGHTBOX MODAL -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 bg-transparent shadow-none">
+      <div class="modal-body p-0 text-center position-relative">
+        <button type="button" class="btn-close btn-close-white position-absolute" data-bs-dismiss="modal" aria-label="Close" style="right: 0; top: -40px;"></button>
+        <img src="" id="modalPreview" class="img-fluid rounded-4 border border-secondary shadow-lg bg-dark" style="max-height: 80vh; object-fit: contain;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT SCRIPTS -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // 0. Apply background colors to swatches dynamically
+    document.querySelectorAll(".color-swatch").forEach(swatch => {
+      const color = swatch.getAttribute("data-color");
+      if (color) {
+        swatch.style.backgroundColor = color;
+      }
+    });
+
+    // 1. Script for Widescreen Image Lightbox preview
+    const imageElements = document.querySelectorAll(".view-image");
+    const modalPreview = document.getElementById("modalPreview");
+    const imageModalEl = document.getElementById("imageModal");
+
+    if (imageModalEl && modalPreview) {
+      const imageModalObj = new bootstrap.Modal(imageModalEl);
+      imageElements.forEach((item) => {
+        item.addEventListener("click", function () {
+          const imgSrc = this.getAttribute("data-img");
+          modalPreview.src = imgSrc;
+          imageModalObj.show();
+        });
+      });
+    }
+
+    // 2. Script for Live Preview Setup (Add modal)
+    const addTitleInput = document.getElementById('addTitleInput');
+    const addDescInput = document.getElementById('addDescInput');
+    const addTitleColor = document.getElementById('addTitleColor');
+    const addDescColor = document.getElementById('addDescColor');
+    const addShadowColor = document.getElementById('addShadowColor');
+
+    const previewTitle = document.getElementById('previewTitle');
+    const previewDesc = document.getElementById('previewDesc');
+
+    function updatePreviewText() {
+      if (addTitleInput && previewTitle) {
+        previewTitle.textContent = addTitleInput.value.trim() !== "" ? addTitleInput.value : "ចំណងជើងស្លាយ";
+      }
+      if (addDescInput && previewDesc) {
+        previewDesc.textContent = addDescInput.value.trim() !== "" ? addDescInput.value : "នេះគឺជាការពិពណ៌នាខ្លីៗអំពីស្លាយរបស់អ្នក។";
+      }
+    }
+
+    function updatePreviewColors() {
+      if (previewTitle && addTitleColor) {
+        previewTitle.style.color = addTitleColor.value;
+      }
+      if (previewDesc && addDescColor) {
+        previewDesc.style.color = addDescColor.value;
+      }
+      if (addShadowColor) {
+        const shadow = addShadowColor.value;
+        if (previewTitle) {
+          previewTitle.style.textShadow = `2px 2px 8px ${shadow}`;
+        }
+        if (previewDesc) {
+          previewDesc.style.textShadow = `1px 1px 4px ${shadow}`;
+        }
+      }
+    }
+
+    if (addTitleInput) addTitleInput.addEventListener('input', updatePreviewText);
+    if (addDescInput) addDescInput.addEventListener('input', updatePreviewText);
+
+    [addTitleColor, addDescColor, addShadowColor].forEach(colorInput => {
+      if (colorInput) {
+        colorInput.addEventListener('input', updatePreviewColors);
+      }
+    });
+
+    updatePreviewText();
+    updatePreviewColors();
+  });
+</script>
+{% endblock %}

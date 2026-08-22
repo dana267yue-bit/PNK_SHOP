@@ -1,0 +1,55 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}PNK Mobile Shop{% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    {% include 'accounts/includes/CssStyles.html' %}
+
+    <style>
+        :root {
+            --primary:#7fad39;
+            --bg:#fff;
+            --text:#1e293b;
+        }
+
+        [data-theme="dark"] {
+            --bg:#0f172a;
+            --text:#f8fafc;
+        }
+
+        body{
+            font-family:'Kantumruy Pro',sans-serif;
+            background:var(--bg);
+            color:var(--text);
+        }
+    </style>
+
+    <script>
+        document.documentElement.setAttribute(
+            'data-theme',
+            localStorage.getItem('theme') || 'light'
+        );
+    </script>
+</head>
+
+<body>
+
+<div id="preloder"><div class="loader"></div></div>
+
+{% include 'accounts/includes/HeaderSection.html' %}
+
+{% block content %}{% endblock %}
+
+{% include 'accounts/includes/FooterSection.html' %}
+
+{% include 'accounts/includes/JsPlugins.html' %}
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

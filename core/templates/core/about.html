@@ -1,0 +1,489 @@
+{% extends 'accounts/shop/index.html' %}
+{% load static %}
+
+{% block title %}អំពីយើង | PNK SHOP{% endblock %}
+
+{% block content %}
+<style>
+  /* ==========================================
+     PNK ABOUT US - ANIMATED WAVES & EFFECTS
+     ========================================== */
+
+  /* 1. HERO ANIMATED WAVE CONTAINER */
+  .about-hero-wave-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 320px;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);
+  }
+
+  .about-wave-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200% !important;
+    height: 280px !important;
+    pointer-events: none;
+  }
+
+  .about-wave-layer-1 {
+    animation: aboutWaveAnim1 9s ease-in-out infinite alternate !important;
+  }
+
+  .about-wave-layer-2 {
+    animation: aboutWaveAnim2 6s ease-in-out infinite alternate !important;
+  }
+
+  @keyframes aboutWaveAnim1 {
+    0% { transform: translateX(0) scaleY(1); }
+    100% { transform: translateX(-40%) scaleY(1.25); }
+  }
+
+  @keyframes aboutWaveAnim2 {
+    0% { transform: translateX(-35%) scaleY(1.15); }
+    100% { transform: translateX(0) scaleY(0.85); }
+  }
+
+  /* 2. NEON WAVE THREADS */
+  .neon-wave-threads-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .neon-wave-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .wave-thread-1 { animation: waveThreadMove1 12s ease-in-out infinite alternate; }
+  .wave-thread-2 { animation: waveThreadMove2 8s ease-in-out infinite alternate-reverse; }
+  .wave-thread-3 { animation: waveThreadMove3 10s ease-in-out infinite alternate; }
+
+  @keyframes waveThreadMove1 {
+    0% { transform: translateX(0) scaleY(1); }
+    100% { transform: translateX(-35%) scaleY(1.25); }
+  }
+
+  @keyframes waveThreadMove2 {
+    0% { transform: translateX(-30%) scaleY(1.1); }
+    100% { transform: translateX(0) scaleY(0.85); }
+  }
+
+  @keyframes waveThreadMove3 {
+    0% { transform: translateX(0) translateY(0); }
+    100% { transform: translateX(-25%) translateY(-10px); }
+  }
+
+  /* 3. FLOATING ANIMATION & GLOW RINGS */
+  .floating-hero-card {
+    animation: floatHeroCard 4s ease-in-out infinite alternate;
+  }
+
+  .hero-glow-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(15, 23, 42, 0) 70%);
+    animation: glowPulseAnim 3s ease-in-out infinite alternate;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  @keyframes floatHeroCard {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-12px); }
+  }
+
+  @keyframes glowPulseAnim {
+    0% { opacity: 0.4; transform: translate(-50%, -50%) scale(0.85); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  }
+
+  .animate-float-delay-1 { animation: floatBadge 3.5s ease-in-out infinite alternate; }
+  .animate-float-delay-2 { animation: floatBadge 4.2s ease-in-out infinite alternate-reverse; }
+
+  @keyframes floatBadge {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-8px); }
+  }
+
+  /* 4. CARDS & INTERACTION DESIGN */
+  .about-feature-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.25rem;
+    padding: 30px 24px;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  }
+
+  .about-feature-card:hover {
+    transform: translateY(-8px);
+    border-color: #10b981;
+    box-shadow: 0 20px 35px rgba(16, 185, 129, 0.15) !important;
+  }
+
+  .about-icon-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin-bottom: 1.25rem;
+    transition: all 0.35s ease;
+  }
+
+  .about-feature-card:hover .about-icon-box {
+    transform: scale(1.12) rotate(5deg);
+  }
+
+  .stat-card-box {
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    border: 1px solid #e2e8f0;
+    border-radius: 1.25rem;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    transition: all 0.35s ease;
+  }
+
+  .stat-card-box:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 14px 28px rgba(16, 185, 129, 0.12);
+    border-color: #10b981;
+  }
+
+  .stat-number {
+    font-size: 2.25rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .vision-mission-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.25rem;
+    padding: 32px;
+    height: 100%;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
+    transition: all 0.35s ease;
+  }
+
+  .vision-mission-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+    border-color: #10b981;
+  }
+
+  .brand-pill-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  }
+
+  .brand-pill-item:hover {
+    border-color: #10b981;
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 10px 22px rgba(16, 185, 129, 0.12);
+  }
+</style>
+
+<div class="position-relative overflow-hidden bg-white">
+
+  <!-- BACKGROUND ANIMATED WATER WAVE BANNER -->
+  <div class="about-hero-wave-container">
+    <svg class="about-wave-svg about-wave-layer-1" viewBox="0 0 1200 280" preserveAspectRatio="none">
+      <path d="M0,0 L1200,0 L1200,160 C1050,80 850,220 600,120 C350,220 150,70 0,160 Z" fill="rgba(16, 185, 129, 0.22)"></path>
+    </svg>
+    <svg class="about-wave-svg about-wave-layer-2" viewBox="0 0 1200 280" preserveAspectRatio="none">
+      <path d="M0,0 L1200,0 L1200,120 C1000,200 750,60 500,170 C250,60 100,180 0,120 Z" fill="rgba(5, 150, 105, 0.15)"></path>
+    </svg>
+  </div>
+
+  <div class="container py-4 position-relative" style="z-index: 2;">
+
+    <!-- 1. HERO HEADER WITH ANIMATED NEON WAVE THREADS -->
+    <div class="p-4 p-md-5 mb-4 rounded-4 text-white shadow-sm position-relative overflow-hidden text-center text-md-start" 
+         style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #064e3b 100%); border: 1px solid rgba(255,255,255,0.08);"
+         data-aos="fade-down">
+        
+      <!-- ANIMATED NEON WAVE THREADS BACKGROUND -->
+      <div class="neon-wave-threads-container">
+        <svg class="neon-wave-svg wave-thread-1" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="aboutNeonGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.65"/>
+              <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.25"/>
+            </linearGradient>
+          </defs>
+          <path fill="none" stroke="url(#aboutNeonGrad1)" stroke-width="2.5" d="M0,160 C320,300 420,0 720,160 C1020,320 1120,20 1440,160"></path>
+        </svg>
+
+        <svg class="neon-wave-svg wave-thread-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="aboutNeonGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#059669" stop-opacity="0.2"/>
+              <stop offset="50%" stop-color="#10b981" stop-opacity="0.7"/>
+              <stop offset="100%" stop-color="#a855f7" stop-opacity="0.3"/>
+            </linearGradient>
+          </defs>
+          <path fill="none" stroke="url(#aboutNeonGrad2)" stroke-width="2" d="M0,80 C360,260 500,40 800,200 C1100,360 1200,80 1440,220"></path>
+        </svg>
+
+        <svg class="neon-wave-svg wave-thread-3" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="aboutNeonGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#10b981" stop-opacity="0.6"/>
+            </linearGradient>
+          </defs>
+          <path fill="none" stroke="url(#aboutNeonGrad3)" stroke-width="1.8" stroke-dasharray="8,6" d="M0,220 C280,100 600,280 900,120 C1200,-20 1350,250 1440,100"></path>
+        </svg>
+      </div>
+
+      <div class="row align-items-center position-relative" style="z-index: 2;">
+        <div class="col-lg-8">
+          <!-- Breadcrumb -->
+          <nav aria-label="breadcrumb" class="d-inline-block mb-3">
+            <ol class="breadcrumb bg-white-10 px-3 py-1.5 rounded-pill border border-white-20 mb-0" style="font-size: 0.82rem;">
+              <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-white text-decoration-none hover-success"><i class="bi bi-house-door-fill me-1"></i> ទំព័រដើម</a></li>
+              <li class="breadcrumb-item active text-success fw-bold" aria-current="page">អំពីហាង PNK SHOP</li>
+            </ol>
+          </nav>
+
+          <h1 class="fw-extrabold display-5 mb-3" style="letter-spacing: -0.5px;">
+            អំពីហាង <span class="text-success" style="background: linear-gradient(135deg, #34d399 0%, #10b981 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">PNK SHOP</span>
+          </h1>
+          <p class="lead opacity-90 mb-0 text-light fw-normal" style="font-size: 1.05rem; line-height: 1.7; max-width: 680px;">
+            ជាហាង់លក់ទូរសព្ទដៃស្មាតហ្វូន គ្រឿងបន្លាស់ និងឧបករណ៍អេឡិចត្រូនិចស្មាតហ្វូនផ្លូវការ ដែលទទួលបានការទុកចិត្ត និងគាំទ្រខ្ពស់បំផុតពីអតិថិជន។
+          </p>
+        </div>
+
+        <div class="col-lg-4 text-center mt-4 mt-lg-0">
+          <div class="floating-hero-card d-inline-block position-relative">
+            <div class="hero-glow-ring"></div>
+            <div class="bg-white-10 backdrop-blur p-4 rounded-4 border border-white-20 shadow-lg position-relative z-2">
+              <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 shadow-sm" style="width: 68px; height: 68px; font-size: 2rem;">
+                <i class="bi bi-shop"></i>
+              </div>
+              <h5 class="fw-bold text-white mb-1">PNK SHOP</h5>
+              <p class="text-success-subtle small mb-0 fw-semibold"><i class="bi bi-patch-check-fill me-1 text-success"></i> ទំនុកចិត្ត & គុណភាពខ្ពស់</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. STORE STORY & OVERVIEW -->
+    <div class="row align-items-center g-4 py-4" data-aos="fade-up">
+      <div class="col-lg-6">
+        <div class="pe-lg-4">
+          <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 fw-bold mb-3" style="font-size: 0.85rem;">
+            <i class="bi bi-shop me-1"></i> រៀបរាប់អំពី PNK SHOP
+          </span>
+          <h2 class="fw-bold text-dark mb-3" style="letter-spacing: -0.5px; font-size: 2.1rem;">
+            ហាងទូរស័ព្ទដៃ ផាន់ នីកា (PNK SHOP)
+          </h2>
+          <p class="text-secondary lh-lg mb-3" style="font-size: 0.95rem;">
+            ហាងទូរស័ព្ទដៃ <strong>ផាន់ នីកា </strong> ត្រូវបានបង្កើតឡើងដោយការប្តេជ្ញាចិត្តខ្ពស់ក្នុងការផ្តល់ជូននូវទូរស័ព្ទដៃស្មាតហ្វូន និងគ្រឿងបន្លាស់សុទ្ធ 100% ពីបណ្តាក្រុមហ៊ុនល្បីៗលើពិភពលោកដូចជា Apple iPhone, HUAWEI, vivo, OPPO និងម៉ាកល្បីៗជាច្រើនទៀត។
+          </p>
+          <p class="text-secondary lh-lg mb-4" style="font-size: 0.95rem;">
+            យើងខ្ញុំមិនត្រឹមតែលក់ទំនិញដែលមានគុណភាពខ្ពស់ និងតម្លៃសមរម្យប៉ុណ្ណោះទេ ថែមទាំងផ្តល់នូវសេវាកម្មជួសជុល ថែទាំ ព្រមទាំងសេវាកម្មដឹកជញ្ជូនរហ័សទាន់ចិត្តជូនអតិថិជននៅគ្រប់ ២៤ ខេត្តក្រុង នៃព្រះរាជាណាចក្រកម្ពុជា។
+          </p>
+
+          <div class="d-flex flex-wrap gap-3">
+            <a href="{% url 'shop:shop' %}" class="btn btn-success rounded-pill px-4 py-2.5 fw-bold shadow-sm d-inline-flex align-items-center gap-2" style="background: linear-gradient(135deg, #10b981, #059669); border: none;">
+              <i class="bi bi-grid-fill"></i> មើលទំនិញទាំងអស់
+            </a>
+            <a href="{% url 'core:contact_Page' %}" class="btn btn-outline-success rounded-pill px-4 py-2.5 fw-bold d-inline-flex align-items-center gap-2">
+              <i class="bi bi-telephone-fill"></i> ទំនាក់ទំនងយើងខ្ញុំ
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="position-relative" data-aos="zoom-in" data-aos-delay="150">
+          <div class="rounded-4 overflow-hidden shadow-lg border border-white border-4">
+            <img src="{% if store_settings.logo %}{{ store_settings.logo.url }}{% else %}{% static 'img/photologo.JPG' %}{% endif %}" alt="PNK SHOP" class="img-fluid w-100" style="object-fit: cover; max-height: 420px; background: #0f172a;">
+          </div>
+          <!-- Experience Badge Card -->
+          <div class="position-absolute bottom-0 start-0 m-3 p-3 bg-white rounded-3 shadow-lg border d-flex align-items-center gap-3 animate-float-delay-1" style="max-width: 260px; z-index: 5;">
+            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px; font-size: 1.4rem;">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <div>
+              <h6 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">ទំនុកចិត្ត 100%</h6>
+              <small class="text-muted" style="font-size: 0.8rem;">ផលិតផល</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. VISION & MISSION SECTION -->
+    <div class="row g-4 py-4" data-aos="fade-up">
+      <!-- MISSION -->
+      <div class="col-md-6">
+        <div class="vision-mission-card">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="rounded-3 bg-success-subtle text-success d-flex align-items-center justify-content-center" style="width: 54px; height: 54px; font-size: 1.5rem;">
+              <i class="bi bi-bullseye"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-0">បេសកកម្មរបស់យើង </h4>
+          </div>
+          <p class="text-secondary lh-lg mb-0" style="font-size: 0.95rem;">
+            ផ្តល់ជូននូវទូរស័ព្ទដៃ និងឧបករណ៍អេឡិចត្រូនិចដែលមានគុណភាពខ្ពស់ សុទ្ធ 100% ជាមួយតម្លៃសមរម្យ និងសេវាកម្មបម្រើអតិថិជនប្រកបដោយភាពស្មោះត្រង់ រហ័សទាន់ចិត្ត និងទំនួលខុសត្រូវ។
+          </p>
+        </div>
+      </div>
+
+      <!-- VISION -->
+      <div class="col-md-6">
+        <div class="vision-mission-card">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 54px; height: 54px; font-size: 1.5rem;">
+              <i class="bi bi-eye-fill"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-0">ចក្ខុវិស័យរបស់យើង </h4>
+          </div>
+          <p class="text-secondary lh-lg mb-0" style="font-size: 0.95rem;">
+            ក្លាយជាមជ្ឈមណ្ឌលលក់ និងជួសជុលទូរស័ព្ទដៃស្មាតហ្វូនឈានមុខគេ ដែលទទួលបានការទុកចិត្ត និងស្រឡាញ់ពេញចិត្តពីសំណាក់អតិថិជនទូទាំងប្រទេសកម្ពុជា តាមរយៈការផ្តល់បទពិសោធន៍ទិញទំនិញទំនើប និងងាយស្រួល។
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. CORE FEATURES & ADVANTAGES (4 CARDS) -->
+    <div class="py-4" data-aos="fade-up">
+      <div class="text-center mb-5">
+        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1.5 fw-bold mb-2" style="font-size: 0.85rem;">
+          <i class="bi bi-star-fill me-1"></i> ចំណុចខ្លាំងរបស់យើង
+        </span>
+        <h2 class="fw-bold text-dark mb-2" style="letter-spacing: -0.5px;">ហេតុអ្វីជ្រើសរើស PNK SHOP?</h2>
+        <p class="text-muted mx-auto" style="max-width: 600px; font-size: 0.92rem;">
+          យើងខ្ញុំផ្តល់ជូននូវសេវាកម្ម និងអត្ថប្រយោជន៍ដ៏ល្អបំផុតសម្រាប់អតិថិជនគ្រប់រូប
+        </p>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <!-- 1. GENUINE PRODUCTS -->
+        <div class="col" data-aos="zoom-in" data-aos-delay="100">
+          <div class="about-feature-card h-100">
+            <div class="about-icon-box bg-success-subtle text-success">
+              <i class="bi bi-patch-check-fill"></i>
+            </div>
+            <h5 class="fw-bold text-dark mb-2">ផលិតផលសុទ្ធ 100%</h5>
+            <p class="text-muted small mb-0 lh-base">
+              រាល់ទូរស័ព្ទ និងគ្រឿងបន្លាស់ទាំងអស់ នាំចូលផ្ទាល់ និងមានប្រភពច្បាស់លាស់ ធានាផលិតផលសុទ្ធ 100%។
+            </p>
+          </div>
+        </div>
+
+        <!-- 2. OFFICIAL WARRANTY -->
+        <div class="col" data-aos="zoom-in" data-aos-delay="200">
+          <div class="about-feature-card h-100">
+            <div class="about-icon-box bg-primary-subtle text-primary">
+              <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            <h5 class="fw-bold text-dark mb-2">ការធានាត្រឹមត្រូវ</h5>
+            <p class="text-muted small mb-0 lh-base">
+              មានការធានាផ្លូវការលើរាល់ផលិតផលដែលបានទិញ ផ្តល់ទំនុកចិត្តខ្ពស់ក្នុងការប្រើប្រាស់។
+            </p>
+          </div>
+        </div>
+
+        <!-- 3. FAST DELIVERY -->
+        <div class="col" data-aos="zoom-in" data-aos-delay="300">
+          <div class="about-feature-card h-100">
+            <div class="about-icon-box bg-warning-subtle text-warning">
+              <i class="bi bi-truck"></i>
+            </div>
+            <p class="text-muted small mb-0 lh-base">
+              សេវាដឹកជញ្ជូនរហ័សទាន់ចិត្ត សុវត្ថិភាព ដល់ដៃអតិថិជននៅគ្រប់ទិសទីទូទាំងប្រទេស។
+            </p>
+          </div>
+        </div>
+
+        <!-- 4. TECHNICAL SUPPORT -->
+        <div class="col" data-aos="zoom-in" data-aos-delay="400">
+          <div class="about-feature-card h-100">
+            <div class="about-icon-box bg-info-subtle text-info">
+              <i class="bi bi-tools"></i>
+            </div>
+            <h5 class="fw-bold text-dark mb-2">សេវាជួសជុលជំនាញ</h5>
+            <p class="text-muted small mb-0 lh-base">
+              មានក្រុមជាងជួសជុលប្រកបដោយបទពិសោធន៍ និងបច្ចេកវិទ្យាទំនើប ក្នុងការថែទាំទូរស័ព្ទរបស់អ្នក។
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 6. BRANDS WE OFFER -->
+    <div class="py-4" data-aos="fade-up">
+      <div class="text-center mb-4">
+        <h3 class="fw-bold text-dark mb-2">ម៉ាកយីហោល្បីៗដែលយើងខ្ញុំចែកចាយ</h3>
+        <p class="text-muted small">ជ្រើសរើសម៉ាកទូរស័ព្ទដែលអ្នកចូលចិត្តជាមួយ PNK SHOP</p>
+      </div>
+
+      <div class="row row-cols-2 row-cols-sm-3 row-cols-md-5 g-3 justify-content-center">
+        <div class="col">
+          <div class="brand-pill-item">
+            <span class="fw-bold text-dark"><i class="bi bi-apple fs-4 me-1 text-secondary"></i> Apple</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="brand-pill-item">
+            <span class="fw-bold text-dark"><i class="bi bi-phone-fill fs-4 me-1 text-danger"></i> HUAWEI</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="brand-pill-item">
+            <span class="fw-bold text-dark"><i class="bi bi-phone fs-4 me-1 text-primary"></i> vivo</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="brand-pill-item">
+            <span class="fw-bold text-dark"><i class="bi bi-phone-landscape fs-4 me-1 text-success"></i> OPPO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,34 +1,31 @@
 {% load static %}
 <!doctype html>
-<html lang="zxx">
+<html lang="km">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Phannika Phone Shop</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet" />
+    <title>{% block title %}PNK SHOP{% endblock %}</title>
     
     {% include 'accounts/includes/CssStyles.html' %}
+    {% block extra_css %}{% endblock %}
   </head>
-
   <body>
-    <div id="preloder">
-      <div class="loader"></div>
-    </div>
-
-    <!-- Header បង្ហាញគ្រប់ទំព័រ -->
     {% include 'accounts/includes/HeaderSection.html' %}
-
-    <!-- ចំណុចសំខាន់៖ កន្លែងសម្រាប់បង្ហាញខ្លឹមសារទំព័រនីមួយៗ -->
-    <main>
+    
+    <main class="min-vh-100">
         {% block content %}
-        <!-- កូដទំព័រដើមនឹងត្រូវលុបចេញពីទីនេះ ហើយយកទៅដាក់ក្នុង file ផ្សេង -->
         {% endblock %}
     </main>
 
-    <!-- Footer បង្ហាញគ្រប់ទំព័រ -->
     {% include 'accounts/includes/FooterSection.html' %}
 
-    {% include 'accounts/includes/JsPlugins.html' %}
+    {% if messages %}
+    <div id="django-messages" class="d-none">
+      {% for message in messages %}
+        <span class="django-message" data-tags="{{ message.tags }}" data-text="{{ message|escapejs }}">{{ message }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

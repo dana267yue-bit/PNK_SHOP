@@ -1,159 +1,666 @@
-{% extends 'accounts/dashboard/base_dashboard.html' %} 
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block header_title %}ផ្ទាំងគ្រប់គ្រងទូទៅ{% endblock %}
+
 {% block dashboard_content %}
-<!-- Stat Cards Row: បង្ហាញ ៤ កាតក្នុងមួយជួរដេក -->
-<div class="row mb-4">
-  <!-- កាតទី១: ទូរស័ព្ទសរុប -->
-  <div class="col-md-3 mb-3">
-    <div
-      class="stat-card bg-white shadow-sm p-3 d-flex justify-content-between align-items-center"
-      style="border-radius: 15px; border: none"
-    >
-      <div>
-        <p class="text-muted mb-1 small">ទូរស័ព្ទសរុប</p>
-        <h3 class="m-0 font-weight-bold" style="color: #2c3e50">12</h3>
+<div class="container-fluid p-0">
+
+  <!-- TOP TITLE & QUICK ACTION BUTTONS -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3" data-aos="fade-down">
+    <div>
+      <h4 class="fw-bold text-dark mb-1">ផ្ទាំងគ្រប់គ្រងទូទៅ</h4>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'accounts:order_list' %}" class="btn btn-outline-success px-4 shadow-sm d-flex align-items-center gap-2 fw-semibold">
+        <i class="bi bi-receipt"></i> ការបញ្ជាទិញ
+      </a>
+    </div>
+  </div>
+
+  <!-- STAT CARDS ROW (4 KPI CARDS) -->
+  <div class="row g-3 mb-4" data-aos="fade-up">
+    <!-- 1. TOTAL PRODUCTS -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="stat-card-modern">
+        <div>
+          <small class="text-muted fw-semibold text-uppercase d-block mb-1" style="font-size: 11px;">ទូរស័ព្ទសរុប</small>
+          <h3 class="fw-bold text-dark m-0">{{ total_products }}</h3>
+          <span class="badge {{ products_growth.badge_class }} mt-2" style="font-size: 11px;">
+            <i class="bi {{ products_growth.icon }}"></i> {{ products_growth.text }}
+          </span>
+        </div>
+        <div class="stat-card-icon-container">
+          <i class="bi bi-phone"></i>
+        </div>
       </div>
-      <div
-        class="stat-icon p-3"
-        style="
-          color: #3498db;
-          background: rgba(52, 152, 219, 0.1);
-          border-radius: 12px;
-        "
-      >
-        <i class="fas fa-mobile-alt"></i>
+    </div>
+
+    <!-- 2. TOTAL ORDERS -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="stat-card-modern">
+        <div>
+          <small class="text-muted fw-semibold text-uppercase d-block mb-1" style="font-size: 11px;">ការបញ្ជាទិញ </small>
+          <h3 class="fw-bold text-dark m-0">{{ total_orders }}</h3>
+          <span class="badge {{ orders_growth.badge_class }} mt-2" style="font-size: 11px;">
+            <i class="bi {{ orders_growth.icon }}"></i> {{ orders_growth.text }}
+          </span>
+        </div>
+        <div class="stat-card-icon-container">
+          <i class="bi bi-cart"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. TOTAL CUSTOMERS -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="stat-card-modern">
+        <div>
+          <small class="text-muted fw-semibold text-uppercase d-block mb-1" style="font-size: 11px;">អតិថិជន </small>
+          <h3 class="fw-bold text-dark m-0">{{ total_customers }}</h3>
+          <span class="badge {{ customers_growth.badge_class }} mt-2" style="font-size: 11px;">
+            <i class="bi {{ customers_growth.icon }}"></i> {{ customers_growth.text }}
+          </span>
+        </div>
+        <div class="stat-card-icon-container">
+          <i class="bi bi-person"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. TOTAL REVENUE -->
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="stat-card-modern">
+        <div>
+          <small class="text-muted fw-semibold text-uppercase d-block mb-1" style="font-size: 11px;">ចំណូលសរុប </small>
+          <h3 class="fw-bold text-success m-0">${{ total_revenue|floatformat:2 }}</h3>
+          <span class="badge {{ revenue_growth.badge_class }} mt-2" style="font-size: 11px;">
+            <i class="bi {{ revenue_growth.icon }}"></i> {{ revenue_growth.text }}
+          </span>
+        </div>
+        <div class="stat-card-icon-container">
+          <i class="bi bi-graph-up"></i>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- កាតទី២: ការលក់ខែនេះ -->
-  <div class="col-md-3 mb-3">
-    <div
-      class="stat-card bg-white shadow-sm p-3 d-flex justify-content-between align-items-center"
-      style="border-radius: 15px; border: none"
-    >
-      <div>
-        <p class="text-muted mb-1 small">ការលក់ខែនេះ</p>
-        <h3 class="m-0 font-weight-bold" style="color: #27ae60">$1,250</h3>
+  <!-- ROW 2: SALES CHART & LATEST ORDERS (SIDE-BY-SIDE) -->
+  <div class="row g-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+    <!-- SALES CHART (HALF-WIDTH) -->
+    <div class="col-12 col-xl-6">
+      <div class="data-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h6 class="fw-bold text-dark m-0">
+              <i class="bi bi-graph-up-arrow me-2 text-primary"></i> ស្ថិតិនៃការលក់ 
+            </h6>
+            <small class="text-muted">ប្រៀបធៀបប្រាក់ចំណូល និងចំនួនការបញ្ជាទិញ</small>
+          </div>
+          <span class="badge badge-soft-success px-2.5 py-1">Live</span>
+        </div>
+        <div class="chart-container" style="position: relative; height: 260px;">
+          <canvas id="revenueTrendChart"></canvas>
+        </div>
       </div>
-      <div
-        class="stat-icon p-3"
-        style="
-          color: #27ae60;
-          background: rgba(39, 174, 96, 0.1);
-          border-radius: 12px;
-        "
-      >
-        <i class="fas fa-chart-line"></i>
+    </div>
+
+    <!-- LATEST ORDERS (HALF-WIDTH) -->
+    <div class="col-12 col-xl-6">
+      <div class="data-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold text-dark m-0">
+            <i class="bi bi-clock-history me-2 text-success"></i> ការបញ្ជាទិញចុងក្រោយ 
+          </h6>
+          <a href="{% url 'accounts:order_list' %}" class="text-success small text-decoration-none fw-semibold">មើលទាំងអស់</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0" style="font-size: 13.5px;">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>អតិថិជន</th>
+                <th>លេខទូរស័ព្ទ</th>
+                <th>ការទូទាត់</th>
+                <th>ស្ថានភាព</th>
+                <th class="text-center">សកម្មភាព</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in recent_orders %}
+              <tr>
+                <td class="fw-bold text-success">#{{ order.id }}</td>
+                <td class="fw-bold text-dark">
+                  {% if order.last_name or order.first_name %}{{ order.last_name }} {{ order.first_name }}{% elif order.user %}{{ order.user.username }}{% else %}Guest{% endif %}
+                </td>
+                <td>{{ order.phone|default:"-" }}</td>
+                <td class="text-uppercase">{{ order.payment_method }}</td>
+                <td>
+                  <span class="badge {% if order.status == 'Completed' %}badge-soft-success{% elif order.status == 'Pending' %}badge-soft-warning{% elif order.status == 'Processing' %}badge-soft-primary{% else %}badge-soft-danger{% endif %} px-2.5 py-1">
+                    {{ order.status }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <a href="{% url 'accounts:order_list' %}" class="btn btn-light btn-sm rounded-circle p-1" title="គ្រប់គ្រងការបញ្ជាទិញ">
+                    <i class="bi bi-eye text-success"></i>
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">មិនទាន់មានការបញ្ជាទិញឡើយ</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- កាតទី៣: ការកម្មង់ថ្មី -->
-  <div class="col-md-3 mb-3">
-    <div
-      class="stat-card bg-white shadow-sm p-3 d-flex justify-content-between align-items-center"
-      style="border-radius: 15px; border: none"
-    >
-      <div>
-        <p class="text-muted mb-1 small">ការកម្មង់ថ្មី</p>
-        <h3 class="m-0 font-weight-bold" style="color: #f39c12">12</h3>
+  <!-- ROW 3: TOP PRODUCTS & LOW STOCK (SIDE-BY-SIDE) -->
+  <div class="row g-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+    <!-- TOP PRODUCTS -->
+    <div class="col-12 col-xl-6">
+      <div class="data-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold text-dark m-0">
+            <i class="bi bi-fire me-2 text-danger"></i> ផលិតផលលក់ដាច់បំផុត 
+          </h6>
+          <a href="{% url 'shop:product_list' %}" class="text-success small text-decoration-none fw-semibold">មើលទាំងអស់</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0" style="font-size: 13.5px;">
+            <thead>
+              <tr>
+                <th>រូបភាព</th>
+                <th>ឈ្មោះទូរស័ព្ទ</th>
+                <th>ប្រភេទ</th>
+                <th>ម៉ាក</th>
+                <th>តម្លៃ</th>
+                <th class="text-center">លក់បាន</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for prod in popular_products %}
+              <tr>
+                <td>
+                  {% if prod.image %}
+                    <img src="{{ prod.image.url }}" class="img-product" style="width: 36px; height: 36px; border-radius: 8px;">
+                  {% else %}
+                    <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted" style="width: 36px; height: 36px;"><i class="bi bi-image" style="font-size: 14px;"></i></div>
+                  {% endif %}
+                </td>
+                <td class="fw-bold text-dark">{{ prod.name }}</td>
+                <td>{{ prod.category.name|default:"-" }}</td>
+                <td>{{ prod.brand.name|default:"-" }}</td>
+                <td class="fw-bold text-success">${{ prod.price }}</td>
+                <td class="text-center fw-bold text-primary">{{ prod.sales_count }} គ្រឿង</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">មិនទាន់មានផលិតផលលក់ដាច់នៅឡើយ</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div
-        class="stat-icon p-3"
-        style="
-          color: #f39c12;
-          background: rgba(243, 156, 18, 0.1);
-          border-radius: 12px;
-        "
-      >
-        <i class="fas fa-shopping-basket"></i>
+    </div>
+
+    <!-- LOW STOCK ALERT -->
+    <div class="col-12 col-xl-6">
+      <div class="data-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold text-danger m-0">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> ជិតអស់ពីស្តុក
+          </h6>
+          <a href="{% url 'accounts:inventory_page' %}" class="btn btn-outline-danger btn-sm">គ្រប់គ្រងស្តុក</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0" style="font-size: 13.5px;">
+            <thead>
+              <tr>
+                <th>ឈ្មោះម៉ូដែល</th>
+                <th>ប្រភេទ</th>
+                <th>ម៉ាក</th>
+                <th class="text-center">ស្តុកសល់</th>
+                <th class="text-center">ស្ថានភាព</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in low_stock_products %}
+              <tr>
+                <td class="fw-bold text-dark d-flex align-items-center gap-2">
+                  {% if product.image %}
+                    <img src="{{ product.image.url }}" class="img-product" style="width: 36px; height: 36px; border-radius: 8px;">
+                  {% endif %}
+                  <span>{{ product.name }}</span>
+                </td>
+                <td>{{ product.category.name|default:"-" }}</td>
+                <td>{{ product.brand.name|default:"-" }}</td>
+                <td class="text-center fw-bold text-danger">{{ product.stock }} គ្រឿង</td>
+                <td class="text-center">
+                  {% if product.stock == 0 %}
+                    <span class="badge badge-soft-danger px-2.5 py-1">អស់ស្តុក</span>
+                  {% else %}
+                    <span class="badge badge-soft-warning px-2.5 py-1">ជិតអស់ស្តុក</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="text-center text-success py-4">
+                  <i class="bi bi-check-circle-fill me-1"></i> គ្រប់ម៉ូដែលទាំងអស់មានស្តុកគ្រាន់ប្រកប។
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- កាតទី៤: ជិតអស់ស្តុក -->
-  <div class="col-md-3 mb-3">
-    <div
-      class="stat-card bg-white shadow-sm p-3 d-flex justify-content-between align-items-center"
-      style="border-radius: 15px; border: none"
-    >
-      <div>
-        <p class="text-muted mb-1 small">ជិតអស់ស្តុក</p>
-        <h3 class="m-0 font-weight-bold" style="color: #e74c3c">3</h3>
+  <!-- ROW 4: CUSTOMER CHARTS SECTION (2 CHARTS SIDE-BY-SIDE) -->
+  <div class="row g-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+    <!-- 1. CUSTOMER GROWTH & REGISTRATION TREND CHART -->
+    <div class="col-12 col-xl-6">
+      <div class="data-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h6 class="fw-bold text-dark m-0">
+              <i class="bi bi-person-plus-fill me-2 text-info"></i> ស្ថិតិកំណើនអតិថិជន (Customer Growth)
+            </h6>
+            <small class="text-muted">ការចុះឈ្មោះអតិថិជនថ្មីៗប្រចាំថ្ងៃ</small>
+          </div>
+          <span class="badge badge-soft-info px-2.5 py-1"><i class="bi bi-graph-up me-1"></i> + ថ្មីៗ</span>
+        </div>
+        <div class="chart-container" style="position: relative; height: 250px;">
+          <canvas id="customerGrowthChart"></canvas>
+        </div>
       </div>
-      <div
-        class="stat-icon p-3"
-        style="
-          color: #e74c3c;
-          background: rgba(231, 76, 60, 0.1);
-          border-radius: 12px;
-        "
-      >
-        <i class="fas fa-exclamation-circle"></i>
+    </div>
+
+    <!-- 2. TOP VIP CUSTOMERS SPEND CHART -->
+    <div class="col-12 col-xl-6">
+      <div class="data-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h6 class="fw-bold text-dark m-0">
+              <i class="bi bi-award-fill me-2 text-warning"></i> ស្ថិតិអតិថិជន VIP & ទិញច្រើនជាងគេ
+            </h6>
+            <small class="text-muted">ប្រៀបធៀបប្រាក់ចំណាយទិញសរុបតាមអតិថិជន</small>
+          </div>
+          <a href="{% url 'accounts:manage_users' %}" class="text-success small text-decoration-none fw-semibold">គ្រប់គ្រងអតិថិជន</a>
+        </div>
+        <div class="chart-container" style="position: relative; height: 250px;">
+          <canvas id="vipCustomerSpendChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- ROW 5: RECENT CUSTOMERS LIST & CUSTOMER ORDER STATUS DOUGHNUT CHART -->
+  <div class="row g-4 mb-4" data-aos="fade-up" data-aos-delay="350">
+    <!-- RECENT REGISTERED CUSTOMERS -->
+    <div class="col-12 col-xl-6">
+      <div class="data-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold text-dark m-0">
+            <i class="bi bi-people me-2 text-success"></i> អតិថិជនចុះឈ្មោះថ្មីៗ
+          </h6>
+          <a href="{% url 'accounts:manage_users' %}" class="text-success small text-decoration-none fw-semibold">មើលទាំងអស់</a>
+        </div>
+        
+        <div class="d-flex flex-column gap-2.5">
+          {% for cust in latest_customers %}
+          <div class="d-flex align-items-center justify-content-between p-2.5 rounded-3 bg-light border border-light-subtle">
+            <div class="d-flex align-items-center gap-3">
+              <div class="position-relative flex-shrink-0">
+                {% if cust.profile.image %}
+                  <img src="{{ cust.profile.image.url }}" alt="{{ cust.username }}" class="rounded-circle border border-2 border-white shadow-xs" width="40" height="40" style="object-fit: cover;">
+                {% else %}
+                  <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-xs" style="width: 40px; height: 40px; font-size: 14px; background: linear-gradient(135deg, #10b981, #059669);">
+                    {{ cust.username|slice:":2"|upper }}
+                  </div>
+                {% endif %}
+                {% if cust.is_active %}
+                  <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-2 border-white rounded-circle" title="គណនីសកម្ម" style="transform: translate(25%, 25%);"></span>
+                {% else %}
+                  <span class="position-absolute bottom-0 end-0 p-1 bg-secondary border border-2 border-white rounded-circle" title="គណនីអសកម្ម" style="transform: translate(25%, 25%);"></span>
+                {% endif %}
+              </div>
+              <div>
+                <h6 class="fw-bold text-dark mb-0 small">
+                  {% if cust.last_name or cust.first_name %}
+                    {{ cust.last_name }} {{ cust.first_name }} <span class="text-muted fw-normal" style="font-size: 11px;">(@{{ cust.username }})</span>
+                  {% else %}
+                    {{ cust.username }}
+                  {% endif %}
+                </h6>
+                <small class="text-muted d-block" style="font-size: 11.5px;">{{ cust.email|default:"គ្មានអ៊ីមែល" }}</small>
+              </div>
+            </div>
+            <div class="text-end">
+              <small class="text-muted d-block" style="font-size: 10.5px;">ថ្ងៃចូលរួម</small>
+              <span class="badge badge-soft-primary" style="font-size: 10px;">{{ cust.date_joined|date:"d M Y" }}</span>
+            </div>
+          </div>
+          {% empty %}
+          <p class="text-muted text-center py-4 small">មិនទាន់មានអតិថិជនចុះឈ្មោះឡើយ</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMER ORDER STATUS DOUGHNUT CHART -->
+    <div class="col-12 col-xl-6">
+      <div class="data-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h6 class="fw-bold text-dark m-0">
+              <i class="bi bi-pie-chart-fill me-2 text-primary"></i> ស្ថិតិសកម្មភាពបញ្ជាទិញអតិថិជន
+            </h6>
+            <small class="text-muted">បែងចែកតាមស្ថានភាពនៃការបញ្ជាទិញ</small>
+          </div>
+          <span class="badge badge-soft-primary px-2.5 py-1">ចំណាត់ថ្នាក់</span>
+        </div>
+        <div class="chart-container" style="position: relative; height: 240px;">
+          <canvas id="customerStatusDoughnutChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
 </div>
 
-<!-- Chart Section -->
-<div class="row">
-  <div class="col-md-8">
-    <div
-      class="card shadow border-0 p-4"
-      style="border-radius: 15px; background: #fff"
-    >
-      <h5 class="font-weight-bold mb-4 text-dark">
-        <i class="fas fa-fire mr-2 text-danger"></i>ទូរសព្ទពេញនិយមជាងគេ
-      </h5>
-      <!-- ត្រូវប្រាកដថាមាន Canvas ជាមួយ ID ត្រឹមត្រូវ -->
-      <div style="position: relative; height: 350px">
-        <canvas id="popularPhonesChart"></canvas>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- ដាក់ Script ខាងក្រោមគេបង្អស់ -->
-
-<!-- ១. បញ្ចូល Library Chart.js សិន (ដាក់ពីលើ Script របស់អ្នក) -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- CHART.JS INITIATION DATA -->
+{{ chart_labels|json_script:"chart-labels" }}
+{{ chart_revenue|json_script:"chart-revenue" }}
+{{ chart_orders|json_script:"chart-orders" }}
+{{ chart_customer_signups|json_script:"chart-customer-signups" }}
+{{ vip_customer_labels|json_script:"vip-customer-labels" }}
+{{ vip_customer_spent|json_script:"vip-customer-spent" }}
+{{ customer_status_labels|json_script:"customer-status-labels" }}
+{{ customer_status_data|json_script:"customer-status-data" }}
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const canvas = document.getElementById("popularPhonesChart");
-    
-    // ឆែកមើលថា តើវាស្គាល់ Canvas ដែរឬទេ
-    if (!canvas) {
-        console.error("រកមិនឃើញ Canvas ជាមួយ ID popularPhonesChart ទេ");
-        return;
+    // COMMON METRICS
+    let chartLabels = [];
+    const labelsEl = document.getElementById("chart-labels");
+    if (labelsEl) chartLabels = JSON.parse(labelsEl.textContent || '[]');
+    if (chartLabels.length === 0) {
+      chartLabels = ["18 Jul", "20 Jul", "23 Jul", "25 Jul", "28 Jul", "30 Jul", "31 Jul"];
     }
 
-    const ctx = canvas.getContext("2d");
-    
-    new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: ["iPhone 15 Pro", "Oppo A3x", "Vivo V60 Lite", "Samsung S24", "Realme C53"],
-        datasets: [{
-          label: "ចំនួនលក់ (គ្រឿង)",
-          data: [120, 95, 80, 70, 45],
-          backgroundColor: ["#7fad39", "#3498db", "#f1c40f", "#e74c3c", "#9b59b6"],
-          borderRadius: 8,
-          barThickness: 35,
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
+    // 1. REVENUE & ORDERS TREND CHART
+    const canvasLine = document.getElementById("revenueTrendChart");
+    if (canvasLine) {
+      const ctxLine = canvasLine.getContext("2d");
+      let chartRevenue = [];
+      let chartOrders = [];
+      const revEl = document.getElementById("chart-revenue");
+      const ordersEl = document.getElementById("chart-orders");
+      if (revEl) chartRevenue = JSON.parse(revEl.textContent || '[]');
+      if (ordersEl) chartOrders = JSON.parse(ordersEl.textContent || '[]');
+      if (chartRevenue.length === 0) chartRevenue = [6400, 120, 0, 1850, 3400, 950, 2100];
+      if (chartOrders.length === 0) chartOrders = [14, 4, 2, 8, 11, 4, 7];
+
+      new Chart(ctxLine, {
+        type: "line",
+        data: {
+          labels: chartLabels,
+          datasets: [
+            {
+              label: "Potential Revenue ($)",
+              data: chartRevenue,
+              borderColor: "#0284c7",
+              backgroundColor: "#0284c7",
+              borderWidth: 2.5,
+              tension: 0.1,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              pointBackgroundColor: "#0284c7",
+              yAxisID: "y_revenue"
+            },
+            {
+              label: "Total Orders",
+              data: chartOrders,
+              borderColor: "#d97706",
+              backgroundColor: "#d97706",
+              borderWidth: 2.5,
+              tension: 0.1,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              pointBackgroundColor: "#d97706",
+              yAxisID: "y_orders"
+            }
+          ]
         },
-        scales: {
-          y: { beginAtZero: true, grid: { display: false } },
-          x: { grid: { display: false } },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          plugins: {
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: {
+                usePointStyle: true,
+                pointStyle: "rect",
+                padding: 20,
+                font: { family: "Kantumruy Pro, sans-serif", size: 12 },
+                color: "#475569"
+              }
+            },
+            tooltip: {
+              backgroundColor: "rgba(15, 23, 42, 0.9)",
+              titleColor: "#ffffff",
+              bodyColor: "#ffffff",
+              padding: 12,
+              borderRadius: 8,
+              callbacks: {
+                label: function(context) {
+                  let label = context.dataset.label || '';
+                  if (label) label += ': ';
+                  if (context.dataset.yAxisID === 'y_revenue') {
+                    label += '$' + context.parsed.y.toLocaleString();
+                  } else {
+                    label += context.parsed.y + ' orders';
+                  }
+                  return label;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: "rgba(226, 232, 240, 0.6)" },
+              ticks: { color: "#64748b", font: { family: "Kantumruy Pro, sans-serif" } }
+            },
+            y_revenue: {
+              type: "linear", display: true, position: "left",
+              title: { display: true, text: "Potential Revenue ($)", color: "#64748b", font: { family: "Kantumruy Pro, sans-serif", size: 11, weight: "bold" } },
+              grid: { color: "rgba(226, 232, 240, 0.6)" },
+              ticks: { color: "#64748b", callback: value => '$' + value.toLocaleString() },
+              beginAtZero: true
+            },
+            y_orders: {
+              type: "linear", display: true, position: "right",
+              title: { display: true, text: "Total Orders", color: "#64748b", font: { family: "Kantumruy Pro, sans-serif", size: 11, weight: "bold" } },
+              grid: { drawOnChartArea: false },
+              ticks: { color: "#64748b" },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    // 2. CUSTOMER GROWTH & REGISTRATION TREND CHART
+    const canvasGrowth = document.getElementById("customerGrowthChart");
+    if (canvasGrowth) {
+      const ctxGrowth = canvasGrowth.getContext("2d");
+      const signupsEl = document.getElementById("chart-customer-signups");
+      let customerSignups = signupsEl ? JSON.parse(signupsEl.textContent || '[]') : [];
+      if (customerSignups.length === 0) customerSignups = [3, 5, 2, 8, 4, 6, 9];
+
+      let gradientGrowth = ctxGrowth.createLinearGradient(0, 0, 0, 220);
+      gradientGrowth.addColorStop(0, "rgba(6, 182, 212, 0.35)");
+      gradientGrowth.addColorStop(1, "rgba(6, 182, 212, 0.0)");
+
+      new Chart(ctxGrowth, {
+        type: "line",
+        data: {
+          labels: chartLabels,
+          datasets: [{
+            label: "អតិថិជនថ្មី (Signups)",
+            data: customerSignups,
+            borderColor: "#06b6d4",
+            backgroundColor: gradientGrowth,
+            borderWidth: 3,
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: "#0891b2",
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7
+          }]
         },
-      },
-    });
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(15, 23, 42, 0.9)",
+              padding: 10,
+              borderRadius: 8,
+              callbacks: {
+                label: ctx => 'អតិថិជនថ្មី: ' + ctx.parsed.y + ' នាក់'
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: "rgba(226, 232, 240, 0.6)" }, ticks: { color: "#64748b", font: { family: "Kantumruy Pro, sans-serif" } } },
+            y: { beginAtZero: true, grid: { color: "rgba(226, 232, 240, 0.6)" }, ticks: { color: "#64748b", precision: 0 } }
+          }
+        }
+      });
+    }
+
+    // 3. TOP VIP CUSTOMERS SPEND CHART (HORIZONTAL BAR CHART)
+    const canvasVip = document.getElementById("vipCustomerSpendChart");
+    if (canvasVip) {
+      const ctxVip = canvasVip.getContext("2d");
+      const vipLabelsEl = document.getElementById("vip-customer-labels");
+      const vipSpentEl = document.getElementById("vip-customer-spent");
+      let vipLabels = vipLabelsEl ? JSON.parse(vipLabelsEl.textContent || '[]') : [];
+      let vipSpent = vipSpentEl ? JSON.parse(vipSpentEl.textContent || '[]') : [];
+      if (vipLabels.length === 0) {
+        vipLabels = ["Sovan Phalla", "Bopha Chhaem", "Sokha Rith", "Dara Chhan", "Mony Roth"];
+        vipSpent = [1450, 980, 750, 620, 430];
+      }
+
+      new Chart(ctxVip, {
+        type: "bar",
+        data: {
+          labels: vipLabels,
+          datasets: [{
+            label: "ទិញសរុប ($)",
+            data: vipSpent,
+            backgroundColor: [
+              "rgba(16, 185, 129, 0.85)",
+              "rgba(59, 130, 246, 0.85)",
+              "rgba(139, 92, 246, 0.85)",
+              "rgba(245, 158, 11, 0.85)",
+              "rgba(236, 72, 153, 0.85)"
+            ],
+            borderRadius: 6,
+            barThickness: 16
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(15, 23, 42, 0.9)",
+              padding: 10,
+              borderRadius: 8,
+              callbacks: {
+                label: ctx => 'ទិញសរុប: $' + ctx.parsed.x.toLocaleString()
+              }
+            }
+          },
+          scales: {
+            x: { beginAtZero: true, grid: { color: "rgba(226, 232, 240, 0.6)" }, ticks: { color: "#64748b", callback: v => '$' + v } },
+            y: { grid: { display: false }, ticks: { color: "#334155", font: { family: "Kantumruy Pro, sans-serif", weight: "bold" } } }
+          }
+        }
+      });
+    }
+
+    // 4. CUSTOMER ORDER STATUS DISTRIBUTION (DOUGHNUT CHART)
+    const canvasStatus = document.getElementById("customerStatusDoughnutChart");
+    if (canvasStatus) {
+      const ctxStatus = canvasStatus.getContext("2d");
+      const statusLabelsEl = document.getElementById("customer-status-labels");
+      const statusDataEl = document.getElementById("customer-status-data");
+      let statusLabels = statusLabelsEl ? JSON.parse(statusLabelsEl.textContent || '[]') : [];
+      let statusData = statusDataEl ? JSON.parse(statusDataEl.textContent || '[]') : [];
+      if (statusLabels.length === 0) {
+        statusLabels = ["ជោគជ័យ", "រង់ចាំ", "ដំណើរការ", "បដិសេធ"];
+        statusData = [14, 4, 3, 2];
+      }
+
+      new Chart(ctxStatus, {
+        type: "doughnut",
+        data: {
+          labels: statusLabels,
+          datasets: [{
+            data: statusData,
+            backgroundColor: ["#10b981", "#f59e0b", "#3b82f6", "#ef4444"],
+            borderWidth: 3,
+            borderColor: "#ffffff",
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "68%",
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                usePointStyle: true,
+                padding: 14,
+                font: { family: "Kantumruy Pro, sans-serif", size: 12 },
+                color: "#475569"
+              }
+            },
+            tooltip: {
+              backgroundColor: "rgba(15, 23, 42, 0.9)",
+              padding: 10,
+              borderRadius: 8,
+              callbacks: {
+                label: ctx => ctx.label + ': ' + ctx.parsed + ' ការបញ្ជាទិញ'
+              }
+            }
+          }
+        }
+      });
+    }
+
   });
 </script>
 {% endblock %}

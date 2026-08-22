@@ -1,12 +1,30 @@
-{% for product in products %}
-<div class="product__item">
-    <div class="product__item__pic">
-        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="products-grid">
+    {% for product in products %}
+    <div class="product__item">
+        <div class="product__item__pic">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        </div>
+
+        <div class="product__item__text">
+            <h6>{{ product.name }}</h6>
+
+            <h5>${{ product.price|floatformat:2 }}</h5>
+
+            <a href="{% url 'add_to_cart' product.id %}" class="primary-btn">
+                ADD TO CART
+            </a>
+        </div>
     </div>
-    <div class="product__item__text">
-        <h6>{{ product.name }}</h6>
-        <h5>${{ product.price|floatformat:2 }}</h5>
-        <a href="{% url 'add_to_cart' product.id %}" class="primary-btn">ADD TO CART</a>
-    </div>
+    {% endfor %}
 </div>
-{% endfor %}
+
+{% endblock %}

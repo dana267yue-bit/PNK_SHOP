@@ -1,0 +1,968 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block header_title %}របាយការណ៍លក់ & វិភាគ{% endblock %}
+
+{% block dashboard_content %}
+<style>
+  /* KPI STAT CARDS */
+  .report-kpi-card {
+    background-color: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .report-kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+  }
+
+  .kpi-icon-box {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  /* CONTAINER & TOOLBAR */
+  .report-card-container {
+    background-color: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+  }
+
+  .filter-label {
+    font-size: 11px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .filter-select-compact {
+    height: 38px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 10px !important;
+    padding-right: 24px !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+    text-align-last: center !important;
+  }
+
+  .search-input-compact {
+    height: 38px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 38px !important;
+    padding-right: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .table-custom-report thead th {
+    background-color: var(--bg-soft, #f8fafc);
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 14px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .table-custom-report tbody td {
+    padding: 12px 14px;
+    vertical-align: middle;
+  }
+
+  .hover-row {
+    transition: background-color 0.15s ease;
+  }
+
+  .hover-row:hover {
+    background-color: rgba(241, 245, 249, 0.6) !important;
+  }
+
+  .product-thumb-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid #e2e8f0;
+  }
+   /* EXPORT MODAL CUSTOM CARDS & PILLS */
+  .export-format-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--bg-soft, #f8fafc);
+  }
+  .export-format-card:hover {
+    border-color: #198754;
+    background-color: #ffffff;
+  }
+  .export-format-card.selected {
+    border-color: #198754;
+    background-color: rgba(25, 135, 84, 0.05);
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.1);
+  }
+  .quick-date-pill {
+    border: 1px solid #cbd5e1;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    background: #ffffff;
+    transition: all 0.15s ease;
+  }
+  .quick-date-pill:hover {
+    border-color: #198754;
+    color: #198754;
+  }
+  .quick-date-pill.active {
+    background-color: #198754;
+    border-color: #198754;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(25, 135, 84, 0.2);
+  }
+</style>
+
+<div class="container-fluid p-0">
+
+  <!-- 1. TOP HEADER & BREADCRUMB -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2" data-aos="fade-down">
+    <div>
+      <h4 class="fw-bold text-dark mb-0" style="letter-spacing: -0.3px; font-size: 1.25rem;">
+        របាយការណ៍លក់ & វិភាគ 
+      </h4>
+      <p class="text-muted small mb-0" style="font-size: 0.8rem;">របាយការណ៍ចំណូលសរុប តាមដានការលក់ និងវិភាគទិន្នន័យផលិតផល PNK Mobile</p>
+    </div>
+
+    <div class="d-none d-sm-flex align-items-center gap-1.5 text-muted small" style="font-size: 0.8rem;">
+      <a href="{% url 'accounts:dashboard' %}" class="text-decoration-none text-muted d-inline-flex align-items-center hover-primary">
+        <i class="bi bi-house me-1 text-success"></i> Dashboard
+      </a>
+      <i class="bi bi-chevron-right mx-1 text-muted" style="font-size: 9px;"></i>
+      <span class="text-dark fw-semibold">Reports</span>
+    </div>
+  </div>
+
+  <!-- 2. 4 KPI STAT CARDS -->
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-2.5 mb-3" data-aos="fade-up">
+    <!-- TOTAL REVENUE -->
+    <div class="col">
+      <div class="report-kpi-card d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">ចំណូលសរុប</small>
+          <h4 class="fw-bold text-success mb-0">${{ total_sales|floatformat:2 }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-success-subtle text-success">
+          <i class="bi bi-wallet2"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLETED ORDERS -->
+    <div class="col">
+      <div class="report-kpi-card d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">
+            ជោគជ័យ <span class="badge bg-success-subtle text-success border border-success-subtle ms-1" style="font-size: 9.5px;">{{ completion_rate }}%</span>
+          </small>
+          <h4 class="fw-bold text-dark mb-0">{{ count_completed }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-success text-white">
+          <i class="bi bi-check-lg"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENDING ORDERS -->
+    <div class="col">
+      <div class="report-kpi-card d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">កំពុងរង់ចាំ</small>
+          <h4 class="fw-bold text-dark mb-0">{{ count_pending }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-warning-subtle text-warning">
+          <i class="bi bi-bag-fill"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- REJECTED ORDERS -->
+    <div class="col">
+      <div class="report-kpi-card d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">
+            បដិសេធ <span class="badge bg-danger-subtle text-danger border border-danger-subtle ms-1" style="font-size: 9.5px;">{{ rejection_rate }}%</span>
+          </small>
+          <h4 class="fw-bold text-dark mb-0">{{ count_rejected }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-danger-subtle text-danger">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. TOOLBAR & REPORT TABLE CONTAINER -->
+  <div class="report-card-container overflow-hidden mb-4" data-aos="fade-up">
+    <!-- TOOLBAR ROW -->
+    <div class="p-3 border-bottom" style="background-color: var(--bg-card, #ffffff);">
+      <form method="GET" action="{% url 'accounts:report_page' %}">
+        <!-- ROW 1: SEARCH & EXPORT REPORTS DROPDOWN MENU -->
+        <div class="row g-2 align-items-center mb-2">
+          <div class="col-lg-7 col-md-8 col-12">
+            <div class="position-relative">
+              <input type="text" name="search" value="{{ search_query }}" class="form-control border shadow-none search-input-compact" placeholder="ស្វែងរកកូដ, ឈ្មោះអតិថិជន, អ៊ីមែល, លេខទូរស័ព្ទ..." style="background-color: var(--bg-soft, #f8fafc); color: var(--text);" />
+              <i class="bi bi-search position-absolute text-muted" style="left: 12px; top: 10px; font-size: 0.9rem; pointer-events: none; z-index: 5;"></i>
+            </div>
+          </div>
+
+          <div class="col-lg-5 col-md-4 col-12 d-flex justify-content-end gap-2">
+            <!-- EXPORT REPORTS MODAL TRIGGER BUTTON -->
+            <button type="button" class="btn btn-success px-3.5 rounded-3 d-flex align-items-center justify-content-center gap-2 fw-semibold text-white w-100 shadow-xs" data-bs-toggle="modal" data-bs-target="#exportReportModal" style="background: linear-gradient(135deg, #198754, #146c43); height: 38px; font-size: 0.82rem; border: none;">
+              <i class="bi bi-file-earmark-arrow-down-fill fs-6"></i> បង្កើត & Export របាយការណ៍ <i class="bi bi-sliders ms-1 small"></i>
+            </button>
+            <button type="button" class="btn btn-light border rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px; flex-shrink: 0;" onclick="window.location.reload();" title="Refresh">
+              <i class="bi bi-arrow-clockwise fs-5 text-dark"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ROW 2: LABELED FILTER DROPDOWNS -->
+        <div class="row g-2 pt-2 border-top align-items-end">
+          <!-- 1. Brand -->
+          <div class="col-lg-2 col-md-4 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label text-center w-100">ម៉ាក</label>
+            <select name="brand" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if brand_filter == 'all' %}selected{% endif %}>គ្រប់ម៉ាក</option>
+              {% for b in all_brands %}
+              <option value="{{ b.id }}" {% if brand_filter == b.id|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- 2. Product -->
+          <div class="col-lg-2 col-md-4 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label text-center w-100">ទំនិញ</label>
+            <select name="product" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if product_filter == 'all' %}selected{% endif %}>គ្រប់ទំនិញ</option>
+              {% for p in all_products %}
+              <option value="{{ p.id }}" {% if product_filter == p.id|stringformat:"s" %}selected{% endif %}>{{ p.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- 3. Status -->
+          <div class="col-lg-2 col-md-4 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label text-center w-100">ស្ថានភាព</label>
+            <select name="status" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if status_filter == 'all' %}selected{% endif %}>គ្រប់ស្ថានភាព</option>
+              <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>🟡 Pending</option>
+              <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>🟢 Completed</option>
+              <option value="Rejected" {% if status_filter == 'Rejected' %}selected{% endif %}>🔴 Rejected</option>
+            </select>
+          </div>
+
+          <!-- 4. Payment -->
+          <div class="col-lg-2 col-md-4 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label text-center w-100">ការទូទាត់</label>
+            <select name="payment" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if payment_filter == 'all' %}selected{% endif %}>គ្រប់ការទូទាត់</option>
+              <option value="COD" {% if payment_filter == 'COD' %}selected{% endif %}>COD</option>
+              <option value="ABA" {% if payment_filter == 'ABA' %}selected{% endif %}> ABA</option>
+            </select>
+          </div>
+
+          <!-- 5. Date -->
+          <div class="col-lg-2 col-md-4 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label text-center w-100">កាលបរិច្ឆេទ</label>
+            <select name="date" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if date_filter == 'all' and not start_date and not end_date %}selected{% endif %}>គ្រប់ពេល</option>
+              <option value="today" {% if date_filter == 'today' %}selected{% endif %}>📆 ថ្ងៃនេះ</option>
+              <option value="yesterday" {% if date_filter == 'yesterday' %}selected{% endif %}>📆 ម្សិលមិញ</option>
+              <option value="week" {% if date_filter == 'week' %}selected{% endif %}>🗓 ៧ ថ្ងៃចុងក្រោយ</option>
+              <option value="month" {% if date_filter == 'month' %}selected{% endif %}>🗓 ៣០ ថ្ងៃចុងក្រោយ</option>
+              <option value="year" {% if date_filter == 'year' %}selected{% endif %}>📅 ឆ្នាំនេះ</option>
+            </select>
+          </div>
+
+          <!-- 6. Sort -->
+          <div class="col-lg-2 col-md-4 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label text-center w-100">តម្រៀប</label>
+            <select name="sort" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>ថ្មីបំផុត</option>
+              <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>ចាស់បំផុត</option>
+              <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>តម្លៃខ្ពស់ → ទាប</option>
+              <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>តម្លៃទាប → ខ្ពស់</option>
+              <option value="cust_asc" {% if sort_by == 'cust_asc' %}selected{% endif %}>ឈ្មោះ (A-Z)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ROW 3: CUSTOM DATE RANGE INPUTS -->
+        <div class="row g-2 pt-2 border-top mt-1 align-items-center">
+          <div class="col-md-auto text-muted fw-semibold small">
+            <i class="bi bi-calendar-range me-1 text-success"></i>កំណត់ចន្លោះថ្ងៃ Custom:
+          </div>
+          <div class="col-auto">
+            <input type="date" name="start_date" value="{{ start_date }}" class="form-control form-control-sm border shadow-none" style="background-color: var(--bg-soft, #f8fafc); width: 145px;" title="ចាប់ពីថ្ងៃ" onchange="this.form.submit()">
+          </div>
+          <div class="col-auto text-muted small">ដល់</div>
+          <div class="col-auto">
+            <input type="date" name="end_date" value="{{ end_date }}" class="form-control form-control-sm border shadow-none" style="background-color: var(--bg-soft, #f8fafc); width: 145px;" title="ដល់ថ្ងៃ" onchange="this.form.submit()">
+          </div>
+          {% if start_date or end_date %}
+          <div class="col-auto">
+            <a href="{% url 'accounts:report_page' %}" class="btn btn-sm btn-light border text-danger rounded-2 px-2 py-1" style="font-size: 11px;">
+              <i class="bi bi-x-circle me-1"></i>លុបថ្ងៃជ្រើសរើស
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+
+    <!-- REPORT SALES TABLE -->
+    <div class="table-responsive">
+      <table class="table table-hover table-custom-report align-middle mb-0" style="width: 100%;">
+        <thead>
+          <tr>
+            <th class="text-nowrap ps-3" style="width: 75px;">ORDER ID</th>
+            <th class="text-nowrap" style="width: 150px;">អតិថិជន</th>
+            <th class="text-nowrap" style="width: 140px;">ទំនិញ</th>
+            <th class="text-nowrap" style="width: 110px;">ថ្ងៃកុម្មង់</th>
+            <th class="text-nowrap" style="width: 100px;">ទូរស័ព្ទ</th>
+            <th class="text-nowrap text-end" style="width: 90px;">សរុប ($)</th>
+            <th class="text-center text-nowrap" style="width: 100px;">ស្ថានភាព</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr class="hover-row">
+            <!-- ORDER ID -->
+            <td class="ps-3 text-nowrap">
+              <span class="fw-bold text-success font-monospace d-block" style="font-size: 13.5px;">#{{ order.id }}</span>
+              <small class="text-muted font-monospace" style="font-size: 9.5px;">ORD-000{{ order.id }}</small>
+            </td>
+
+            <!-- CUSTOMER PROFILE -->
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                {% if order.user and order.user.profile and order.user.profile.image %}
+                  <img src="{{ order.user.profile.image.url }}" class="rounded-circle shadow-xs border border-white" style="width: 34px; height: 34px; object-fit: cover;">
+                {% else %}
+                  <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-xs" style="width: 34px; height: 34px; font-size: 0.8rem; background: linear-gradient(135deg, #198754, #146c43);">
+                    {{ order.first_name|slice:":1"|upper }}{{ order.last_name|slice:":1"|upper }}
+                  </div>
+                {% endif %}
+                <div>
+                  <span class="fw-bold text-dark d-block" style="font-size: 13px;">
+                    {% if order.last_name or order.first_name %}{{ order.last_name }} {{ order.first_name }}{% elif order.user %}{{ order.user.username }}{% else %}Guest{% endif %}
+                  </span>
+                  <small class="text-muted d-block" style="font-size: 10px;">{{ order.phone|default:"-" }}</small>
+                </div>
+              </div>
+            </td>
+
+            <!-- PRODUCTS SUMMARY -->
+            <td>
+              <div style="max-width: 140px;" class="text-truncate">
+                {% for item in order.items.all %}
+                  <span class="badge bg-light text-dark border font-monospace px-1.5 py-0.5" style="font-size: 10px;">{{ item.product.name }} (x{{ item.quantity }})</span>
+                {% empty %}
+                  <span class="text-muted small">-</span>
+                {% endfor %}
+              </div>
+            </td>
+
+            <!-- ORDER DATE -->
+            <td class="text-nowrap">
+              <span class="badge bg-light text-dark border font-monospace px-2 py-1 rounded-2 d-inline-flex align-items-center gap-1" style="font-size: 11px;">
+                <i class="bi bi-calendar-event text-success"></i> <span>{{ order.created_at|date:"d-m-Y" }}</span>
+              </span>
+            </td>
+
+            <!-- PHONE -->
+            <td class="small">
+              {% if order.phone and order.phone != "None" %}
+                <a href="tel:{{ order.phone }}" class="text-decoration-none text-dark hover-primary" title="Call Phone">
+                  <i class="bi bi-telephone-fill text-success me-1"></i>{{ order.phone }}
+                </a>
+              {% else %}
+                <span class="text-muted font-monospace">-</span>
+              {% endif %}
+            </td>
+
+            <!-- TOTAL AMOUNT -->
+            <td class="text-end fw-bold text-success font-monospace fs-6 text-nowrap">
+              ${{ order.total_amount|floatformat:2 }}
+            </td>
+
+            <!-- STATUS BADGE -->
+            <td class="text-center">
+              {% if order.status == 'Completed' or order.status == 'completed' %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill font-monospace" style="font-size: 10.5px;"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
+              {% elif order.status == 'Rejected' or order.status == 'rejected' %}
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1 rounded-pill font-monospace" style="font-size: 10.5px;"><i class="bi bi-x-circle-fill me-1"></i>Rejected</span>
+              {% else %}
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2.5 py-1 rounded-pill font-monospace" style="font-size: 10.5px;"><i class="bi bi-clock-history me-1"></i>{{ order.status|default:"Pending" }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center text-muted py-4">មិនមានទិន្នន័យការលក់តាមលក្ខខណ្ឌ Filter ឡើយ។</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% if orders %}
+        <tfoot>
+          <tr class="table-light fw-bold border-top" style="background-color: var(--bg-soft, #f8fafc);">
+            <td colspan="5" class="ps-3 text-dark">
+              សរុបទំព័រនេះ ({{ orders|length }} នៃ {{ total_orders_count }} បញ្ជាទិញ):
+            </td>
+            <td class="text-end text-success font-monospace fs-6">
+              ${{ page_total_amount|floatformat:2 }}
+            </td>
+            <td class="text-center small text-muted">
+              សរុបទាំងអស់: ${{ total_sales|floatformat:2 }}
+            </td>
+          </tr>
+        </tfoot>
+        {% endif %}
+      </table>
+    </div>
+
+    <!-- PAGINATION CONTROLS -->
+    {% if orders.has_other_pages %}
+    <div class="p-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2" style="background-color: var(--bg-card, #ffffff);">
+      <small class="text-muted">
+        បង្ហាញទំព័រទី <b>{{ orders.number }}</b> នៃ <b>{{ orders.paginator.num_pages }}</b> (សរុប <b>{{ total_orders_count }}</b> Orders)
+      </small>
+
+      <ul class="pagination pagination-sm mb-0">
+        {% if orders.has_previous %}
+        <li class="page-item">
+          <a class="page-link text-success border shadow-none" href="?page={{ orders.previous_page_number }}&status={{ status_filter }}&search={{ search_query }}&product={{ product_filter }}&brand={{ brand_filter }}&payment={{ payment_filter }}&date={{ date_filter }}&start_date={{ start_date }}&end_date={{ end_date }}&sort={{ sort_by }}">
+            <i class="bi bi-chevron-left me-1"></i>មុន
+          </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-left me-1"></i>មុន</span></li>
+        {% endif %}
+
+        {% for p in orders.paginator.page_range %}
+          {% if p >= orders.number|add:"-2" and p <= orders.number|add:"2" %}
+            {% if p == orders.number %}
+              <li class="page-item active"><span class="page-link bg-success border-success text-white">{{ p }}</span></li>
+            {% else %}
+              <li class="page-item">
+                <a class="page-link text-dark border shadow-none" href="?page={{ p }}&status={{ status_filter }}&search={{ search_query }}&product={{ product_filter }}&brand={{ brand_filter }}&payment={{ payment_filter }}&date={{ date_filter }}&start_date={{ start_date }}&end_date={{ end_date }}&sort={{ sort_by }}">{{ p }}</a>
+              </li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+        {% if orders.has_next %}
+        <li class="page-item">
+          <a class="page-link text-success border shadow-none" href="?page={{ orders.next_page_number }}&status={{ status_filter }}&search={{ search_query }}&product={{ product_filter }}&brand={{ brand_filter }}&payment={{ payment_filter }}&date={{ date_filter }}&start_date={{ start_date }}&end_date={{ end_date }}&sort={{ sort_by }}">
+            បន្ទាប់<i class="bi bi-chevron-right ms-1"></i>
+          </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">បន្ទាប់<i class="bi bi-chevron-right ms-1"></i></span></li>
+        {% endif %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- 4. TOP SELLING MODELS TABLE CONTAINER -->
+  <div class="report-card-container overflow-hidden mb-4" data-aos="fade-up">
+    <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="background-color: var(--bg-card, #ffffff);">
+      <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+        <i class="bi bi-fire text-danger fs-5"></i> តារាងទូរស័ព្ទលក់ដាច់បំផុត (Top Selling Models)
+      </h6>
+      <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill font-monospace" style="font-size: 11.5px;">
+        {{ top_products|length }} Top Models
+      </span>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="table table-hover table-custom-report align-middle mb-0" style="width: 100%;">
+        <thead>
+          <tr>
+            <th class="ps-3" style="width: 60px;">រូបភាព</th>
+            <th>ឈ្មោះទូរស័ព្ទ (MODEL NAME)</th>
+            <th>ប្រភេទ (CATEGORY)</th>
+            <th>ម៉ាក (BRAND)</th>
+            <th>តម្លៃ ($)</th>
+            <th class="text-center pe-3">ចំនួនលក់បាន (TOTAL SALES)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for prod in top_products %}
+          <tr class="hover-row">
+            <td class="ps-3">
+              {% if prod.image %}
+                <img src="{{ prod.image.url }}" class="product-thumb-box shadow-xs" alt="{{ prod.name }}">
+              {% else %}
+                <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border" style="width: 44px; height: 44px;"><i class="bi bi-phone fs-5"></i></div>
+              {% endif %}
+            </td>
+            <td class="fw-bold text-dark fs-6">{{ prod.name }}</td>
+            <td><span class="badge bg-light text-dark border px-2.5 py-1 rounded-2">{{ prod.category.name|default:"-" }}</span></td>
+            <td><span class="badge bg-light text-dark border px-2.5 py-1 rounded-2">{{ prod.brand.name|default:"-" }}</span></td>
+            <td class="fw-bold text-success font-monospace fs-6">${{ prod.price|floatformat:2 }}</td>
+            <td class="text-center pe-3">
+              <span class="badge bg-primary text-white px-3 py-1.5 rounded-pill font-monospace fs-6 shadow-xs">
+                <i class="bi bi-cart-check-fill me-1"></i>{{ prod.sales_count }} គ្រឿង
+              </span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">មិនទាន់មានទិន្នន័យលក់ដាច់ឡើយ។</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5. VIP CUSTOMERS & LOW STOCK ALERTS ROW -->
+  <div class="row g-3 mb-4" data-aos="fade-up">
+    <!-- VIP TOP BUYERS TABLE -->
+    <div class="col-lg-7">
+      <div class="report-card-container overflow-hidden h-100">
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="background-color: var(--bg-card, #ffffff);">
+          <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+            <i class="bi bi-trophy-fill text-warning fs-5"></i> អតិថិជន VIP ទិញច្រើនបំផុត (Top VIP Customers)
+          </h6>
+          <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-1 rounded-pill font-monospace" style="font-size: 11.5px;">
+            Top Buyers
+          </span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0" style="width: 100%; font-size: 0.85rem;">
+            <thead>
+              <tr class="table-light">
+                <th class="ps-3">អតិថិជន</th>
+                <th>លេខទូរស័ព្ទ</th>
+                <th class="text-center">ចំនួនកុម្មង់</th>
+                <th class="text-end pe-3">ចំណាយសរុប ($)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for cust in top_customers %}
+              <tr>
+                <td class="ps-3 fw-bold text-dark">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-xs" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                      {{ cust.first_name|slice:":1"|upper }}{{ cust.last_name|slice:":1"|upper }}
+                    </div>
+                    <div>
+                      <span>{% if cust.last_name or cust.first_name %}{{ cust.last_name }} {{ cust.first_name }}{% else %}{{ cust.user__username }}{% endif %}</span>
+                      <small class="text-muted d-block font-monospace" style="font-size: 10px;">@{{ cust.user__username }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td class="font-monospace small">{{ cust.phone|default:"-" }}</td>
+                <td class="text-center font-monospace"><span class="badge bg-light text-dark border px-2 py-1">{{ cust.total_orders }} orders</span></td>
+                <td class="text-end pe-3 fw-bold text-success font-monospace">${{ cust.total_spent|floatformat:2 }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="text-center text-muted py-3">មិនទាន់មានទិន្នន័យអតិថិជន VIP ឡើយ។</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOW STOCK ALERTS WIDGET -->
+    <div class="col-lg-5">
+      <div class="report-card-container overflow-hidden h-100">
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="background-color: var(--bg-card, #ffffff);">
+          <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+            <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i> ទំនិញជិតអស់ពីស្តុក (Low Stock Alert)
+          </h6>
+          <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 rounded-pill font-monospace" style="font-size: 11.5px;">
+            Stock ≤ 5
+          </span>
+        </div>
+        <div class="p-2">
+          <ul class="list-group list-group-flush">
+            {% for item in low_stock_products %}
+            <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 border-0 rounded-3 mb-1 hover-row" style="background-color: var(--bg-soft, #f8fafc);">
+              <div class="d-flex align-items-center gap-2.5">
+                {% if item.image %}
+                  <img src="{{ item.image.url }}" class="rounded-2 border" style="width: 36px; height: 36px; object-fit: cover;">
+                {% else %}
+                  <div class="bg-light rounded-2 d-flex align-items-center justify-content-center text-muted border" style="width: 36px; height: 36px;"><i class="bi bi-phone"></i></div>
+                {% endif %}
+                <div>
+                  <span class="fw-bold text-dark d-block text-truncate" style="max-width: 170px; font-size: 0.83rem;">{{ item.name }}</span>
+                  <small class="text-muted" style="font-size: 10.5px;">${{ item.price|floatformat:2 }}</small>
+                </div>
+              </div>
+              <div>
+                {% if item.stock == 0 %}
+                  <span class="badge bg-danger text-white px-2.5 py-1 rounded-pill font-monospace" style="font-size: 10.5px;"><i class="bi bi-x-circle me-1"></i>អស់ស្តុក (0)</span>
+                {% else %}
+                  <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2.5 py-1 rounded-pill font-monospace" style="font-size: 10.5px;"><i class="bi bi-exclamation-circle me-1"></i>សល់ {{ item.stock }} គ្រឿង</span>
+                {% endif %}
+              </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-center text-muted py-4 border-0">គ្មានទំនិញជិតអស់ពីស្តុកឡើយ! (ស្តុកទាំងអស់សុវត្ថិភាព)</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EXPORT REPORT MODAL POP-UP -->
+<div class="modal fade" id="exportReportModal" tabindex="-1" aria-labelledby="exportReportModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 650px;">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      <!-- HEADER -->
+      <div class="modal-header border-0 pb-0 pt-3.5 px-4 d-flex align-items-center justify-content-between">
+        <h5 class="modal-title fw-bold text-dark fs-5" id="exportReportModalLabel">
+          <i class="bi bi-file-earmark-bar-graph-fill text-success me-2"></i>ទាញយករបាយការណ៍
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body px-4 py-3">
+        <!-- STEP 1: CHOOSE REPORT TYPE -->
+        <div class="mb-4">
+          <label class="form-label fw-bold text-dark d-flex align-items-center gap-2 mb-2.5" style="font-size: 0.95rem;">
+            <span class="badge rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 22px; height: 22px; font-size: 11px;">1</span>
+            <span>ជ្រើសរើសប្រភេទរបាយការណ៍</span>
+          </label>
+          <div class="row g-2.5">
+            <div class="col-md-6">
+              <label class="border rounded-3 p-3 d-flex align-items-center gap-3 w-100 cursor-pointer hover-card text-start transition-all" style="background-color: var(--bg-soft, #f8fafc);">
+                <input type="radio" name="modal_report_type" value="orders" class="form-check-input flex-shrink-0 mt-0" checked onchange="toggleFormatOptions()">
+                <div>
+                  <span class="fw-bold text-dark d-block" style="font-size: 0.88rem;"><i class="bi bi-cart-check-fill text-success me-1"></i> របាយការណ៍ការលក់</span>
+                </div>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="border rounded-3 p-3 d-flex align-items-center gap-3 w-100 cursor-pointer hover-card text-start transition-all" style="background-color: var(--bg-soft, #f8fafc);">
+                <input type="radio" name="modal_report_type" value="top_products" class="form-check-input flex-shrink-0 mt-0" onchange="toggleFormatOptions()">
+                <div>
+                  <span class="fw-bold text-dark d-block" style="font-size: 0.88rem;"><i class="bi bi-fire text-danger me-1"></i> របាយការណ៍ទូរស័ព្ទលក់ដាច់</span>
+                </div>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="border rounded-3 p-3 d-flex align-items-center gap-3 w-100 cursor-pointer hover-card text-start transition-all" style="background-color: var(--bg-soft, #f8fafc);">
+                <input type="radio" name="modal_report_type" value="vip_customers" class="form-check-input flex-shrink-0 mt-0" onchange="toggleFormatOptions()">
+                <div>
+                  <span class="fw-bold text-dark d-block" style="font-size: 0.88rem;"><i class="bi bi-trophy-fill text-warning me-1"></i> របាយការណ៍អតិថិជន VIP</span>
+                </div>
+              </label>
+            </div>
+            <div class="col-md-6">
+              <label class="border rounded-3 p-3 d-flex align-items-center gap-3 w-100 cursor-pointer hover-card text-start transition-all" style="background-color: var(--bg-soft, #f8fafc);">
+                <input type="radio" name="modal_report_type" value="low_stock" class="form-check-input flex-shrink-0 mt-0" onchange="toggleFormatOptions()">
+                <div>
+                  <span class="fw-bold text-dark d-block" style="font-size: 0.88rem;"><i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> របាយការណ៍ស្តុកជិតអស់</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: CHOOSE FORMAT -->
+        <div class="mb-4">
+          <label class="form-label fw-bold text-dark d-flex align-items-center gap-2 mb-2.5" style="font-size: 0.95rem;">
+            <span class="badge rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 22px; height: 22px; font-size: 11px;">2</span>
+            <span>ជ្រើសរើសទម្រង់</span>
+          </label>
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="export-format-card d-flex align-items-center gap-2.5 selected" id="modalFmtExcelCard" onclick="selectModalExportFormat('excel')">
+                <input type="radio" name="modal_format" id="modalFmtExcelRadio" value="excel" checked class="form-check-input mt-0">
+                <i class="bi bi-file-earmark-excel-fill text-success fs-4"></i>
+                <span class="fw-bold text-dark fs-6">Excel</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="export-format-card d-flex align-items-center gap-2.5" id="modalFmtPdfCard" onclick="selectModalExportFormat('pdf')">
+                <input type="radio" name="modal_format" id="modalFmtPdfRadio" value="pdf" class="form-check-input mt-0">
+                <i class="bi bi-file-earmark-pdf-fill text-danger fs-4"></i>
+                <span class="fw-bold text-dark fs-6">PDF Report</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: DATE RANGE SELECTION -->
+        <div class="mb-2">
+          <label class="form-label fw-bold text-dark d-flex align-items-center gap-2 mb-2.5" style="font-size: 0.95rem;">
+            <span class="badge rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 22px; height: 22px; font-size: 11px;">3</span>
+            <span>កំណត់កាលបរិច្ឆេទរបាយការណ៍</span>
+          </label>
+
+          <!-- QUICK DATE PILLS -->
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <button type="button" class="btn quick-date-pill active" data-period="today" onclick="selectModalQuickDate('today', this)">📅 ថ្ងៃ</button>
+            <button type="button" class="btn quick-date-pill" data-period="week" onclick="selectModalQuickDate('week', this)">សប្តាហ៍</button>
+            <button type="button" class="btn quick-date-pill" data-period="month" onclick="selectModalQuickDate('month', this)">ខែ</button>
+            <button type="button" class="btn quick-date-pill" data-period="year" onclick="selectModalQuickDate('year', this)">🗓 ឆ្នាំនេះ</button>
+            <button type="button" class="btn quick-date-pill" data-period="all" onclick="selectModalQuickDate('all', this)">🌐 គ្រប់ពេល</button>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-6">
+              <label class="form-label text-secondary fw-semibold small mb-1">ចាប់ពីថ្ងៃ</label>
+              <input type="date" id="modalStartDate" value="{{ start_date }}" class="form-control rounded-3 p-2.5 border" onchange="onModalCustomDateChange()">
+            </div>
+            <div class="col-6">
+              <label class="form-label text-secondary fw-semibold small mb-1">ដល់ថ្ងៃ</label>
+              <input type="date" id="modalEndDate" value="{{ end_date }}" class="form-control rounded-3 p-2.5 border" onchange="onModalCustomDateChange()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer border-top px-4 py-3 bg-light d-flex justify-content-between">
+        <button type="button" class="btn btn-light border rounded-3 px-4 py-2 fw-semibold text-dark" data-bs-dismiss="modal">បោះបង់</button>
+        <button type="button" class="btn btn-success px-4 py-2 rounded-3 fw-bold d-flex align-items-center gap-2" onclick="triggerModalExport()" style="background-color: #146c43; border: none;">
+          <i class="bi bi-download"></i> ទាញយករបាយការណ៍
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PDF REPORT PREVIEW MODAL -->
+<div class="modal fade" id="pdfReportModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow-lg" style="height: 85vh;">
+      <div class="modal-header border-bottom p-3 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #198754, #146c43); color: white; border-top-left-radius: 15px; border-top-right-radius: 15px;">
+        <h5 class="modal-title fw-bold m-0 d-flex align-items-center gap-2">
+          <i class="bi bi-file-earmark-pdf-fill"></i>
+          <span id="pdfModalTitleText">មើលរបាយការណ៍ PDF</span>
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0 position-relative bg-light" style="flex: 1; overflow: hidden;">
+        <div id="pdfReportSpinner" class="position-absolute top-50 start-50 translate-middle text-center" style="z-index: 10;">
+          <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;"></div>
+          <p class="text-muted mt-2 small fw-semibold">កំពុងរៀបចំរបាយការណ៍...</p>
+        </div>
+        <iframe id="pdfReportIframe" src="" style="width: 100%; height: 100%; border: none; display: none;"></iframe>
+      </div>
+      <div class="modal-footer border-top p-3 d-flex justify-content-between bg-white" style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
+        <button type="button" class="btn btn-light border rounded-3 fw-semibold px-3" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i> បិទ (Close)
+        </button>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-outline-success rounded-3 fw-bold px-3" onclick="document.getElementById('pdfReportIframe').contentWindow.print()">
+            <i class="bi bi-printer me-1"></i> បោះពុម្ព (Print)
+          </button>
+          <a id="pdfDownloadDirectLink" href="#" target="_blank" class="btn btn-success rounded-3 fw-bold px-4" style="background-color: #146c43; border: none;">
+            <i class="bi bi-download me-1"></i> ទាញយក PDF
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function selectModalExportFormat(fmt) {
+    const excelCard = document.getElementById('modalFmtExcelCard');
+    const pdfCard = document.getElementById('modalFmtPdfCard');
+    const excelRadio = document.getElementById('modalFmtExcelRadio');
+    const pdfRadio = document.getElementById('modalFmtPdfRadio');
+
+    if (fmt === 'excel') {
+      if (excelCard) excelCard.classList.add('selected');
+      if (pdfCard) pdfCard.classList.remove('selected');
+      if (excelRadio) excelRadio.checked = true;
+    } else {
+      if (pdfCard) pdfCard.classList.add('selected');
+      if (excelCard) excelCard.classList.remove('selected');
+      if (pdfRadio) pdfRadio.checked = true;
+    }
+  }
+
+  function toggleFormatOptions() {
+    const pdfCard = document.getElementById('modalFmtPdfCard');
+    const pdfRadio = document.getElementById('modalFmtPdfRadio');
+    if (pdfRadio) pdfRadio.disabled = false;
+    if (pdfCard) {
+      pdfCard.style.opacity = '1';
+      pdfCard.style.pointerEvents = 'auto';
+    }
+  }
+
+  function selectModalQuickDate(period, btnEl) {
+    document.querySelectorAll('.quick-date-pill').forEach(b => b.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+
+    const today = new Date();
+    const startDateInput = document.getElementById('modalStartDate');
+    const endDateInput = document.getElementById('modalEndDate');
+
+    const formatDate = (d) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    if (period === 'all') {
+      startDateInput.value = '';
+      endDateInput.value = '';
+      return;
+    }
+
+    endDateInput.value = formatDate(today);
+
+    if (period === 'today') {
+      startDateInput.value = formatDate(today);
+    } else if (period === 'week') {
+      const past = new Date(today);
+      past.setDate(past.getDate() - 7);
+      startDateInput.value = formatDate(past);
+    } else if (period === 'month') {
+      const past = new Date(today);
+      past.setDate(past.getDate() - 30);
+      startDateInput.value = formatDate(past);
+    } else if (period === 'year') {
+      const past = new Date(today);
+      past.setFullYear(past.getFullYear() - 1);
+      startDateInput.value = formatDate(past);
+    }
+  }
+
+  function onModalCustomDateChange() {
+    document.querySelectorAll('.quick-date-pill').forEach(b => b.classList.remove('active'));
+  }
+
+  function triggerModalExport() {
+    const reportType = document.querySelector('input[name="modal_report_type"]:checked')?.value || 'orders';
+    const format = document.querySelector('input[name="modal_format"]:checked')?.value || 'excel';
+    const startDate = document.getElementById('modalStartDate').value;
+    const endDate = document.getElementById('modalEndDate').value;
+
+    let baseUrl = '';
+
+    if (reportType === 'orders') {
+      baseUrl = (format === 'pdf') ? "{% url 'accounts:export_orders_pdf' %}" : "{% url 'accounts:export_orders_csv' %}";
+    } else if (reportType === 'top_products') {
+      baseUrl = (format === 'pdf') ? "{% url 'accounts:export_top_products_pdf' %}" : "{% url 'accounts:export_top_products_csv' %}";
+    } else if (reportType === 'vip_customers') {
+      baseUrl = (format === 'pdf') ? "{% url 'accounts:export_vip_customers_pdf' %}" : "{% url 'accounts:export_vip_customers_csv' %}";
+    } else if (reportType === 'low_stock') {
+      baseUrl = (format === 'pdf') ? "{% url 'accounts:export_low_stock_pdf' %}" : "{% url 'accounts:export_low_stock_csv' %}";
+    }
+
+    const params = new URLSearchParams({
+      status: '{{ status_filter|default:"all" }}',
+      search: '{{ search_query|default:"" }}',
+      product: '{{ product_filter|default:"all" }}',
+      brand: '{{ brand_filter|default:"all" }}',
+      payment: '{{ payment_filter|default:"all" }}',
+      date: '{{ date_filter|default:"all" }}',
+      sort: '{{ sort_by|default:"newest" }}'
+    });
+
+    if (startDate) params.set('start_date', startDate);
+    if (endDate) params.set('end_date', endDate);
+
+    const exportModalEl = document.getElementById('exportReportModal');
+    if (exportModalEl) {
+      const modalInstance = bootstrap.Modal.getInstance(exportModalEl) || bootstrap.Modal.getOrCreateInstance(exportModalEl);
+      modalInstance.hide();
+    }
+
+    if (format === 'pdf') {
+      params.set('embed', '1');
+      const finalUrl = `${baseUrl}?${params.toString()}`;
+      openPdfReportModal(finalUrl, reportType);
+    } else {
+      const finalUrl = `${baseUrl}?${params.toString()}`;
+      window.location.href = finalUrl;
+    }
+  }
+
+  function openPdfReportModal(url, reportType) {
+    const pdfModalEl = document.getElementById('pdfReportModal');
+    const iframe = document.getElementById('pdfReportIframe');
+    const spinner = document.getElementById('pdfReportSpinner');
+    const directLink = document.getElementById('pdfDownloadDirectLink');
+    const modalTitleEl = document.getElementById('pdfModalTitleText');
+
+    if (!pdfModalEl || !iframe) {
+      window.open(url, '_blank');
+      return;
+    }
+
+    if (modalTitleEl) {
+      if (reportType === 'top_products') {
+        modalTitleEl.textContent = 'មើលរបាយការណ៍ទូរស័ព្ទលក់ដាច់បំផុត';
+      } else if (reportType === 'vip_customers') {
+        modalTitleEl.textContent = 'មើលរបាយការណ៍អតិថិជន VIP';
+      } else if (reportType === 'low_stock') {
+        modalTitleEl.textContent = 'មើលរបាយការណ៍ស្តុកជិតអស់';
+      } else {
+        modalTitleEl.textContent = 'មើលរបាយការណ៍លក់ និងការបញ្ជាទិញ';
+      }
+    }
+
+    if (directLink) {
+      const downloadUrl = url.replace('embed=1', 'download=1');
+      directLink.href = downloadUrl;
+    }
+
+    spinner.style.display = 'block';
+    iframe.style.display = 'none';
+    iframe.src = url;
+
+    iframe.onload = function() {
+      spinner.style.display = 'none';
+      iframe.style.display = 'block';
+    };
+
+    const pdfModal = bootstrap.Modal.getOrCreateInstance(pdfModalEl);
+    pdfModal.show();
+  }
+</script>
+{% endblock %}

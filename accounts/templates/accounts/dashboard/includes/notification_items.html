@@ -1,0 +1,180 @@
+{% if total_notifications_count == 0 %}
+<!-- EMPTY STATE -->
+<div class="text-center py-5 px-3 bg-white rounded-4 border my-2">
+  <div class="rounded-circle bg-success-subtle text-success d-inline-flex align-items-center justify-content-center mb-2 shadow-xs" style="width: 52px; height: 52px;">
+    <i class="bi bi-check2-circle fs-2"></i>
+  </div>
+  <h6 class="fw-bold text-dark mb-1" style="font-size: 14px;">មិនមានការជូនដំណឹងថ្មីទេ</h6>
+  <p class="text-muted small mb-0" style="font-size: 12px;">រាល់ការបញ្ជាទិញ និងស្តុកទំនិញស្ថិតក្នុងស្ថានភាពល្អ!</p>
+</div>
+{% else %}
+
+  <!-- 1. PENDING ORDERS SECTION -->
+  {% if pending_orders_count > 0 %}
+  <div class="notif-group-header px-2 pt-1 pb-2" data-group="orders">
+    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 fw-bold" style="font-size: 10.5px;">
+      <i class="bi bi-bag-check-fill me-1"></i> ការបញ្ជាទិញរង់ចាំពិនិត្យ ({{ pending_orders_count }})
+    </span>
+  </div>
+  {% for ord in recent_pending_orders %}
+  <div id="notif-order-{{ ord.id }}" class="notif-card-item position-relative mb-2">
+    <a href="{% url 'accounts:order_list' %}?view_order={{ ord.id }}" class="notif-item card border border-light-subtle rounded-3 p-2.5 shadow-xs text-decoration-none hover-card transition-all bg-white d-block" onclick="dismissNotifItem('order-{{ ord.id }}')">
+      <div class="d-flex align-items-center gap-3">
+        <!-- CUSTOMER REAL AVATAR -->
+        <div class="position-relative flex-shrink-0">
+          {% if ord.user and ord.user.profile and ord.user.profile.image %}
+            <img src="{{ ord.user.profile.image.url }}" alt="{% if ord.user %}{{ ord.user.username }}{% else %}Customer{% endif %}" class="rounded-circle border border-2 border-warning shadow-xs" style="width: 44px; height: 44px; object-fit: cover;">
+          {% else %}
+            <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold shadow-xs border border-2 border-white" style="width: 44px; height: 44px; font-size: 14px; background: linear-gradient(135deg, #f59e0b, #d97706);">
+              {% if ord.user %}{{ ord.user.username|slice:":2"|upper }}{% elif ord.last_name %}{{ ord.last_name|slice:":2"|upper }}{% elif ord.first_name %}{{ ord.first_name|slice:":2"|upper }}{% else %}OD{% endif %}
+            </div>
+          {% endif %}
+          <span class="position-absolute bottom-0 end-0 bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center border border-white shadow-xs" style="width: 17px; height: 17px; font-size: 9px;">
+            <i class="bi bi-bag-fill"></i>
+          </span>
+        </div>
+
+        <div class="flex-grow-1 overflow-hidden">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="fw-bold text-dark text-truncate" style="font-size: 13px;">
+              #OD-{{ ord.id }} • {% if ord.last_name or ord.first_name %}{{ ord.last_name }} {{ ord.first_name }}{% elif ord.user %}{% if ord.user.last_name or ord.user.first_name %}{{ ord.user.last_name }} {{ ord.user.first_name }}{% else %}{{ ord.user.username }}{% endif %}{% else %}អតិថិជន{% endif %}
+            </span>
+            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill fw-bold" style="font-size: 11px;">
+              ${{ ord.total_price }}
+            </span>
+          </div>
+          <div class="d-flex align-items-center justify-content-between text-muted small" style="font-size: 11px;">
+            <span class="text-truncate">
+              <i class="bi bi-telephone text-success me-1"></i>{{ ord.phone|default:"គ្មានលេខទូរស័ព្ទ" }}
+            </span>
+            <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill" style="font-size: 9.5px;">
+              រង់ចាំការបញ្ជាក់
+            </span>
+          </div>
+          <div class="mt-1 d-flex align-items-center text-secondary" style="font-size: 10px;">
+            <i class="bi bi-clock me-1"></i>{{ ord.created_at|timesince }} មុន
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <!-- 2. NEW CUSTOMERS SECTION (REAL PROFILE) -->
+  {% if new_customers_count > 0 and recent_customers %}
+  <div class="notif-group-header px-2 pt-2 pb-2 d-flex align-items-center justify-content-between" data-group="customers">
+    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 fw-bold" style="font-size: 10.5px;">
+      <i class="bi bi-person-plus-fill me-1"></i> អតិថិជនចុះឈ្មោះថ្មី ({{ new_customers_count }})
+    </span>
+    <a href="{% url 'accounts:manage_users' %}" class="text-muted small text-decoration-none" style="font-size: 11px;" title="មើលទាំងអស់">
+      មើលទាំងអស់ <i class="bi bi-arrow-right"></i>
+    </a>
+  </div>
+  {% for cust in recent_customers %}
+  <div id="notif-cust-{{ cust.id }}" class="notif-card-item position-relative mb-2">
+    <a href="{% url 'accounts:manage_users' %}" class="notif-item card border border-light-subtle rounded-3 p-2.5 shadow-xs text-decoration-none hover-card transition-all bg-white d-block" onclick="dismissNotifItem('cust-{{ cust.id }}')">
+      <div class="d-flex align-items-center gap-3">
+        <!-- CUSTOMER REAL AVATAR -->
+        <div class="position-relative flex-shrink-0">
+          {% if cust.profile and cust.profile.image %}
+            <img src="{{ cust.profile.image.url }}" alt="{{ cust.username }}" class="rounded-circle border border-2 border-white shadow-xs" style="width: 44px; height: 44px; object-fit: cover;">
+          {% else %}
+            <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold shadow-xs border border-2 border-white" style="width: 44px; height: 44px; font-size: 14px; background: linear-gradient(135deg, #198754, #146c43);">
+              {{ cust.username|slice:":2"|upper }}
+            </div>
+          {% endif %}
+          <span class="position-absolute bottom-0 end-0 bg-success text-white rounded-circle d-flex align-items-center justify-content-center border border-2 border-white shadow-xs" style="width: 16px; height: 16px; font-size: 8px;">
+            <i class="bi bi-check-lg"></i>
+          </span>
+        </div>
+
+        <div class="flex-grow-1 overflow-hidden">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="fw-bold text-dark text-truncate" style="font-size: 13px;">
+              {% if cust.last_name or cust.first_name %}{{ cust.last_name }} {{ cust.first_name }}{% else %}{{ cust.username }}{% endif %}
+            </span>
+            <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill" style="font-size: 9.5px;">
+              សមាជិកថ្មី
+            </span>
+          </div>
+          <div class="text-muted small text-truncate" style="font-size: 11px;">
+            <i class="bi bi-envelope text-secondary me-1"></i>{{ cust.email|default:cust.username }}
+            {% if cust.profile and cust.profile.phone and cust.profile.phone != "None" %} • <i class="bi bi-phone text-secondary me-0.5"></i>{{ cust.profile.phone }}{% endif %}
+          </div>
+          <div class="mt-1 d-flex align-items-center text-secondary" style="font-size: 10px;">
+            <i class="bi bi-calendar3 me-1"></i>ចូលរួម៖ {{ cust.date_joined|timesince }} មុន
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <!-- 3. LOW STOCK / OUT OF STOCK SECTION -->
+  {% if low_stock_count > 0 %}
+  <div class="notif-group-header px-2 pt-2 pb-2" data-group="stock">
+    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 fw-bold" style="font-size: 10.5px;">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i> ស្តុកទំនិញជិតអស់/អស់ ({{ low_stock_count }})
+    </span>
+  </div>
+  {% for p in recent_low_stocks %}
+  <div id="notif-stock-{{ p.id }}" class="notif-card-item position-relative mb-2">
+    <a href="{% url 'accounts:inventory_page' %}" class="notif-item card border border-light-subtle rounded-3 p-2.5 shadow-xs text-decoration-none hover-card transition-all bg-white d-block" onclick="dismissNotifItem('stock-{{ p.id }}')">
+      <div class="d-flex align-items-center gap-3">
+        <!-- PRODUCT REAL IMAGE -->
+        <div class="position-relative flex-shrink-0">
+          {% if p.image %}
+            <img src="{{ p.image.url }}" alt="{{ p.name }}" class="rounded-3 border border-2 border-danger-subtle bg-white p-0.5 shadow-xs" style="width: 44px; height: 44px; object-fit: contain;">
+          {% else %}
+            <div class="rounded-3 bg-danger-subtle text-danger d-flex align-items-center justify-content-center fw-bold shadow-xs border border-2 border-danger-subtle" style="width: 44px; height: 44px; font-size: 14px;">
+              <i class="bi bi-phone"></i>
+            </div>
+          {% endif %}
+          <span class="position-absolute bottom-0 end-0 bg-danger text-white rounded-circle d-flex align-items-center justify-content-center border border-white shadow-xs" style="width: 17px; height: 17px; font-size: 9px; font-weight: bold;">
+            !
+          </span>
+        </div>
+
+        <div class="flex-grow-1 overflow-hidden">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="fw-bold text-dark text-truncate" style="font-size: 13px;">{{ p.name }}</span>
+            {% if p.stock == 0 %}
+            <span class="badge bg-danger text-white rounded-pill fw-bold" style="font-size: 10px;">អស់ស្តុក (0)</span>
+            {% else %}
+            <span class="badge bg-warning text-dark rounded-pill fw-bold" style="font-size: 10px;">សល់ {{ p.stock }} គ្រឿង</span>
+            {% endif %}
+          </div>
+          <div class="d-flex align-items-center justify-content-between text-muted small" style="font-size: 11px;">
+            <span>តម្លៃលក់៖ <strong class="text-dark">${{ p.price }}</strong></span>
+            <span class="text-danger fw-semibold"><i class="bi bi-arrow-up-circle me-1"></i>សូមថែមស្តុក</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <!-- 4. UNREAD CHAT MESSAGES -->
+  {% if unread_chat_count > 0 %}
+  <div id="notif-chat" class="notif-card-item position-relative mb-2">
+    <a href="{% url 'accounts:customer_messages' %}" class="notif-item card border border-light-subtle rounded-3 p-2.5 shadow-xs text-decoration-none hover-card transition-all bg-white d-block" onclick="dismissNotifItem('chat')">
+      <div class="d-flex align-items-center gap-3">
+        <div class="rounded-circle bg-primary-subtle text-primary p-2 flex-shrink-0 d-flex align-items-center justify-content-center shadow-xs" style="width: 44px; height: 44px;">
+          <i class="bi bi-chat-dots-fill fs-5"></i>
+        </div>
+        <div class="flex-grow-1 overflow-hidden">
+          <div class="d-flex align-items-center justify-content-between mb-0.5">
+            <span class="fw-bold text-dark" style="font-size: 13px;">សារពីអតិថិជន</span>
+            <span class="badge bg-primary rounded-pill" style="font-size: 10px;">{{ unread_chat_count }} សារថ្មី</span>
+          </div>
+          <p class="text-muted mb-0 small text-truncate" style="font-size: 11.5px;">មានសារថ្មីមិនទាន់បានអានពីអតិថិជន</p>
+        </div>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+
+{% endif %}

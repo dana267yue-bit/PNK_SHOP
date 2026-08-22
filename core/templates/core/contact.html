@@ -1,0 +1,416 @@
+{% extends 'accounts/shop/index.html' %}
+{% load static %}
+
+{% block title %}ទំនាក់ទំនង | PNK SHOP{% endblock %}
+
+{% block content %}
+<style>
+  .contact-info-card {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid #e2e8f0;
+  }
+  .contact-info-card:hover {
+    transform: translateY(-6px);
+    border-color: #198754 !important;
+    box-shadow: 0 15px 30px rgba(25, 135, 84, 0.12) !important;
+  }
+  .contact-icon-bg {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+  }
+  .map-container {
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+  .map-container iframe {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 320px !important;
+    border: 0 !important;
+  }
+  .contact-hero-wave-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 260px;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  }
+
+  .contact-wave-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200% !important;
+    height: 220px !important;
+    pointer-events: none;
+  }
+
+  .contact-wave-layer-1 {
+    animation: contactWaveAnim1 9s ease-in-out infinite alternate !important;
+  }
+
+  .contact-wave-layer-2 {
+    animation: contactWaveAnim2 6s ease-in-out infinite alternate !important;
+  }
+
+  @keyframes contactWaveAnim1 {
+    0% { transform: translateX(0) scaleY(1); }
+    100% { transform: translateX(-40%) scaleY(1.2); }
+  }
+
+  @keyframes contactWaveAnim2 {
+    0% { transform: translateX(-35%) scaleY(1.1); }
+    100% { transform: translateX(0) scaleY(0.85); }
+  }
+  /* 3D FLOATING ANIMATION & NEON WAVE STYLES */
+  .floating-phone-wrap {
+    position: relative;
+    display: inline-block;
+    animation: floatPhoneAnim 4s ease-in-out infinite alternate;
+  }
+
+  .phone-glow-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 240px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(15, 23, 42, 0) 70%);
+    animation: glowPulseAnim 3s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+
+  .floating-badge-1 {
+    top: -16px;
+    right: -10px;
+    font-size: 11px;
+    padding: 6px 12px;
+    z-index: 2;
+  }
+
+  .floating-badge-2 {
+    bottom: -16px;
+    left: -10px;
+    font-size: 11px;
+    padding: 6px 12px;
+    z-index: 2;
+  }
+
+  @keyframes floatPhoneAnim {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-10px); }
+  }
+
+  @keyframes glowPulseAnim {
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  }
+
+  .animate-float-delay-1 { animation: floatBadge 3.5s ease-in-out infinite alternate; }
+  .animate-float-delay-2 { animation: floatBadge 4.2s ease-in-out infinite alternate-reverse; }
+
+  @keyframes floatBadge {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-8px); }
+  }
+
+  /* NEON WAVE THREADS STYLES */
+  .neon-wave-threads-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .neon-wave-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .wave-thread-1 {
+    animation: waveThreadMove1 12s ease-in-out infinite alternate;
+  }
+
+  .wave-thread-2 {
+    animation: waveThreadMove2 8s ease-in-out infinite alternate-reverse;
+  }
+
+  .wave-thread-3 {
+    animation: waveThreadMove3 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes waveThreadMove1 {
+    0% { transform: translateX(0) scaleY(1); }
+    100% { transform: translateX(-35%) scaleY(1.25); }
+  }
+
+  @keyframes waveThreadMove2 {
+    0% { transform: translateX(-30%) scaleY(1.1); }
+    100% { transform: translateX(0) scaleY(0.85); }
+  }
+
+  @keyframes waveThreadMove3 {
+    0% { transform: translateX(0) translateY(0); }
+    100% { transform: translateX(-25%) translateY(-10px); }
+  }
+</style>
+
+<div class="position-relative overflow-hidden bg-white">
+    <!-- BACKGROUND ANIMATED WATER WAVE BANNER -->
+    <div class="contact-hero-wave-container">
+        <svg class="contact-wave-svg contact-wave-layer-1" viewBox="0 0 1200 220" preserveAspectRatio="none">
+            <path d="M0,0 L1200,0 L1200,140 C1050,60 850,200 600,100 C350,200 150,50 0,140 Z" fill="rgba(16, 185, 129, 0.22)"></path>
+        </svg>
+        <svg class="contact-wave-svg contact-wave-layer-2" viewBox="0 0 1200 220" preserveAspectRatio="none">
+            <path d="M0,0 L1200,0 L1200,100 C1000,180 750,45 500,150 C250,45 100,160 0,100 Z" fill="rgba(5, 150, 105, 0.15)"></path>
+        </svg>
+    </div>
+
+    <div class="container py-4 position-relative" style="z-index: 2;">
+
+    <!-- HERO HEADER WITH ANIMATED NEON WAVE THREADS & FLOATING TELEGRAM ACTION -->
+    <div class="p-4 p-md-5 mb-4 rounded-4 text-white shadow-sm position-relative overflow-hidden text-center text-md-start" 
+         style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255,255,255,0.08);">
+        
+        <!-- ANIMATED NEON WAVE THREADS BACKGROUND -->
+        <div class="neon-wave-threads-container">
+            <svg class="neon-wave-svg wave-thread-1" viewBox="0 0 1440 320" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="contactNeonGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#10b981" stop-opacity="0.65"/>
+                        <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.85"/>
+                        <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.25"/>
+                    </linearGradient>
+                </defs>
+                <path fill="none" stroke="url(#contactNeonGrad1)" stroke-width="2.5" d="M0,160 C320,300 420,0 720,160 C1020,320 1120,20 1440,160"></path>
+            </svg>
+            <svg class="neon-wave-svg wave-thread-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="contactNeonGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35"/>
+                        <stop offset="50%" stop-color="#10b981" stop-opacity="0.75"/>
+                        <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.45"/>
+                    </linearGradient>
+                </defs>
+                <path fill="none" stroke="url(#contactNeonGrad2)" stroke-width="2.2" d="M0,96 C240,220 480,40 720,120 C960,200 1200,80 1440,192"></path>
+            </svg>
+            <svg class="neon-wave-svg wave-thread-3" viewBox="0 0 1440 320" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="contactNeonGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ec4899" stop-opacity="0.25"/>
+                        <stop offset="50%" stop-color="#10b981" stop-opacity="0.65"/>
+                        <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.55"/>
+                    </linearGradient>
+                </defs>
+                <path fill="none" stroke="url(#contactNeonGrad3)" stroke-width="1.8" stroke-dasharray="8 4" d="M0,224 C360,60 600,280 960,100 C1200,20 1350,180 1440,140"></path>
+            </svg>
+        </div>
+
+        <div class="row align-items-center position-relative z-1">
+            <div class="col-md-7 col-lg-7 mb-3 mb-md-0">
+                <span class="badge bg-success rounded-pill px-3 py-2 fs-6 mb-3 fw-bold shadow-sm d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-headset"></i> 24/7 Customer Support
+                </span>
+                <h1 class="display-5 fw-bold mb-2">ទំនាក់ទំនងពួកយើង</h1>
+                <p class="fs-6 text-white-50 mb-0">សូមទាក់ទងមកកាន់ {{ store_settings.store_name|default:"PNK SHOP" }} សម្រាប់ព័ត៌មានបន្ថែម ការប្រឹក្សាយោបល់ និងការបញ្ជាទិញទូរស័ព្ទដៃ</p>
+            </div>
+            
+            <div class="col-md-5 col-lg-5 text-md-end position-relative my-2 my-md-0">
+                <div class="floating-phone-wrap">
+                    <div class="phone-glow-ring"></div>
+                    <a href="{{ store_settings.telegram_link|default:'https://t.me/pnkmobile' }}" target="_blank" class="btn btn-success btn-lg rounded-pill px-4 shadow-lg fw-bold d-inline-flex align-items-center gap-2 py-3">
+                        <i class="bi bi-telegram fs-3 text-white"></i> ឆាតតាម Telegram ភ្លាមៗ
+                    </a>
+
+                    <!-- FLOATING TECH BADGES -->
+                    <span class="badge bg-success shadow-lg rounded-pill position-absolute floating-badge-1 animate-float-delay-1">
+                        <i class="bi bi-shield-check text-warning me-1"></i> ធានា 100%
+                    </span>
+                    <span class="badge bg-primary shadow-lg rounded-pill position-absolute floating-badge-2 animate-float-delay-2">
+                        <i class="bi bi-truck text-info me-1"></i> ដឹក ២៤ ខេត្តក្រុង
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 CONTACT INFO CARDS -->
+    <section class="mb-5">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+            
+            <!-- PHONE CARD -->
+            <div class="col">
+                <div class="card h-100 p-4 text-center bg-white rounded-4 shadow-sm contact-info-card">
+                    <div class="contact-icon-bg bg-success-subtle text-success">
+                        <i class="bi bi-telephone-fill fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">លេខទូរស័ព្ទ</h5>
+                    <p class="text-success fw-bold fs-5 mb-2">{{ store_settings.phone|default:"096 29 647 13" }}</p>
+                    <a href="tel:{{ store_settings.phone|default:'0962964713' }}" class="btn btn-sm btn-outline-success rounded-pill fw-bold px-3">
+                        <i class="bi bi-telephone-out me-1"></i> ចុចតេភ្លាម
+                    </a>
+                </div>
+            </div>
+
+            <!-- LOCATION CARD -->
+            <div class="col">
+                <div class="card h-100 p-4 text-center bg-white rounded-4 shadow-sm contact-info-card">
+                    <div class="contact-icon-bg bg-primary-subtle text-primary">
+                        <i class="bi bi-geo-alt-fill fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">អាសយដ្ឋាន</h5>
+                    <p class="text-muted small mb-0">{{ store_settings.address|default:"ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ, ព្រះរាជាណាចក្រកម្ពុជា" }}</p>
+                </div>
+            </div>
+
+            <!-- WORKING HOURS CARD -->
+            <div class="col">
+                <div class="card h-100 p-4 text-center bg-white rounded-4 shadow-sm contact-info-card">
+                    <div class="contact-icon-bg bg-warning-subtle text-warning">
+                        <i class="bi bi-clock-fill fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">ម៉ោងធ្វើការ</h5>
+                    <p class="text-dark font-medium mb-1">10:00 AM - 11:00 PM</p>
+                    <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-3 py-1">បើកបំរើសេវា ៧ថ្ងៃ/សប្តាហ៍</span>
+                </div>
+            </div>
+
+            <!-- EMAIL CARD -->
+            <div class="col">
+                <div class="card h-100 p-4 text-center bg-white rounded-4 shadow-sm contact-info-card">
+                    <div class="contact-icon-bg bg-danger-subtle text-danger">
+                        <i class="bi bi-envelope-fill fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">អ៊ីមែលផ្លូវការ</h5>
+                    <p class="text-muted small mb-2 text-truncate">{{ store_settings.email|default:"dana267yue@gmail.com" }}</p>
+                    <a href="mailto:{{ store_settings.email|default:'dana267yue@gmail.com' }}" class="btn btn-sm btn-outline-danger rounded-pill fw-bold px-3">
+                        <i class="bi bi-send me-1"></i> ផ្ញើអ៊ីមែល
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FORM & MAP SECTION -->
+    <div class="row g-4 mb-5">
+        
+        <!-- CONTACT FORM -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white h-100">
+                <div class="mb-4">
+                    <h3 class="fw-bold text-dark mb-2 d-flex align-items-center gap-2">
+                        <i class="bi bi-chat-left-text-fill text-success"></i> ផ្ញើសារមកកាន់ពួកយើង
+                    </h3>
+                    <p class="text-muted small">បំពេញព័ត៌មានខាងក្រោម ក្រុមការងារយើងខ្ញុំនឹងឆ្លើយតបវិញក្នុងពេលឆាប់ៗ</p>
+                </div>
+
+                <form id="contactForm" onsubmit="handleContactSubmit(event)">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-dark">ឈ្មោះរបស់អ្នក <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-pill px-3" placeholder="ឈ្មោះពេញ..." required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-dark">លេខទូរស័ព្ទ / អ៊ីមែល <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-pill px-3" placeholder="012 345 678..." required>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-dark">ប្រធានបទ</label>
+                            <input type="text" class="form-control rounded-pill px-3" placeholder="សួរអំពីតម្លៃ, ការបង់រំលស់, ស្តុក...">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-dark">សាររបស់អ្នក <span class="text-danger">*</span></label>
+                            <textarea class="form-control rounded-4 p-3" rows="4" placeholder="សរសេរព័ត៌មានលម្អិត..." required></textarea>
+                        </div>
+
+                        <div class="col-12 pt-2">
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill w-100 fw-bold shadow-sm">
+                                <i class="bi bi-send-fill me-2"></i> ផ្ញើសារឥឡូវនេះ
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MAP LOCATION -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 d-flex flex-column justify-content-between">
+                <div class="mb-3">
+                    <h3 class="fw-bold text-dark mb-2 d-flex align-items-center gap-2">
+                        <i class="bi bi-geo-alt-fill text-success"></i> ទីតាំងហាងលើ Google Map
+                    </h3>
+                    <p class="text-muted small mb-0">{{ store_settings.address|default:"ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ" }}</p>
+                </div>
+
+                <div class="map-container flex-grow-1" style="min-height: 320px;">
+                    {% if store_settings.map_iframe %}
+                        {{ store_settings.map_iframe|safe }}
+                    {% else %}
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15619.641324707833!2d105.79424565!3d11.895525!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3109315d96f9f3c7%3A0x6e245b736b432a51!2sPhum%20Nikom%20Leu!5e0!3m2!1sen!2skh!4v1714900000000!5m2!1sen!2skh"
+                            width="100%"
+                            height="100%"
+                            style="border:0; min-height: 320px;"
+                            allowfullscreen=""
+                            loading="lazy">
+                        </iframe>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+<script>
+function handleContactSubmit(event) {
+    event.preventDefault();
+    if (typeof showToast === 'function') {
+        showToast('សាររបស់លោកអ្នកត្រូវបានផ្ញើដោយជោគជ័យ។ ក្រុមការងារយើងខ្ញុំនឹងទាក់ទងទៅវិញក្នុងពេលឆាប់ៗ!', false, 'សូមអរគុណ!');
+    } else if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'សូមអរគុណ!',
+            html: '<div class="pnk-toast-body">សាររបស់លោកអ្នកត្រូវបានផ្ញើដោយជោគជ័យ។ ក្រុមការងារយើងខ្ញុំនឹងទាក់ទងទៅវិញក្នុងពេលឆាប់ៗ!</div>',
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true
+        });
+    } else {
+        alert('សាររបស់លោកអ្នកត្រូវបានផ្ញើដោយជោគជ័យ!');
+    }
+    const form = document.getElementById('contactForm');
+    if (form) form.reset();
+}
+</script>
+{% endblock %}

@@ -1,104 +1,784 @@
 {% load static %}
 
-<header class="header">
-  <div class="header__top">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-lg-6 col-md-6">
-          <div class="header__top__left">
-            <ul>
-              <li><i class="fa fa-envelope"></i> dana267yue@gmail.com</li>
-              <li>សូមស្វាគមន៍ មកកាន់ ផាន់ នីកា</li>
+<!-- =========================
+     STICKY FULL LIQUID WAVE HEADER (STAYS FIXED AT TOP ON ALL PAGES)
+========================= -->
+<header class="sticky-top top-0 w-100 shadow-sm bg-white" style="z-index: 1050;">
+
+  <!-- 1. LIQUID GRADIENT FLOW TOP ANNOUNCEMENT BAR WITH RISING BUBBLES -->
+  <div class="liquid-top-bar py-1.5 px-3 text-white position-relative overflow-hidden">
+
+    <!-- RISING LIQUID BUBBLES -->
+    <div class="bubbles-container">
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+    </div>
+
+    <div class="container-fluid px-lg-4 d-flex flex-wrap justify-content-between align-items-center position-relative z-2 gap-2"
+      style="font-size: 0.82rem;">
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <span class="fw-semibold d-flex align-items-center gap-1.5">
+          <i class="bi bi-water text-light fs-6 waves-icon"></i>
+          <span class="d-none d-sm-inline">ស្វាគមន៍មកកាន់</span> 
+          <strong class="fs-6 text-white">{{ store_settings.store_name|default:"PNK SHOP" }}</strong>
+        </span>
+        <span class="d-none d-md-inline opacity-75">|  ហាងទូរស័ព្ទដៃ ផាន់ នីកា </span>
+        <span class="d-none d-md-inline fw-medium">
+        </span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 ms-auto ms-sm-0">
+        <a href="tel:{{ store_settings.phone|default:'012345678' }}"
+          class="text-white text-decoration-none fw-bold d-flex align-items-center gap-1 bg-white-10 px-2.5 py-1 rounded-pill border border-white-20 hover-glow">
+          <i class="bi bi-telephone-fill me-1 text-warning"></i> {{ store_settings.phone|default:"012 345 678" }}
+        </a>
+        <span class="opacity-75 d-none d-sm-inline">|</span>
+        <a href="{{ store_settings.telegram_link|default:'https://t.me/pnkmobile' }}" target="_blank"
+          class="text-white text-decoration-none fw-semibold bg-white-10 px-2.5 py-1 rounded-pill border border-white-20 hover-glow d-none d-sm-inline-flex align-items-center">
+          <i class="bi bi-telegram me-1 text-info"></i> Telegram
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MAIN NAVBAR SECTION -->
+  <nav class="navbar navbar-expand-lg bg-white py-2 position-relative">
+    <div class="container-fluid px-lg-4">
+
+      <!-- BRAND LOGO -->
+      <a class="navbar-brand d-flex align-items-center gap-2 me-lg-4" href="{% url 'core:home' %}">
+        <img src="{% if store_settings.logo %}{{ store_settings.logo.url }}{% else %}{% static 'img/photologo.JPG' %}{% endif %}" alt="{{ store_settings.store_name|default:'PNK SHOP' }}" height="42" class="rounded-3 shadow-xs">
+        <span class="fw-bold text-success fs-5 mb-0" style="letter-spacing: 0.3px;">{{ store_settings.store_name|default:"PNK SHOP" }}</span>
+      </a>
+
+      <!-- MOBILE TOGGLER -->
+      <button class="navbar-toggler border-0 shadow-none p-1" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="bi bi-list fs-2 text-success"></i>
+      </button>
+
+      <!-- NAVIGATION LINKS -->
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold fs-6 gap-lg-1">
+          <!-- 1. HOME -->
+          <li class="nav-item">
+            <a class="nav-link px-3 rounded-pill {% if request.path == '/' %}active text-success fw-bold bg-success-subtle{% endif %}"
+              href="{% url 'core:home' %}">
+              <i ></i> ទំព័រដើម
+            </a>
+          </li>
+
+          <!-- 2. SHOP (DIRECT LINK) -->
+          <li class="nav-item">
+            <a class="nav-link px-3 rounded-pill {% if '/shop/' in request.path and 'blog' not in request.path %}active text-success fw-bold bg-success-subtle{% endif %}"
+              href="{% url 'shop:shop' %}">
+              ហាងទំនិញ
+            </a>
+          </li>
+
+          <!-- 3. ABOUT US -->
+          <li class="nav-item">
+            <a class="nav-link px-3 rounded-pill {% if 'about' in request.path %}active text-success fw-bold bg-success-subtle{% endif %}"
+              href="{% url 'core:about_page' %}">
+              <i></i> អំពីយើង
+            </a>
+          </li>
+
+          <!-- 4. BLOG / ARTICLES -->
+          <li class="nav-item">
+            <a class="nav-link px-3 rounded-pill {% if '/blog/' in request.path %}active text-success fw-bold bg-success-subtle{% endif %}"
+              href="{% url 'shop:blog_page' %}">
+              <i></i> អត្ថបទថ្មីៗ
+            </a>
+          </li>
+
+          <!-- 5. CONTACT -->
+          <li class="nav-item">
+            <a class="nav-link px-3 rounded-pill {% if 'contact' in request.path %}active text-success fw-bold bg-success-subtle{% endif %}"
+              href="{% url 'core:contact_Page' %}">
+              <i></i> ព័ត៌មានទំនាក់ទំនង
+            </a>
+          </li>
+        </ul>
+
+        <!-- RIGHT UTILITIES & USER -->
+        <div class="d-flex align-items-center gap-2 pt-2 pt-lg-0 mt-2 mt-lg-0">
+          <!-- SEARCH BAR FORM (DESKTOP) -->
+          <form action="{% url 'shop:shop' %}" method="GET" class="d-none d-xl-flex align-items-center me-1">
+            <div class="input-group input-group-sm rounded-pill overflow-hidden border shadow-xs" style="width: 200px; background: #f8fafc;">
+              <input type="text" name="search" value="{{ search_query|default:'' }}" placeholder="ស្វែងរកទូរស័ព្ទ..." class="form-control border-0 bg-transparent ps-3 text-dark small" style="font-size: 13px;">
+              <button type="submit" class="btn btn-success border-0 px-3" title="ស្វែងរក">
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
+          </form>
+
+          <!-- SEARCH MODAL BUTTON (MOBILE & QUICK) -->
+          <button type="button" class="btn btn-light rounded-circle p-2 shadow-sm text-dark d-xl-none" data-bs-toggle="modal" data-bs-target="#headerSearchModal" title="ស្វែងរក">
+            <i class="bi bi-search fs-5"></i>
+          </button>
+
+          <!-- WISHLIST -->
+          <button type="button" class="btn btn-light rounded-circle p-2 shadow-sm position-relative text-dark" data-bs-toggle="modal" data-bs-target="#wishlistModal" title="ទំនិញដែលពេញចិត្ត (Wishlist)">
+            <i class="bi bi-heart-fill text-danger fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="wishlistBadge" style="font-size: 10px;">0</span>
+          </button>
+
+          <!-- CART -->
+          <a href="{% url 'shop:cart_view' %}"
+            class="btn btn-light rounded-circle p-2 shadow-sm position-relative text-dark" title="Cart">
+            <i class="bi bi-cart3 fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success" style="font-size: 10px;">{{ global_cart_total_items|default:"0" }}</span>
+          </a>
+
+          <!-- USER PROFILE / LOGIN -->
+          {% if user.is_authenticated %}
+          <div class="dropdown">
+            <button
+              class="btn btn-outline-success rounded-pill dropdown-toggle d-flex align-items-center gap-2 px-3 py-1.5"
+              type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+              {% if user.profile.image %}
+              <img src="{{ user.profile.image.url }}" class="rounded-circle navbar-avatar" width="28" height="28"
+                style="object-fit: cover;" alt="Avatar">
+              {% else %}
+              <i class="bi bi-person-circle fs-5"></i>
+              {% endif %}
+              <span class="fw-semibold small d-none d-md-inline text-truncate" style="max-width: 120px;">{% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username|truncatechars:12 }}{% endif %}</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 mt-2" aria-labelledby="userMenu">
+              <li class="px-3 py-2 border-bottom">
+                <div class="fw-bold text-dark">{% if user.last_name or user.first_name %}{{ user.last_name }} {{ user.first_name }}{% else %}{{ user.username }}{% endif %}</div>
+                <small class="text-muted">{{ user.email }}</small>
+              </li>
+              <li><a class="dropdown-item py-2" href="{% url 'accounts:profile' %}"><i
+                    class="bi bi-person me-2 text-success"></i> My Profile</a></li>
+              {% if user.is_superuser %}
+              <li><a class="dropdown-item py-2" href="{% url 'accounts:dashboard' %}"><i
+                    class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard</a></li>
+              {% endif %}
+              <li><a class="dropdown-item py-2" href="{% url 'shop:cart_view' %}"><i
+                    class="bi bi-cart3 me-2 text-success"></i> My Cart</a></li>
+              <li><a class="dropdown-item py-2" href="{% url 'shop:order_history' %}"><i
+                    class="bi bi-clock-history me-2 text-success"></i> ប្រវត្តិការទិញ</a></li>
+              {% if user_latest_order %}
+                {% if user_latest_order.status == 'Pending' %}
+                  <li><a class="dropdown-item py-2" href="{% url 'shop:order_waiting' user_latest_order.id %}"><i
+                        class="bi bi-hourglass-split me-2 text-warning"></i> កំពុងរង់ចាំការផ្ទៀងផ្ទាត់</a></li>
+                {% else %}
+                  <li><a class="dropdown-item py-2" href="{% url 'shop:order_success' user_latest_order.id %}"><i
+                        class="bi bi-check-circle-fill me-2 text-success"></i> ផ្ទៀងផ្ទាត់រួចហើយ</a></li>
+                {% endif %}
+              {% else %}
+                <li><a class="dropdown-item py-2" href="{% url 'shop:latest_order_shortcut' %}"><i
+                      class="bi bi-receipt me-2 text-info"></i> ស្ថានភាពការកុម្មង់</a></li>
+              {% endif %}
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item py-2 text-danger" href="{% url 'account_logout' %}"><i
+                    class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
             </ul>
           </div>
+          {% else %}
+          <a href="{% url 'account_login' %}" class="btn btn-success rounded-pill px-3 py-1.5 fw-bold shadow-sm small">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Login
+          </a>
+          {% endif %}
         </div>
-        <div class="col-lg-6 col-md-6">
-          <div class="header__top__right">
-            <div class="header__top__right__social">
-              <a href="#"><i class="fa fa-facebook"></i></a>
-              <a href="#"><i class="fa fa-twitter"></i></a>
-              <a href="#"><i class="fa fa-linkedin"></i></a>
-              <a href="#"><i class="fa fa-pinterest-p"></i></a>
-            </div>
+      </div>
 
-            <!-- ផ្នែក Login / Profile ដែលបានកែសម្រួលរួច -->
-            <div class="header__top__right__auth" style="display: inline-block; margin-left: 20px;">
-              {% if user.is_authenticated %}
-                <div class="header__top__right__auth__user" style="display: inline-block;">
-                  <a href="javascript:void(0);" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="cursor: pointer;">
-                    <i class="fa fa-user-circle-o"></i> {{ user.username }} <i class="fa fa-angle-down"></i>
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown" style="font-family: 'Kantumruy Pro', sans-serif; font-size: 14px;">
-                    <a class="dropdown-item" href="{% url 'profile' %}">
-                      <i class="fa fa-id-card-o"></i> កែប្រែប្រវត្តិរូប
-                    </a>
-                    {% if user.is_staff %}
-                    <a class="dropdown-item" href="{% url 'dashboard' %}">
-                      <i class="fa fa-dashboard"></i> គ្រប់គ្រងហាង
-                    </a>
-                    {% endif %}
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                      <i class="fa fa-sign-out"></i> ចាកចេញ
-                    </a>
-                  </div>
-                </div>
-              {% else %}
-                <a href="{% url 'login' %}"><i class="fa fa-user"></i> Login</a>
-              {% endif %}
-            </div>
+    </div>
+  </nav>
+</header>
+
+<!-- LIQUID WAVE ANIMATION STYLES -->
+<style>
+  /* 1. VIBRANT LIQUID GRADIENT FLOW TOP BAR */
+  .liquid-top-bar {
+    background: linear-gradient(-45deg, #047857, #10b981, #06b6d4, #0f766e, #3b82f6, #10b981);
+    background-size: 500% 500%;
+    animation: liquidGradientFlow 8s ease-in-out infinite;
+  }
+
+  @keyframes liquidGradientFlow {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .bg-white-10 {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  .border-white-20 {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .hover-glow:hover {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .waves-icon {
+    animation: pulseIcon 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulseIcon {
+
+    0%,
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+
+    50% {
+      transform: scale(1.3) rotate(12deg);
+    }
+  }
+
+  /* RISING LIQUID BUBBLES */
+  .bubbles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .bubble {
+    position: absolute;
+    bottom: -20px;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    animation: riseBubble 6s infinite ease-in;
+  }
+
+  .bubble:nth-child(1) {
+    width: 12px;
+    height: 12px;
+    left: 10%;
+    animation-duration: 4s;
+    animation-delay: 0.5s;
+  }
+
+  .bubble:nth-child(2) {
+    width: 18px;
+    height: 18px;
+    left: 30%;
+    animation-duration: 6s;
+    animation-delay: 1s;
+  }
+
+  .bubble:nth-child(3) {
+    width: 10px;
+    height: 10px;
+    left: 50%;
+    animation-duration: 5s;
+    animation-delay: 1.5s;
+  }
+
+  .bubble:nth-child(4) {
+    width: 16px;
+    height: 16px;
+    left: 70%;
+    animation-duration: 7s;
+    animation-delay: 0.2s;
+  }
+
+  .bubble:nth-child(5) {
+    width: 14px;
+    height: 14px;
+    left: 85%;
+    animation-duration: 4.5s;
+    animation-delay: 2s;
+  }
+
+  .bubble:nth-child(6) {
+    width: 22px;
+    height: 22px;
+    left: 95%;
+    animation-duration: 8s;
+    animation-delay: 0.8s;
+  }
+
+  @keyframes riseBubble {
+    0% {
+      transform: translateY(0) scale(0.5);
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 0.8;
+    }
+
+    100% {
+      transform: translateY(-60px) scale(1.2);
+      opacity: 0;
+    }
+  }
+
+  /* 2. PROMINENT TALLER SVG WATER WAVE FLOW AT BOTTOM OF HEADER */
+  .water-wave-container {
+    width: 100%;
+    height: 32px;
+    position: absolute;
+    bottom: -32px;
+    left: 0;
+    overflow: hidden;
+    line-height: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .water-waves {
+    position: relative;
+    width: 100%;
+    height: 32px;
+  }
+
+  .parallax-waves>use {
+    animation: move-forever 14s cubic-bezier(.55, .5, .45, .5) infinite;
+  }
+
+  .parallax-waves>use:nth-child(1) {
+    animation-delay: -2s;
+    animation-duration: 5s;
+  }
+
+  .parallax-waves>use:nth-child(2) {
+    animation-delay: -3s;
+    animation-duration: 8s;
+  }
+
+  .parallax-waves>use:nth-child(3) {
+    animation-delay: -4s;
+    animation-duration: 11s;
+  }
+
+  .parallax-waves>use:nth-child(4) {
+    animation-delay: -5s;
+    animation-duration: 15s;
+  }
+
+  @keyframes move-forever {
+    0% {
+      transform: translate3d(-90px, 0, 0);
+    }
+
+    100% {
+      transform: translate3d(85px, 0, 0);
+    }
+  }
+
+  /* DROPDOWN HOVER & ANIMATION FOR HEADER NAVIGATION */
+  @media (min-width: 992px) {
+    .nav-item.dropdown:hover .dropdown-menu {
+      display: block;
+      margin-top: 0;
+      animation: dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  }
+
+  @keyframes dropdownFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hover-bg-light {
+    transition: all 0.2s ease-in-out;
+  }
+  .hover-bg-light:hover {
+    background-color: #f0fdf4 !important;
+    color: #198754 !important;
+    padding-left: 1.25rem !important;
+  }
+
+  /* User Header Profile Trigger */
+  .user-header-profile-btn {
+    border: 1px solid #e2e8f0 !important;
+    background: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+  .user-header-profile-btn:hover,
+  .user-header-profile-btn:focus,
+  .user-header-profile-btn[aria-expanded="true"] {
+    border-color: #10b981 !important;
+    background: #f0fdf4 !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18) !important;
+    transform: translateY(-1px);
+  }
+
+  /* User Header Dropdown Items */
+  .hover-item-custom {
+    transition: all 0.2s ease-in-out;
+    font-size: 13.5px;
+  }
+  .hover-item-custom:hover {
+    background-color: #f0fdf4 !important;
+    color: #059669 !important;
+    padding-left: 1rem !important;
+  }
+
+  .hover-danger-custom {
+    transition: all 0.2s ease-in-out;
+    font-size: 13.5px;
+  }
+  .hover-danger-custom:hover {
+    background-color: #fef2f2 !important;
+    color: #dc2626 !important;
+    padding-left: 1rem !important;
+  }
+</style>
+
+<!-- HEADER SEARCH MODAL (MOBILE & QUICK ACCESSIBLE) -->
+<div class="modal fade" id="headerSearchModal" tabindex="-1" aria-labelledby="headerSearchModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow-lg" style="background: #ffffff;">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-dark fs-5" id="headerSearchModalLabel">
+          <i class="bi bi-search text-success me-2"></i> ស្វែងរកទំនិញក្នុងហាង
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form action="{% url 'shop:shop' %}" method="GET">
+          <div class="input-group input-group-lg rounded-pill overflow-hidden border shadow-sm mb-3">
+            <input type="text" name="search" value="{{ search_query|default:'' }}" placeholder="វាយបញ្ចូលឈ្មោះទូរស័ព្ទ ឬគ្រឿងបន្លាស់..." class="form-control border-0 ps-4 fs-6" required>
+            <button type="submit" class="btn btn-success px-4 fw-bold">
+              <i class="bi bi-search me-1"></i> ស្វែងរក
+            </button>
+          </div>
+        </form>
+        <div class="search-suggestions mt-3">
+          <small class="text-muted fw-bold d-block mb-2" style="font-size: 11px; letter-spacing: 0.5px;">ពាក្យស្វែងរកពេញនិយម (POPULAR SEARCHES):</small>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'shop:shop' %}?search=iPhone" class="badge bg-light text-dark border text-decoration-none px-3 py-2 rounded-pill hover-bg-success">iPhone 15</a>
+            <a href="{% url 'shop:shop' %}?search=AirPods" class="badge bg-light text-dark border text-decoration-none px-3 py-2 rounded-pill hover-bg-success">AirPods Pro</a>
+            <a href="{% url 'shop:shop' %}?search=MagSafe" class="badge bg-light text-dark border text-decoration-none px-3 py-2 rounded-pill hover-bg-success">MagSafe Charger</a>
+            <a href="{% url 'shop:shop' %}?search=OPPO" class="badge bg-light text-dark border text-decoration-none px-3 py-2 rounded-pill hover-bg-success">OPPO SUPERVOOC</a>
+            <a href="{% url 'shop:shop' %}?search=Vivo" class="badge bg-light text-dark border text-decoration-none px-3 py-2 rounded-pill hover-bg-success">Vivo FlashCharge</a>
+            <a href="{% url 'shop:shop' %}?search=Huawei" class="badge bg-light text-dark border text-decoration-none px-3 py-2 rounded-pill hover-bg-success">Huawei FreeBuds</a>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-lg-3">
-        <div class="header__logo">
-          <a href="{% url 'index' %}">
-            <img src="{% static 'img/logo1.png' %}" alt="Logo" />
+<!-- WISHLIST MODAL -->
+<div class="modal fade" id="wishlistModal" tabindex="-1" aria-labelledby="wishlistModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow-2xl overflow-hidden" style="font-family: 'Kantumruy Pro', sans-serif;">
+      
+      <!-- MODAL HEADER -->
+      <div class="modal-header border-0 bg-light bg-opacity-75 py-3 px-4 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2.5">
+          <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-flex align-items-center justify-content-center shadow-xs" style="width: 40px; height: 40px;">
+            <i class="bi bi-heart-pulse-fill fs-5"></i>
+          </div>
+          <div>
+            <h5 class="modal-title fw-bold text-dark mb-0 fs-6 d-flex align-items-center gap-2" id="wishlistModalLabel">
+              ទំនិញដែលពេញចិត្ត <span class="text-muted fw-normal small">(Wishlist)</span>
+            </h5>
+            <small class="text-muted" style="font-size: 11.5px;">រក្សាទុកទូរសព្ទ និងឧបករណ៍ដែលលោកអ្នកចាប់អារម្មណ៍</small>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1 fw-semibold d-none" id="wishlistClearAllBtn" onclick="clearAllWishlist()">
+            <i class="bi bi-trash3 me-1"></i> សម្អាតទាំងអស់
+          </button>
+          <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+      </div>
+
+      <!-- MODAL BODY -->
+      <div class="modal-body p-3 p-md-4" style="max-height: 520px; overflow-y: auto;">
+        <div id="wishlistItemsContainer">
+          <!-- Dynamically populated via JavaScript -->
+        </div>
+      </div>
+
+      <!-- MODAL FOOTER -->
+      <div class="modal-footer border-top bg-light bg-opacity-50 py-3 px-4 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-muted small">សរុបទំនិញ៖ <strong class="text-dark" id="wishlistTotalCount">0</strong> មុខ</span>
+          <span class="text-muted small d-none d-sm-inline">|</span>
+          <span class="text-muted small d-none d-sm-inline">តម្លៃសរុបប្រហែល៖ <strong class="text-success font-monospace" id="wishlistTotalPrice">$0.00</strong></span>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-light rounded-pill px-3.5 py-1.5 fw-semibold border shadow-xs" data-bs-dismiss="modal">បិទ</button>
+          <a href="{% url 'shop:shop' %}" class="btn btn-success rounded-pill px-4 py-1.5 fw-bold shadow-sm d-inline-flex align-items-center gap-1.5" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none;">
+            <i class="bi bi-shop"></i> ទៅកាន់ហាងទំនិញ
           </a>
         </div>
       </div>
 
-      <div class="col-lg-6">
-        <nav class="header__menu">
-          <ul>
-            <li class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
-              <a href="{% url 'home' %}">Home</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'shop' %}active{% endif %}">
-              <a href="{% url 'shop' %}">Shop</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'blog_page' %}active{% endif %}">
-              <a href="{% url 'blog_page' %}">Blog</a>
-            </li>
-            <li class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
-              <a href="{% url 'contact' %}">Contact</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-
-      <div class="col-lg-3">
-        <div class="header__cart">
-          <ul>
-            <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
-            <li><a href="#"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>
-          </ul>
-          <div class="header__cart__price">item: <span>$150.00</span></div>
-        </div>
-      </div>
     </div>
-    <div class="phone__open d-none"><i class="fa fa-bars"></i></div>
   </div>
-</header>
+</div>
 
-<!-- Hero Section នៅរក្សាទុកដដែល... -->
-<section class="hero-header-area">
-    <!-- ... កូដ Hero Section របស់បង ... -->
+<script>
+  // Helper សម្រាប់គ្រប់គ្រង Wishlist Local Storage
+  function getWishlist() {
+    try {
+      const items = JSON.parse(localStorage.getItem('pnk_wishlist') || '[]');
+      return Array.isArray(items) ? items : [];
+    } catch(e) {
+      return [];
+    }
+  }
 
-    {% include 'accounts/includes/JsPlugins.html' %}
-</section>
+  function saveWishlist(items) {
+    localStorage.setItem('pnk_wishlist', JSON.stringify(items));
+    updateWishlistUI();
+    syncWishlistHeartButtons();
+  }
+
+  // Handle click on wishlist button with data attributes
+  function handleWishlistClick(btn, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (btn && btn.dataset) {
+      toggleWishlist(
+        btn.dataset.id,
+        btn.dataset.name,
+        btn.dataset.price,
+        btn.dataset.image,
+        btn.dataset.url,
+        btn.dataset.brand,
+        btn.dataset.stock,
+        btn.dataset.oldPrice
+      );
+    }
+  }
+
+  // បន្ថែម ឬដកទំនិញចេញពី Wishlist
+  function toggleWishlist(id, name, price, image, url, brand = 'Phone', stock = 1, oldPrice = '') {
+    let list = getWishlist();
+    const index = list.findIndex(item => item.id == id);
+    
+    if (index > -1) {
+      const removed = list.splice(index, 1)[0];
+      if (typeof showToast === 'function') {
+        showToast(`បានដក "${name || removed.name}" ចេញពីទំនិញពេញចិត្ត`, true);
+      }
+    } else {
+      // ធានាថារូបភាពមាន format ត្រឹមត្រូវ មិនចេញ logo ចាស់ឡើយ
+      let cleanImage = image;
+      if (!cleanImage || cleanImage === 'undefined' || cleanImage.includes('photologo')) {
+        cleanImage = '';
+      }
+
+      list.push({
+        id: id,
+        name: name || 'ទំនិញ PNK',
+        price: parseFloat(price) || 0,
+        old_price: oldPrice ? parseFloat(oldPrice) : null,
+        image: cleanImage,
+        url: url || '#',
+        brand: brand || 'PNK Mobile',
+        stock: parseInt(stock) || 1,
+        added_at: Date.now()
+      });
+
+      if (typeof showToast === 'function') {
+        showToast(`💖 បានបន្ថែម "${name}" ទៅកាន់ទំនិញពេញចិត្ត!`, false);
+      }
+    }
+
+    saveWishlist(list);
+  }
+
+  // សម្អាត Wishlist ទាំងអស់
+  function clearAllWishlist() {
+    if (confirm('តើលោកអ្នកពិតជាចង់សម្អាតទំនិញពេញចិត្តទាំងអស់មែនទេ?')) {
+      saveWishlist([]);
+      if (typeof showToast === 'function') {
+        showToast('បានសម្អាតទំនិញពេញចិត្តទាំងអស់រួចរាល់', false);
+      }
+    }
+  }
+
+  // Update UI នៃ Wishlist Modal & Navbar Badge
+  function updateWishlistUI() {
+    const list = getWishlist();
+    const badge = document.getElementById('wishlistBadge');
+    if (badge) {
+      badge.innerText = list.length;
+      badge.style.display = list.length > 0 ? 'inline-block' : 'none';
+    }
+
+    const totalCountEl = document.getElementById('wishlistTotalCount');
+    if (totalCountEl) totalCountEl.innerText = list.length;
+
+    const clearBtn = document.getElementById('wishlistClearAllBtn');
+    if (clearBtn) {
+      if (list.length > 0) {
+        clearBtn.classList.remove('d-none');
+      } else {
+        clearBtn.classList.add('d-none');
+      }
+    }
+
+    // គណនាតម្លៃសរុប
+    const totalPrice = list.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0);
+    const totalPriceEl = document.getElementById('wishlistTotalPrice');
+    if (totalPriceEl) totalPriceEl.innerText = '$' + totalPrice.toFixed(2);
+
+    const container = document.getElementById('wishlistItemsContainer');
+    if (!container) return;
+
+    if (list.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-5">
+          <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-flex align-items-center justify-content-center mx-auto mb-3.5 shadow-sm" style="width: 80px; height: 80px;">
+            <i class="bi bi-heartbreak-fill display-5"></i>
+          </div>
+          <h5 class="fw-bold text-dark mb-1.5">មិនទាន់មានទំនិញពេញចិត្តនៅឡើយទេ!</h5>
+          <p class="text-muted small mb-4 mx-auto" style="max-width: 380px;">
+            សូមចុចលើរូបបេះដូង <i class="bi bi-heart-fill text-danger mx-1"></i> នៅលើទូរសព្ទដៃ ឬឧបករណ៍ដែលអ្នកពេញចិត្ត ដើម្បីរក្សាទុកមើល ឬទិញនៅពេលក្រោយ។
+          </p>
+          <a href="{% url 'shop:shop' %}" class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold shadow-xs">
+            <i class="bi bi-grid-fill me-1"></i> ទស្សនាទូរសព្ទដៃទាំងអស់
+          </a>
+        </div>
+      `;
+    } else {
+      let html = '<div class="row g-3">';
+      list.forEach(item => {
+        const itemImg = item.image && item.image.trim() !== '' 
+          ? item.image 
+          : '/media/products/apple1.jpg';
+
+        const isOutOfStock = typeof item.stock !== 'undefined' && item.stock <= 0;
+
+        html += `
+          <div class="col-12 col-md-6" id="wishlist-card-${item.id}">
+            <div class="p-3 border rounded-4 bg-white shadow-xs d-flex align-items-center justify-content-between gap-3 h-100 hover-shadow transition-all" style="border-color: #f1f5f9 !important;">
+              
+              <!-- IMAGE & INFO -->
+              <div class="d-flex align-items-center gap-3 overflow-hidden flex-grow-1">
+                <a href="${item.url || '#'}" class="rounded-3 p-1.5 d-flex align-items-center justify-content-center flex-shrink-0 bg-light" style="width: 72px; height: 72px; border: 1px solid #e2e8f0;">
+                  <img src="${itemImg}" 
+                       onerror="this.onerror=null; this.src='/media/products/apple1.jpg';" 
+                       class="img-fluid" 
+                       style="max-height: 100%; max-width: 100%; object-fit: contain;" 
+                       alt="${item.name}">
+                </a>
+
+                <div class="overflow-hidden">
+                  <div class="d-flex align-items-center gap-1.5 mb-1">
+                    <span class="badge bg-light text-secondary border rounded-pill px-2 py-0.5" style="font-size: 9.5px; font-weight: 700;">
+                      ${item.brand || 'PNK Phone'}
+                    </span>
+                    <span class="badge ${isOutOfStock ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'} rounded-pill px-2 py-0.5" style="font-size: 9.5px;">
+                      ${isOutOfStock ? 'អស់ស្តុក' : 'មានក្នុងស្តុក'}
+                    </span>
+                  </div>
+
+                  <h6 class="fw-bold text-dark text-truncate mb-1" style="font-size: 13.5px;" title="${item.name}">
+                    <a href="${item.url || '#'}" class="text-decoration-none text-dark hover-success">
+                      ${item.name}
+                    </a>
+                  </h6>
+
+                  <div class="d-flex align-items-baseline gap-1.5">
+                    <span class="fw-bold text-success font-monospace" style="font-size: 14px;">
+                      $${parseFloat(item.price || 0).toFixed(2)}
+                    </span>
+                    ${item.old_price && item.old_price > item.price ? `
+                      <span class="text-muted text-decoration-line-through small" style="font-size: 11px;">
+                        $${parseFloat(item.old_price).toFixed(2)}
+                      </span>
+                    ` : ''}
+                  </div>
+                </div>
+              </div>
+
+              <!-- ACTION BUTTONS -->
+              <div class="d-flex flex-column align-items-end gap-1.5 flex-shrink-0">
+                <div class="d-flex align-items-center gap-1">
+                  <a href="${item.url || '#'}" class="btn btn-sm btn-light border rounded-circle d-flex align-items-center justify-content-center shadow-xs" style="width: 32px; height: 32px;" title="មើលលម្អិត">
+                    <i class="bi bi-eye text-primary"></i>
+                  </a>
+                  <button onclick="toggleWishlist(${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.image}', '${item.url}', '${item.brand || ''}', ${item.stock || 1})" 
+                          class="btn btn-sm btn-light border rounded-circle d-flex align-items-center justify-content-center shadow-xs text-danger hover-danger" 
+                          style="width: 32px; height: 32px;" 
+                          title="លុបចេញ">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+
+                <form method="POST" action="/shop/cart/add/${item.id}/" class="m-0">
+                  {% csrf_token %}
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="btn btn-success btn-sm rounded-pill px-2.5 py-1 fw-bold shadow-xs d-flex align-items-center gap-1" style="font-size: 11px; background: #10b981; border: none;" ${isOutOfStock ? 'disabled' : ''}>
+                    <i class="bi bi-cart-plus-fill"></i> ទិញ
+                  </button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+  }
+
+  // មុខងារ Sync ស្ថានភាពបេះដូងនៅលើប៊ូតុងទាំងអស់
+  function syncWishlistHeartButtons() {
+    const list = getWishlist();
+    const ids = new Set(list.map(i => String(i.id)));
+
+    document.querySelectorAll('.wishlist-btn-heart, #wishlistToggleBtn').forEach(btn => {
+      const pId = String(btn.dataset.id || '');
+      const icon = btn.querySelector('i');
+      if (ids.has(pId)) {
+        btn.classList.add('active', 'btn-danger', 'text-white');
+        btn.classList.remove('btn-light', 'btn-outline-danger', 'text-danger');
+        if (icon) icon.className = 'bi bi-heart-fill';
+      } else {
+        btn.classList.remove('active', 'btn-danger', 'text-white');
+        if (btn.id === 'wishlistToggleBtn') {
+          btn.classList.add('btn-outline-danger', 'text-danger');
+        } else {
+          btn.classList.add('btn-light', 'text-danger');
+        }
+        if (icon) icon.className = 'bi bi-heart-fill';
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    updateWishlistUI();
+    syncWishlistHeartButtons();
+  });
+</script>

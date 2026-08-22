@@ -1,121 +1,60 @@
-    
-{% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<section class="from-blog spad">
+<!-- LATEST BLOG SECTION -->
+<section class="py-5">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title from-blog__title">
-                    <h2>From The Blog</h2>
-                </div>
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h3 class="fw-bold mb-1 text-dark d-flex align-items-center gap-2">
+                    <i class="bi bi-newspaper text-success"></i> ព័ត៌មាន & បច្ចេកវិទ្យា (Tech News)
+                </h3>
+                <small class="text-muted fs-6">អត្ថបទចែករំលែកចំណេះដឹង និងបច្ចេកវិទ្យាថ្មីៗ</small>
             </div>
+            <a href="{% url 'shop:blog_page' %}" class="btn btn-outline-success rounded-pill px-4 btn-sm fw-bold">
+                មើលអត្ថបទទាំងអស់ <i class="bi bi-arrow-right ms-1"></i>
+            </a>
         </div>
-        
-        <div class="row">
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for blog in blogs %}
-            <div class="col-lg-4 col-md-4 col-sm-6">
-                <div class="blog__item">
-                    <!-- ១. ផ្នែករូបភាព (រៀបចំឱ្យ Fit ទាំង Computer និង Mobile) -->
-                    <div class="blog__item__pic">
-                        <a href="{% url 'blog_detail' blog.slug %}">
-                            {% if blog.image %}
-                                <img src="{{ blog.image.url }}" alt="{{ blog.title }}" class="responsive-blog-img" />
-                            {% else %}
-                                <img src="{% static 'img/blog/default.jpg' %}" alt="Default Image" class="responsive-blog-img" />
-                            {% endif %}
-                        </a>
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-product">
+                    <div class="position-relative bg-light text-center overflow-hidden" style="height: 190px;">
+                        {% if blog.image %}
+                            <img src="{{ blog.image.url }}" class="w-100 h-100 object-fit-cover" alt="{{ blog.name }}">
+                        {% else %}
+                            <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-secondary-subtle">
+                                <i class="bi bi-phone text-muted fs-1"></i>
+                            </div>
+                        {% endif %}
                     </div>
-                    
-                    <!-- ២. ផ្នែកអត្ថបទ -->
-                    <div class="blog__item__text">
-                        <ul>
-                            <li><i class="fa fa-calendar-o"></i> {{ blog.date_added|date:"M d, Y" }}</li>
-                            <li><i class="fa fa-comment-o"></i> 5</li>
-                        </ul>
-                        
-                        <h5>
-                            <a href="{% url 'blog_detail' blog.slug %}" class="blog-title-link">
-                                {{ blog.title }}
-                            </a>
-                        </h5>
-                        
-                        <p class="blog-desc">
-                            {{ blog.description|truncatewords:15 }}
-                        </p>
-                        
-                        <!-- ៣. ប៊ូតុង Read More (ធានាថាបង្ហាញច្បាស់) -->
-                        <div class="read-more-wrapper">
-                            <a href="{% url 'blog_detail' blog.slug %}" class="btn-read-more">
-                                READ MORE <i class="fa fa-long-arrow-right"></i>
+
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-calendar3 text-success me-1"></i> {{ blog.created_at|date:"d M Y" }}
+                            </div>
+
+                            <h6 class="card-title fw-bold text-dark text-truncate-2 mb-2">
+                                <a href="{% url 'shop:blog_detail' blog.slug %}" class="text-decoration-none text-dark hover-success">
+                                    {{ blog.name }}
+                                </a>
+                            </h6>
+
+                            <p class="card-text text-secondary small text-truncate-2 mb-3" style="font-size: 13px;">
+                                {{ blog.description|striptags|truncatechars:80 }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <a href="{% url 'shop:blog_detail' blog.slug %}" class="text-success text-decoration-none fw-bold small">
+                                អានបន្ថែម <i class="bi bi-chevron-right ms-1"></i>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-            {% empty %}
-            <div class="col-12 text-center">
-                <p class="text-muted">មិនទាន់មានអត្ថបទ Blog នៅឡើយទេ។</p>
-            </div>
             {% endfor %}
         </div>
     </div>
 </section>
-
-<!-- CSS សម្រាប់រៀបចំ Mobile Responsive និងបង្ហាញប៊ូតុង -->
-<style>
-    /* រៀបចំរូបភាពឱ្យសមតាមទំហំអេក្រង់ */
-    .responsive-blog-img {
-        height: 220px; /* ទំហំសម្រាប់ Computer */
-        width: 100%;
-        object-fit: cover;
-        border-radius: 8px;
-        display: block;
-    }
-
-    /* រៀបចំចំណងជើង */
-    .blog-title-link {
-        text-decoration: none !important;
-        color: #1c1c1c !important;
-        font-weight: bold;
-        font-size: 18px;
-        transition: 0.3s;
-    }
-
-    .blog-desc {
-        color: #666;
-        line-height: 1.5;
-        margin-bottom: 15px;
-    }
-
-    /* កន្លែងដាក់ប៊ូតុង */
-    .read-more-wrapper {
-        margin-top: 10px;
-        padding-bottom: 10px;
-    }
-
-    .btn-read-more {
-        display: inline-block !important; /* បង្ខំឱ្យបង្ហាញ */
-        font-size: 14px;
-        color: #7fad39 !important;
-        text-transform: uppercase;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-decoration: none !important;
-        visibility: visible !important;
-    }
-
-    /* នៅពេលស្ថិតលើទូរសព្ទ (Mobile) */
-    @media (max-width: 768px) {
-        .responsive-blog-img {
-            height: 200px; /* បន្ថយទំហំរូបភាពបន្តិចលើ Mobile */
-        }
-        .blog__item {
-            margin-bottom: 40px; /* បន្ថែមគម្លាតរវាង Post នីមួយៗ */
-            border-bottom: 1px solid #eee; /* បន្ថែមបន្ទាត់ខណ្ឌតិចៗ */
-            padding-bottom: 20px;
-        }
-    }
-</style>
-{% endblock %}

@@ -1,0 +1,202 @@
+{% load static %}
+{% load custom_filters %}
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 g-md-4">
+    {% for product in products %}
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-product text-center p-3 position-relative d-flex flex-column justify-content-between" style="transition: transform 0.25s ease, box-shadow 0.25s ease;">
+            
+            <!-- BADGE & IMAGE -->
+            <div>
+                <div class="position-relative mb-3 bg-light rounded-3 p-2 overflow-hidden d-flex align-items-center justify-content-center" style="height: 190px;">
+                    {% if product.stock <= 0 %}
+                    <span class="badge bg-danger rounded-pill position-absolute top-0 end-0 m-2 px-2.5 py-1 shadow-xs" style="font-size: 10px; font-weight: 700; z-index: 5;">
+                        <i class="bi bi-x-circle me-0.5"></i> អស់ស្តុក
+                    </span>
+                    {% elif product.old_price and product.old_price > product.price %}
+                    <span class="badge bg-danger rounded-pill position-absolute top-0 start-0 m-2 px-2.5 py-1 shadow-xs" style="font-size: 10px; font-weight: 700; z-index: 5;">
+                        បញ្ចុះតម្លៃ
+                    </span>
+                    {% endif %}
+
+                    <!-- WISHLIST HEART BUTTON -->
+                    <button type="button" class="btn btn-sm btn-light rounded-circle shadow-xs position-absolute bottom-0 end-0 m-2 text-danger border wishlist-btn-heart" 
+                            data-id="{{ product.id }}"
+                            data-name="{{ product.name|escapejs }}"
+                            data-price="{{ product.price|default:0 }}"
+                            data-image="{% if product.image %}{{ product.image.url }}{% elif product.images.first %}{{ product.images.first.image.url }}{% endif %}"
+                            data-url="{% url 'shop:product_details' product.id %}"
+                            data-brand="{{ product.brand.name|default:'Phone'|escapejs }}"
+                            data-stock="{{ product.stock|default:1 }}"
+                            data-old-price="{{ product.old_price|default:'' }}"
+                            onclick="handleWishlistClick(this, event);" 
+                            title="បន្ថែមក្នុងទំនិញពេញចិត្ត" style="width: 34px; height: 34px; padding: 0; z-index: 6;">
+                        <i class="bi bi-heart-fill"></i>
+                    </button>
+
+                    <a href="{% url 'shop:product_details' product.id %}" class="d-block w-100 h-100 d-flex align-items-center justify-content-center">
+                        <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no-image.png' %}{% endif %}" 
+                             alt="{{ product.name }}" 
+                             class="img-fluid product-img" 
+                             style="max-height: 160px; width: auto; object-fit: contain; transition: transform 0.3s ease;">
+                    </a>
+                </div>
+
+                <!-- PRODUCT BODY -->
+                <div>
+                    <!-- BRAND -->
+                    <small class="text-uppercase text-muted fw-bold d-block mb-1" style="font-size: 11px; letter-spacing: 0.5px;">
+                        {{ product.brand.name|default:"PNK Mobile" }}
+                    </small>
+
+                    <!-- TITLE -->
+                    <h6 class="card-title fw-bold text-dark text-truncate mb-1" title="{{ product.name }}">
+                        <a href="{% url 'shop:product_details' product.id %}" class="text-decoration-none text-dark hover-success">
+                            {{ product.name }}
+                        </a>
+                    </h6>
+
+                    <!-- RATING -->
+                    <div class="text-warning small mb-2" style="font-size: 12px;">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <span class="text-muted ms-1" style="font-size: 11px;">(5.0)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRICE & ACTION BUTTONS -->
+            <div class="mt-2 pt-2 border-top">
+                <div class="mb-3 d-flex align-items-center justify-content-center gap-2">
+                    <span class="fw-bold text-success fs-5">${{ product.price }}</span>
+                    {% if product.old_price and product.old_price > product.price %}
+                    <span class="text-decoration-line-through text-muted small">${{ product.old_price }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="d-flex gap-2">
+                    <a href="{% url 'shop:product_details' product.id %}" class="btn btn-outline-success btn-sm rounded-pill w-50 fw-bold d-flex align-items-center justify-content-center gap-1">
+                        <i class="bi bi-eye"></i> មើល
+                    </a>
+                    {% if product.stock > 0 %}
+                    <form method="POST" action="{% url 'shop:add_to_cart' product.id %}" class="w-50">
+                        {% csrf_token %}
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-success btn-sm rounded-pill w-100 fw-bold d-flex align-items-center justify-content-center gap-1">
+                            <i class="bi bi-cart-plus"></i> ទិញ
+                        </button>
+                    </form>
+                    {% else %}
+                    <button type="button" class="btn btn-secondary btn-sm rounded-pill w-50 fw-bold d-flex align-items-center justify-content-center gap-1 opacity-75" disabled>
+                        <i class="bi bi-x-circle"></i> អស់ស្តុក
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <div class="p-5 bg-white rounded-4 shadow-sm border text-center">
+            <i class="bi bi-phone-vibrate text-muted fs-1 d-block mb-3"></i>
+            <h5 class="fw-bold text-dark mb-1">មិនទាន់មានទិន្នន័យទូរស័ព្ទក្នុងផ្នែកនេះនៅឡើយទេ</h5>
+            <p class="text-muted small mb-0">សូមជ្រើសរើសប្រភេទ ឬម៉ាកទូរស័ព្ទផ្សេងទៀត</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- PAGINATION -->
+{% if products.has_other_pages %}
+<div class="d-flex justify-content-center mt-5">
+    <nav aria-label="Shop Page Navigation">
+        <ul class="pagination pagination-sm mb-0 gap-1.5">
+            {% if products.has_previous %}
+            <li class="page-item">
+                <a class="page-link rounded-circle px-3 py-2 border-0 bg-white text-dark shadow-xs fw-bold" 
+                   href="javascript:void(0);"
+                   hx-get="{% url 'shop:shop' %}?page={{ products.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_brand %}&brand={{ selected_brand }}{% endif %}{% if selected_sort %}&sort={{ selected_sort }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+                   hx-target="#product-list-container"
+                   hx-push-url="true">
+                    ‹
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in products.paginator.page_range %}
+                {% if products.number == num %}
+                <li class="page-item active">
+                    <span class="page-link rounded-circle px-3 py-2 border-0 bg-success text-white shadow-xs fw-bold">{{ num }}</span>
+                </li>
+                {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link rounded-circle px-3 py-2 border-0 bg-white text-dark shadow-xs fw-bold" 
+                       href="javascript:void(0);"
+                       hx-get="{% url 'shop:shop' %}?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_brand %}&brand={{ selected_brand }}{% endif %}{% if selected_sort %}&sort={{ selected_sort }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+                       hx-target="#product-list-container"
+                       hx-push-url="true">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if products.has_next %}
+            <li class="page-item">
+                <a class="page-link rounded-circle px-3 py-2 border-0 bg-white text-dark shadow-xs fw-bold" 
+                   href="javascript:void(0);"
+                   hx-get="{% url 'shop:shop' %}?page={{ products.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_brand %}&brand={{ selected_brand }}{% endif %}{% if selected_sort %}&sort={{ selected_sort }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+                   hx-target="#product-list-container"
+                   hx-push-url="true">
+                    ›
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
+
+<div id="active-style-updater" 
+     hx-swap-oob="true" 
+     data-selected-category="{{ selected_category|default:'' }}" 
+     data-selected-brand="{{ selected_brand|default:'' }}">
+    <script>
+        (function() {
+            var container = document.getElementById('active-style-updater');
+            if (!container) return;
+            
+            var selectedCategory = container.getAttribute('data-selected-category');
+            var selectedBrand = container.getAttribute('data-selected-brand');
+
+            // Update Category Pill active states
+            document.querySelectorAll('.cat-pill-tab').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            if (selectedCategory) {
+                var activeCat = document.getElementById('pill-cat-' + selectedCategory);
+                if (activeCat) activeCat.classList.add('active');
+            } else {
+                var catAll = document.getElementById('pill-cat-all');
+                if (catAll) catAll.classList.add('active');
+            }
+
+            // Update Brand Grid active states
+            document.querySelectorAll('.brand-grid-item').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            if (selectedBrand) {
+                var activeBrand = document.getElementById('brand-grid-' + selectedBrand);
+                if (activeBrand) activeBrand.classList.add('active');
+            } else {
+                var brandAll = document.getElementById('brand-grid-all');
+                if (brandAll) brandAll.classList.add('active');
+            }
+        })();
+    </script>
+</div>

@@ -1,0 +1,506 @@
+{% extends 'accounts/dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block header_title %}គ្រប់គ្រងស្តុកទំនិញ {% endblock %}
+
+{% block dashboard_content %}
+<style>
+  /* KPI STAT CARDS */
+  .inv-kpi-card {
+    background-color: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .inv-kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+  }
+
+  .inv-kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3.5px;
+  }
+
+  .kpi-inv-total::before { background: linear-gradient(90deg, #0d6efd, #0b5ed7); }
+  .kpi-inv-instock::before { background: linear-gradient(90deg, #198754, #146c43); }
+  .kpi-inv-low::before { background: linear-gradient(90deg, #ffc107, #fd7e14); }
+  .kpi-inv-out::before { background: linear-gradient(90deg, #dc3545, #b02a37); }
+
+  .kpi-icon-box {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  /* CONTAINER & TOOLBAR */
+  .inv-card-container {
+    background-color: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+  }
+
+  .filter-label {
+    font-size: 11px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .filter-select-compact {
+    height: 38px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 10px !important;
+    padding-right: 24px !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+    text-align-last: center !important;
+  }
+
+  .search-input-compact {
+    height: 38px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 38px !important;
+    padding-right: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .table-custom-inv thead th {
+    background-color: var(--bg-soft, #f8fafc);
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 14px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .table-custom-inv tbody td {
+    padding: 12px 14px;
+    vertical-align: middle;
+  }
+
+  .hover-row {
+    transition: background-color 0.15s ease;
+  }
+
+  .hover-row:hover {
+    background-color: rgba(241, 245, 249, 0.6) !important;
+  }
+
+  .inv-thumb-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid #e2e8f0;
+  }
+
+  .btn-stock-adjust {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-weight: bold;
+    transition: transform 0.15s ease;
+  }
+
+  .btn-stock-adjust:hover {
+    transform: scale(1.15);
+  }
+</style>
+
+<div class="container-fluid p-0">
+
+  <!-- 1. TOP HEADER & BREADCRUMB -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2" data-aos="fade-down">
+    <div>
+      <h4 class="fw-bold text-dark mb-0" style="letter-spacing: -0.3px; font-size: 1.25rem;">
+        គ្រប់គ្រងស្តុកទំនិញ 
+      </h4>
+    </div>
+
+    <div class="d-flex gap-2">
+
+      <button type="button" class="btn btn-success px-3 rounded-3 d-flex align-items-center gap-1.5 fw-semibold text-white shadow-sm" id="addProductBtn" data-bs-toggle="modal" data-bs-target="#addProductModal" style="background: linear-gradient(135deg, #198754, #146c43); height: 38px; font-size: 0.82rem; border: none;">
+        <i class="bi bi-plus-circle-fill fs-6"></i> បន្ថែមទំនិញ
+      </button>
+      
+      <button type="button" class="btn btn-light border rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px;" onclick="window.location.reload();" title="Refresh">
+        <i class="bi bi-arrow-clockwise fs-5 text-dark"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- 2. 4 KPI STAT CARDS -->
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-2.5 mb-3" data-aos="fade-up">
+    <!-- TOTAL PRODUCTS -->
+    <div class="col">
+      <div class="inv-kpi-card kpi-inv-total d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">ទំនិញសរុប</small>
+          <h4 class="fw-bold text-dark mb-0">{{ total_products }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-primary-subtle text-primary">
+          <i class="bi bi-boxes"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- IN STOCK -->
+    <div class="col">
+      <div class="inv-kpi-card kpi-inv-instock d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">មានស្តុក </small>
+          <h4 id="kpi-instock-count" class="fw-bold text-dark mb-0">{{ total_in_stock }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-success-subtle text-success">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOW STOCK -->
+    <div class="col">
+      <div class="inv-kpi-card kpi-inv-low d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">ជិតអស់ស្តុក </small>
+          <h4 id="kpi-lowstock-count" class="fw-bold text-dark mb-0">{{ total_low_stock }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-warning-subtle text-warning">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUT OF STOCK -->
+    <div class="col">
+      <div class="inv-kpi-card kpi-inv-out d-flex align-items-center justify-content-between">
+        <div>
+          <small class="text-muted fw-semibold d-block mb-1" style="font-size: 11.5px;">អស់ពីស្តុក </small>
+          <h4 id="kpi-outstock-count" class="fw-bold text-dark mb-0">{{ total_out_of_stock }}</h4>
+        </div>
+        <div class="kpi-icon-box bg-danger-subtle text-danger">
+          <i class="bi bi-x-octagon-fill"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. TOOLBAR & INVENTORY TABLE CONTAINER -->
+  <div class="inv-card-container overflow-hidden mb-4" data-aos="fade-up">
+    <!-- TOOLBAR ROW -->
+    <div class="p-3 border-bottom" style="background-color: var(--bg-card, #ffffff);">
+      <form method="GET" action="{% url 'accounts:inventory_page' %}">
+        <div class="row g-2 align-items-end">
+          <!-- SEARCH BOX -->
+          <div class="col-lg-4 col-md-12">
+            <label class="form-label text-muted fw-bold mb-1 filter-label d-none d-lg-block" style="visibility: hidden;">ស្វែងរក</label>
+            <div class="position-relative">
+              <input type="text" name="search" value="{{ search_query }}" class="form-control border shadow-none search-input-compact" placeholder="ស្វែងរកឈ្មោះទូរស័ព្ទ, ម៉ាក, ប្រភេទ..." style="background-color: var(--bg-soft, #f8fafc); color: var(--text);" />
+              <i class="bi bi-search position-absolute text-muted" style="left: 12px; top: 10px; font-size: 0.9rem; pointer-events: none; z-index: 5;"></i>
+            </div>
+          </div>
+
+          <!-- BRAND FILTER -->
+          <div class="col-lg-2 col-md-3 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label text-center w-100">ម៉ាក</label>
+            <select name="brand" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if brand_filter == 'all' %}selected{% endif %}>គ្រប់ម៉ាក</option>
+              {% for b in all_brands %}
+              <option value="{{ b.id }}" {% if brand_filter == b.id|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- CATEGORY FILTER -->
+          <div class="col-lg-2 col-md-3 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label text-center w-100">ប្រភេទ</label>
+            <select name="category" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if category_filter == 'all' %}selected{% endif %}>គ្រប់ប្រភេទ</option>
+              {% for c in all_categories %}
+              <option value="{{ c.id }}" {% if category_filter == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- STOCK STATUS FILTER -->
+          <div class="col-lg-2 col-md-3 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label text-center w-100">ស្ថានភាពស្តុក</label>
+            <select name="filter" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="all" {% if filter_type == 'all' %}selected{% endif %}>គ្រប់ស្ថានភាព</option>
+              <option value="instock" {% if filter_type == 'instock' %}selected{% endif %}>🟢 មានស្តុក</option>
+              <option value="low" {% if filter_type == 'low' %}selected{% endif %}>🟡 ជិតអស់ស្តុក</option>
+              <option value="out" {% if filter_type == 'out' %}selected{% endif %}>🔴 អស់ពីស្តុក</option>
+            </select>
+          </div>
+
+          <!-- SORT FILTER -->
+          <div class="col-lg-2 col-md-3 col-6">
+            <label class="form-label text-muted fw-bold mb-1 filter-label text-center w-100">តម្រៀប</label>
+            <select name="sort" class="form-select border shadow-none filter-select-compact" style="background-color: var(--bg-soft, #f8fafc);" onchange="this.form.submit()">
+              <option value="stock_asc" {% if sort_by == 'stock_asc' %}selected{% endif %}>ស្តុកទាប → ខ្ពស់</option>
+              <option value="stock_desc" {% if sort_by == 'stock_desc' %}selected{% endif %}>ស្តុកខ្ពស់ → ទាប</option>
+              <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>តម្លៃខ្ពស់ → ទាប</option>
+              <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>តម្លៃទាប → ខ្ពស់</option>
+              <option value="name_asc" {% if sort_by == 'name_asc' %}selected{% endif %}>ឈ្មោះ (A-Z)</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- INVENTORY TABLE -->
+    <div class="table-responsive">
+      <table class="table table-hover table-custom-inv align-middle mb-0" style="width: 100%;">
+        <thead>
+          <tr>
+            <th class="ps-3" style="width: 60px;">រូបភាព</th>
+            <th style="width: 240px;">ឈ្មោះទូរស័ព្ទ </th>
+            <th style="width: 140px;">ប្រភេទ</th>
+            <th style="width: 130px;">ម៉ាក </th>
+            <th style="width: 110px;">តម្លៃ ($)</th>
+            <th class="text-center" style="width: 170px;">ចំនួនស្តុក </th>
+            <th class="text-center pe-3" style="width: 130px;">ស្ថានភាព </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+          <tr id="inv-row-{{ product.id }}" class="hover-row">
+            <!-- IMAGE -->
+            <td class="ps-3">
+              {% if product.image %}
+                <img src="{{ product.image.url }}" class="inv-thumb-box shadow-xs" alt="{{ product.name }}">
+              {% else %}
+                <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border" style="width: 44px; height: 44px;">
+                  <i class="bi bi-phone fs-5"></i>
+                </div>
+              {% endif %}
+            </td>
+
+            <!-- PRODUCT NAME -->
+            <td>
+              <span class="fw-bold text-dark d-block fs-6">{{ product.name }}</span>
+              <small class="text-muted font-monospace" style="font-size: 10px;">PROD-000{{ product.id }}</small>
+            </td>
+
+            <!-- CATEGORY -->
+            <td>
+              <span class="badge bg-light text-dark border px-2.5 py-1 rounded-2">{{ product.category.name|default:"-" }}</span>
+            </td>
+
+            <!-- BRAND -->
+            <td>
+              <span class="badge bg-light text-dark border px-2.5 py-1 rounded-2">{{ product.brand.name|default:"-" }}</span>
+            </td>
+
+            <!-- PRICE -->
+            <td class="fw-bold text-success font-monospace fs-6">
+              ${{ product.price|floatformat:2 }}
+            </td>
+
+            <!-- UNIFIED DYNAMIC STOCK CONTROL ( - | INPUT | + ) -->
+            <td class="text-center">
+              <div class="d-inline-flex align-items-center gap-1.5 p-1 rounded-pill bg-light border shadow-xs" style="max-width: 165px;">
+                <button type="button" class="btn btn-outline-danger btn-stock-adjust shadow-xs" onclick="adjustStock('{{ product.id }}', 'subtract')" title="-1 គ្រឿង">
+                  <i class="bi bi-dash-lg"></i>
+                </button>
+                
+                <input type="number" id="input-stock-{{ product.id }}" class="form-control form-control-sm text-center font-monospace fw-bold border-0 bg-transparent shadow-none px-1" value="{{ product.stock }}" min="0" style="width: 50px; font-size: 14px;" onchange="saveDirectStock('{{ product.id }}')" onkeydown="if(event.key==='Enter') saveDirectStock('{{ product.id }}')">
+                
+                <button type="button" class="btn btn-outline-success btn-stock-adjust shadow-xs" onclick="adjustStock('{{ product.id }}', 'add')" title="+1 គ្រឿង">
+                  <i class="bi bi-plus-lg"></i>
+                </button>
+              </div>
+            </td>
+
+            <!-- DYNAMIC STATUS BADGE (LOW STOCK <= 5) -->
+            <td class="text-center pe-3">
+              <span id="stock-badge-{{ product.id }}">
+                {% if product.stock == 0 %}
+                  <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1 fw-semibold" style="font-size: 10.5px;"><i class="bi bi-x-octagon-fill me-1"></i>Out of Stock</span>
+                {% elif product.stock <= 5 %}
+                  <span class="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-2.5 py-1 fw-semibold" style="font-size: 10.5px;"><i class="bi bi-exclamation-triangle-fill me-1"></i>Low Stock</span>
+                {% else %}
+                  <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2.5 py-1 fw-semibold" style="font-size: 10.5px;"><i class="bi bi-check-circle-fill me-1"></i>In Stock</span>
+                {% endif %}
+              </span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center text-muted py-5">មិនទាន់មានទិន្នន័យស្តុកទំនិញតាមលក្ខខណ្ឌ Filter ឡើយ។</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD PRODUCT MODAL -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom p-4">
+        <h5 class="modal-title fw-bold text-dark"><i class="bi bi-plus-circle-fill text-success me-2"></i>បន្ថែមទូរស័ព្ទថ្មី</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4" id="addModalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $.ajaxSetup({ headers: { "X-CSRFToken": "{{ csrf_token }}" } });
+
+  $(document).ready(function () {
+    const loadingHtml = '<div class="text-center py-5"><div class="spinner-border text-success"></div><p class="text-muted mt-2 small">កំពុងទាញយកទិន្នន័យ...</p></div>';
+
+    $("#addProductBtn").on("click", function () {
+      $("#addModalBody").html(loadingHtml);
+      $.get("{% url 'shop:add_product' %}", function(data) { $("#addModalBody").html(data); });
+    });
+
+    // Intercept Add Product form submit via AJAX
+    $(document).on("submit", "#addProductForm", function (e) {
+      e.preventDefault();
+      if (typeof syncRichText === 'function') syncRichText();
+
+      var formData = new FormData(this);
+      $.ajax({
+        url: "{% url 'shop:add_product' %}",
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        success: function (res) {
+          if (res.success) {
+            $("#addProductModal").modal("hide");
+            if (typeof showToast === 'function') showToast("បានបន្ថែមទំនិញថ្មីជោគជ័យ!", false);
+            setTimeout(function() { window.location.reload(); }, 600);
+          } else if (res.html_form) {
+            $("#addModalBody").html(res.html_form);
+          } else {
+            if (typeof showToast === 'function') showToast("មានបញ្ហាក្នុងការរក្សាទុក!", true);
+            else alert("មានបញ្ហាក្នុងការរក្សាទុក!");
+          }
+        }
+      });
+    });
+  });
+
+  function adjustStock(productId, action) {
+    fetch(`/accounts/update-stock/${productId}/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: `action=${action}`
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        updateDOMStock(data);
+        if (typeof showToast === 'function') showToast(`បានធ្វើបច្ចុប្បន្នភាពស្តុក ទៅជា ${data.new_stock} គ្រឿង!`, false);
+      } else {
+        if (typeof showToast === 'function') showToast(data.error || "មានបញ្ហា!", true);
+      }
+    });
+  }
+
+  function saveDirectStock(productId) {
+    const stockVal = document.getElementById("input-stock-" + productId).value;
+    fetch(`/accounts/update-stock/${productId}/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: `stock=${stockVal}&action=set`
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        updateDOMStock(data);
+        if (typeof showToast === 'function') showToast(`បានរក្សាទុកចំនួនស្តុក ${data.new_stock} គ្រឿងជោគជ័យ!`, false);
+      } else {
+        if (typeof showToast === 'function') showToast(data.error || "មានបញ្ហា!", true);
+      }
+    });
+  }
+
+  function updateDOMStock(data) {
+    const pId = data.product_id;
+    // 1. Update text & input value
+    const valEl = document.getElementById("stock-val-" + pId);
+    const inputEl = document.getElementById("input-stock-" + pId);
+    if (valEl) valEl.innerText = data.new_stock;
+    if (inputEl) inputEl.value = data.new_stock;
+
+    // 2. Update Status Badge
+    const badgeEl = document.getElementById("stock-badge-" + pId);
+    if (badgeEl) {
+      if (data.new_stock === 0) {
+        badgeEl.innerHTML = '<span class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1 fw-semibold" style="font-size: 10.5px;"><i class="bi bi-x-octagon-fill me-1"></i>Out of Stock</span>';
+      } else if (data.new_stock <= 5) {
+        badgeEl.innerHTML = '<span class="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-2.5 py-1 fw-semibold" style="font-size: 10.5px;"><i class="bi bi-exclamation-triangle-fill me-1"></i>Low Stock</span>';
+      } else {
+        badgeEl.innerHTML = '<span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2.5 py-1 fw-semibold" style="font-size: 10.5px;"><i class="bi bi-check-circle-fill me-1"></i>In Stock</span>';
+      }
+    }
+
+    // 3. Update top KPI stat counters live!
+    if (data.total_in_stock !== undefined) {
+      const inEl = document.getElementById("kpi-instock-count");
+      if (inEl) inEl.innerText = data.total_in_stock;
+    }
+    if (data.total_low_stock !== undefined) {
+      const lowEl = document.getElementById("kpi-lowstock-count");
+      if (lowEl) lowEl.innerText = data.total_low_stock;
+    }
+    if (data.total_out_of_stock !== undefined) {
+      const outEl = document.getElementById("kpi-outstock-count");
+      if (outEl) outEl.innerText = data.total_out_of_stock;
+    }
+
+    // 4. Live sync notification bell & sidebar stock badge immediately!
+    if (typeof window.refreshNotificationsLive === 'function') {
+      window.refreshNotificationsLive();
+    }
+  }
+</script>
+{% endblock %}

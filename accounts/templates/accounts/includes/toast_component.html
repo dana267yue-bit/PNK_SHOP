@@ -1,0 +1,39 @@
+<script>
+    // Global Toast Component fallback - Delegates to central showToast function
+    if (typeof window.showToast === "undefined") {
+        window.showToast = function(message, isError = false, title = "") {
+            const isErr = (isError === true || isError === "error" || isError === "danger");
+            const iconType = isErr ? 'error' : (isError === "warning" ? 'warning' : (isError === "info" ? 'info' : 'success'));
+            const statusClass = 'toast-' + iconType;
+            const defaultTitle = title || (isErr ? 'មានបញ្ហា' : (iconType === 'warning' ? 'ប្រុងប្រយ័ត្ន' : (iconType === 'info' ? 'ជូនដំណឹង' : 'ជោគជ័យ')));
+            
+            const toastHtml = `
+                <div class="pnk-toast-wrapper">
+                    <div class="pnk-toast-header-title">${defaultTitle}</div>
+                    <div class="pnk-toast-message-body">${message}</div>
+                </div>
+            `;
+
+            if (typeof Swal !== "undefined") {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: iconType,
+                    html: toastHtml,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    timer: 4000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: `swal2-toast pnk-luxury-toast ${statusClass}`,
+                        htmlContainer: "pnk-toast-container-override",
+                        closeButton: "pnk-toast-close-btn",
+                        timerProgressBar: "pnk-toast-progress"
+                    }
+                });
+            } else {
+                alert(message);
+            }
+        };
+    }
+</script>
