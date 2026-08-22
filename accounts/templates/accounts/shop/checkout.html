@@ -507,7 +507,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const selectedRadio = document.querySelector('input[name="payment_method"]:checked');
             const paymentMethod = selectedRadio ? selectedRadio.value : 'cod';
             
-            // ពិនិត្យមើលបើជ្រើសរើស KHQR តែអត់ទាន់បង្ហោះរូបភាព
             if (paymentMethod === 'khqr' || paymentMethod === 'online') {
                 if (!pageReceipt.files || pageReceipt.files.length === 0) {
                     event.preventDefault();
