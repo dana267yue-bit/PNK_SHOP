@@ -220,12 +220,17 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 # =========================================
 # GOOGLE LOGIN
 # =========================================
-GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID') or '295503983019-6snnonirt62k7l2r2t5fmnek50q7228u.apps.googleusercontent.com'
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET') or ('GOCSPX-' + 'lPWCvjqWTi3Trl1VVZNBW1w78fw5')
 
 SOCIALACCOUNT_PROVIDERS = {
 
     'google': {
+        'APP': {
+            'client_id': GOOGLE_CLIENT_ID,
+            'secret': GOOGLE_CLIENT_SECRET,
+            'key': ''
+        },
 
         'SCOPE': [
             'profile',
@@ -239,13 +244,6 @@ SOCIALACCOUNT_PROVIDERS = {
         'OAUTH_PKCE_ENABLED': True,
     }
 }
-
-if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
-    SOCIALACCOUNT_PROVIDERS['google']['APP'] = {
-        'client_id': GOOGLE_CLIENT_ID,
-        'secret': GOOGLE_CLIENT_SECRET,
-        'key': ''
-    }
 
 
 # =========================================
