@@ -18,8 +18,9 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://pnk-shop.onrender.com',
     'https://*.onrender.com',
+    'https://pnk-shop-5zfw.onrender.com',
+    'https://pnk-shop.onrender.com',
     'http://127.0.0.1:8000',
     'http://localhost:8000',
 ]
@@ -297,6 +298,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+WHITENOISE_MANIFEST_STRICT = False
 
 
 # =========================================
