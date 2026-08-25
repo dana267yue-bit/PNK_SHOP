@@ -16,7 +16,7 @@ class AccountsConfig(AppConfig):
                 from django.conf import settings
                 render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
                 is_prod = render_host or not settings.DEBUG
-                target_domain = render_host or ('pnk-shop.onrender.com' if is_prod else '127.0.0.1:8000')
+                target_domain = render_host or ('pnk-shop-5zfw.onrender.com' if is_prod else '127.0.0.1:8000')
 
                 site, _ = Site.objects.get_or_create(id=settings.SITE_ID)
                 if site.domain != target_domain:
