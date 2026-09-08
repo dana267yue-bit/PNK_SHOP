@@ -286,8 +286,8 @@
                     <i class="bi bi-headset fs-1 mb-2 d-block text-white"></i>
                     <h6 class="fw-bold mb-1">ត្រូវការជំនួយ?</h6>
                     <p class="small text-white-50 mb-3" style="font-size: 12.5px;">ក្រុមការងារ PNK Mobile ព្រមរង់ចាំប្រឹក្សា និងបម្រើអតិថិជន ២៤/៧</p>
-                    <a href="tel:0962964713" class="btn btn-light text-success btn-sm rounded-pill fw-bold px-4 py-2">
-                        <i class="bi bi-telephone-fill me-1"></i> 096 29 647 13
+                    <a href="tel:{{ store_settings.phone|default:'0977097547' }}" class="btn btn-light text-success btn-sm rounded-pill fw-bold px-4 py-2">
+                        <i class="bi bi-telephone-fill me-1"></i> {{ store_settings.phone|default:"0977097547" }}
                     </a>
                 </div>
 

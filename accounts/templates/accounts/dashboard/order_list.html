@@ -989,8 +989,8 @@
                 <span style="font-size: 24px; font-weight: bold; color: #198754; margin-left: 10px;">$${ord.total_amount.toFixed(2)}</span>
               </div>
               <div class="footer">
-                <p style="font-weight: 600; color: #0f172a; margin-bottom: 4px;">សូមអរគុណសម្រាប់ការជឿទុកចិត្ត និងគាំទ្រហាង PNK Mobile Store!</p>
-                <p style="margin: 0;">អាសយដ្ឋាន៖ ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ | ទូរស័ព្ទ៖ 096 29 647 13 | Email: dana267yue@gmail.com</p>
+                <p style="font-weight: 600; color: #0f172a; margin-bottom: 4px;">សូមអរគុណសម្រាប់ការជឿទុកចិត្ត និងគាំទ្រហាង {{ store_settings.store_name|default:'PNK SHOP' }}!</p>
+                <p style="margin: 0;">អាសយដ្ឋាន៖ {{ store_settings.address|default:'ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ' }} | ទូរស័ព្ទ៖ {{ store_settings.phone|default:'0977097547' }} | Email: {{ store_settings.email|default:'dana267yue@gmail.com' }}</p>
               </div>
               <script>window.print();<\/script>
             </body>

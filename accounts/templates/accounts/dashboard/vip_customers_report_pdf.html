@@ -192,8 +192,8 @@
     <!-- METADATA -->
     <div class="metadata-section">
       <div class="meta-box">
-        <p>📍 <strong>អាសយដ្ឋាន:</strong> ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ, ព្រះរាជាណាចក្រកម្ពុជា</p>
-        <p>📞 <strong>ទូរស័ព្ទ:</strong> 096 29 647 13 | ✉️ <strong>អ៊ីមែល:</strong> dana267yue@gmail.com</p>
+        <p>📍 <strong>អាសយដ្ឋាន:</strong> {{ store_settings.address|default:"ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ, ព្រះរាជាណាចក្រកម្ពុជា" }}</p>
+        <p>📞 <strong>ទូរស័ព្ទ:</strong> {{ store_settings.phone|default:"0977097547" }} | ✉️ <strong>អ៊ីមែល:</strong> {{ store_settings.email|default:"dana267yue@gmail.com" }}</p>
       </div>
       <div class="meta-box text-right">
         <p>📅 <strong>កាលបរិច្ឆេទបង្កើត:</strong> {{ generated_at|date:"d-m-Y h:i A" }}</p>
