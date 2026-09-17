@@ -24,9 +24,35 @@ document.addEventListener("DOMContentLoaded", function () {
 // 4. Smart System Messages Formatter & Khmer Localization
 function formatSystemMessage(text, tag = "") {
     const raw = (text || "").trim();
-    if (!raw) return { title: "", text: "", type: tag || "info" };
+    let normType = "";
 
-    const tagStr = String(tag || "").toLowerCase();
+    if (tag === true || tag === "true" || tag === "error" || tag === "danger") {
+        normType = "error";
+    } else if (tag === "warning") {
+        normType = "warning";
+    } else if (tag === "info") {
+        normType = "info";
+    } else if (tag === false || tag === "false" || tag === "success") {
+        normType = "success";
+    } else if (typeof tag === "string" && tag.trim()) {
+        const tagLower = tag.trim().toLowerCase();
+        if (tagLower.includes("error") || tagLower.includes("danger")) normType = "error";
+        else if (tagLower.includes("warning")) normType = "warning";
+        else if (tagLower.includes("info")) normType = "info";
+        else if (tagLower.includes("success")) normType = "success";
+    }
+
+    if (!normType) {
+        if (raw.includes("បរាជ័យ") || raw.includes("មានបញ្ហា") || raw.includes("មិនត្រឹមត្រូវ") || raw.includes("រួចហើយ")) {
+            normType = "error";
+        } else if (raw.includes("ជោគជ័យ")) {
+            normType = "success";
+        } else {
+            normType = "info";
+        }
+    }
+
+    if (!raw) return { title: "", text: "", type: normType };
 
     // 1. Allauth: Successfully signed in as <email/username>
     const signInMatch = raw.match(/Successfully signed in as\s+([^.]+)\.?/i);
@@ -78,7 +104,7 @@ function formatSystemMessage(text, tag = "") {
     return {
         title: "",
         text: raw,
-        type: tagStr || (raw.includes("ជោគជ័យ") ? "success" : raw.includes("បញ្ហា") || raw.includes("បរាជ័យ") ? "error" : "info")
+        type: normType
     };
 }
 
@@ -89,18 +115,20 @@ function showToast(message, isError = false, title = "") {
     let finalTitle = title || formatted.title;
     let finalType = formatted.type;
 
+    const isErr = (isError === true || isError === "true" || isError === "error" || isError === "danger" || finalType === "error" || finalType === "danger");
+    const isWarn = (isError === "warning" || finalType === "warning");
+    const isInf = (isError === "info" || finalType === "info");
+
     let iconType = "success";
     let statusClass = "toast-success";
     
-    // Normalize message type from tag string or boolean
-    const tagStr = String(finalType || "").toLowerCase();
-    if (finalType === true || tagStr.includes("error") || tagStr.includes("danger")) {
+    if (isErr) {
         iconType = "error";
         statusClass = "toast-error";
-    } else if (tagStr.includes("warning")) {
+    } else if (isWarn) {
         iconType = "warning";
         statusClass = "toast-warning";
-    } else if (tagStr.includes("info")) {
+    } else if (isInf) {
         iconType = "info";
         statusClass = "toast-info";
     } else {
@@ -109,10 +137,10 @@ function showToast(message, isError = false, title = "") {
     }
 
     if (!finalTitle) {
-        if (iconType === "success") finalTitle = "ជោគជ័យ";
-        else if (iconType === "error") finalTitle = "មានបញ្ហា";
-        else if (iconType === "warning") finalTitle = "ប្រុងប្រយ័ត្ន";
-        else finalTitle = "ជូនដំណឹង";
+        if (iconType === "error") finalTitle = "មានបញ្ហា!";
+        else if (iconType === "warning") finalTitle = "ប្រុងប្រយ័ត្ន!";
+        else if (iconType === "info") finalTitle = "ជូនដំណឹង";
+        else finalTitle = "ជោគជ័យ!";
     }
 
     const toastHtml = `
