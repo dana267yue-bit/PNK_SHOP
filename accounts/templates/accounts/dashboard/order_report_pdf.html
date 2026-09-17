@@ -272,8 +272,8 @@
             <td style="text-align: center; font-weight: bold; color: #64748b;">{{ forloop.counter }}</td>
             <td style="font-weight: bold; font-family: monospace;">#{{ order.id }}</td>
             <td>
-              <strong>{{ order.first_name }} {{ order.last_name }}</strong><br>
-              <small style="color: #64748b;">{{ order.email|default:"" }}</small>
+              <strong>{% if order.first_name or order.last_name %}{{ order.first_name }} {{ order.last_name }}{% elif order.user %}{{ order.user.username }}{% else %}Guest{% endif %}</strong><br>
+              <small style="color: #64748b;">{% if order.email %}{{ order.email }}{% elif order.user %}{{ order.user.email }}{% endif %}</small>
             </td>
             <td>{{ order.phone }}</td>
             <td>

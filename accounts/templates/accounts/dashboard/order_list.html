@@ -609,8 +609,8 @@
 
           <!-- QUICK DATE PILLS -->
           <div class="d-flex flex-wrap gap-2 mb-3">
-            <button type="button" class="btn quick-date-pill active" data-period="today" onclick="selectQuickDate('today', this)">
-              📅 ថ្ងៃ
+            <button type="button" class="btn quick-date-pill" data-period="today" onclick="selectQuickDate('today', this)">
+              📅 ថ្ងៃនេះ
             </button>
             <button type="button" class="btn quick-date-pill" data-period="week" onclick="selectQuickDate('week', this)">
               សប្តាហ៍
@@ -621,7 +621,7 @@
             <button type="button" class="btn quick-date-pill" data-period="year" onclick="selectQuickDate('year', this)">
               🗓 ឆ្នាំនេះ
             </button>
-            <button type="button" class="btn quick-date-pill" data-period="all" onclick="selectQuickDate('all', this)">
+            <button type="button" class="btn quick-date-pill active" data-period="all" onclick="selectQuickDate('all', this)">
               🌐 គ្រប់ពេល
             </button>
           </div>
@@ -999,7 +999,7 @@
       });
   }
 
-  let selectedExportPeriod = 'today';
+  let selectedExportPeriod = 'all';
   let selectedExportFormat = 'excel';
 
   function selectExportFormat(fmt) {
@@ -1040,22 +1040,24 @@
       return `${year}-${month}-${day}`;
     }
 
-    endInput.value = formatDate(today);
-
     if (period === 'today') {
       startInput.value = formatDate(today);
+      endInput.value = formatDate(today);
     } else if (period === 'week') {
       const past = new Date();
       past.setDate(today.getDate() - 7);
       startInput.value = formatDate(past);
+      endInput.value = formatDate(today);
     } else if (period === 'month') {
       const past = new Date();
       past.setDate(today.getDate() - 30);
       startInput.value = formatDate(past);
+      endInput.value = formatDate(today);
     } else if (period === 'year') {
       const past = new Date();
       past.setFullYear(today.getFullYear() - 1);
       startInput.value = formatDate(past);
+      endInput.value = formatDate(today);
     } else if (period === 'all') {
       startInput.value = '';
       endInput.value = '';
@@ -1124,7 +1126,7 @@
     const exportModalEl = document.getElementById('exportReportsModal');
     if (exportModalEl) {
       exportModalEl.addEventListener('show.bs.modal', function() {
-        selectQuickDate('today', document.querySelector('.quick-date-pill[data-period="today"]'));
+        selectQuickDate('all', document.querySelector('.quick-date-pill[data-period="all"]'));
       });
     }
 
