@@ -6,26 +6,26 @@
 {% block content %}
 <style>
     /* ==========================================================================
-       🌿 CLEAN & PROFESSIONAL MINIMALIST INVOICE (NO CLUTTERED BORDERS)
+       🌿 ELEGANT & PERFECTLY STRUCTURED INVOICE
        ========================================================================== */
     .invoice-page-bg {
         background-color: #f8fafc;
         min-height: 85vh;
         padding: 40px 15px 60px 15px;
-        font-family: 'Kantumruy Pro', sans-serif;
+        font-family: 'Kantumruy Pro', Arial, sans-serif;
     }
 
-    /* Success Icon Pulse */
+    /* Success Icon */
     .success-icon-wrap {
-        width: 60px;
-        height: 60px;
+        width: 56px;
+        height: 56px;
         border-radius: 50%;
         background: #198754;
         color: white;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 6px 16px rgba(25, 135, 84, 0.25);
+        box-shadow: 0 6px 16px rgba(25, 135, 84, 0.2);
         margin-bottom: 12px;
     }
 
@@ -33,8 +33,8 @@
     .invoice-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     }
 
     .invoice-card-body {
@@ -49,86 +49,94 @@
 
     /* Brand Header */
     .invoice-brand-title {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 800;
         color: #198754;
-        display: flex;
-        align-items: center;
-        gap: 8px;
         letter-spacing: -0.3px;
+        line-height: 1.2;
     }
 
     .invoice-badge-number {
         background: #f0fdf4;
         color: #166534;
         border: 1px solid #bbf7d0;
-        padding: 5px 14px;
-        border-radius: 8px;
+        padding: 4px 12px;
+        border-radius: 6px;
         font-weight: 700;
         font-family: monospace;
-        font-size: 14px;
+        font-size: 13.5px;
         display: inline-block;
     }
 
-    /* Clean Info Sections (Uncluttered) */
-    .info-section-title {
+    /* Structured Key-Value Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 130px 1fr;
+        row-gap: 8px;
+        column-gap: 12px;
+        font-size: 13px;
+    }
+
+    .info-grid .label {
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .info-grid .value {
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+    .info-section-heading {
         font-size: 12px;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         color: #198754;
-        margin-bottom: 10px;
+        margin-bottom: 14px;
         display: flex;
         align-items: center;
         gap: 6px;
     }
 
-    .info-item {
-        margin-bottom: 6px;
-        font-size: 13.5px;
-        color: #475569;
-    }
-
-    .info-item strong {
-        color: #0f172a;
-    }
-
-    /* Clean Table (Minimalist Borders) */
-    .clean-table {
+    /* Clean Structured Table */
+    .clean-invoice-table {
         width: 100%;
         border-collapse: collapse;
-        margin: 24px 0;
+        margin: 20px 0;
     }
 
-    .clean-table thead th {
-        background-color: transparent;
-        color: #334155;
+    .clean-invoice-table thead th {
+        background: transparent;
+        color: #475569;
         font-weight: 700;
-        font-size: 13px;
-        padding: 12px 16px;
+        font-size: 12.5px;
+        padding: 12px 14px;
         border-top: 1px solid #e2e8f0;
         border-bottom: 2px solid #cbd5e1;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
     }
 
-    .clean-table tbody td {
-        padding: 14px 16px;
+    .clean-invoice-table tbody td {
+        padding: 14px;
         vertical-align: middle;
         border-bottom: 1px solid #f1f5f9;
         font-size: 13.5px;
         color: #1e293b;
     }
 
-    .clean-table tbody tr:last-child td {
-        border-bottom: 1.5px solid #e2e8f0;
+    .clean-invoice-table tbody tr:last-child td {
+        border-bottom: 1.5px solid #cbd5e1;
     }
 
     /* Product Thumbnail */
     .product-img-box {
-        width: 44px;
-        height: 44px;
-        border-radius: 8px;
+        width: 42px;
+        height: 42px;
+        border-radius: 6px;
         background: #f8fafc;
-        border: 1px solid #f1f5f9;
+        border: 1px solid #e2e8f0;
         padding: 2px;
         display: flex;
         align-items: center;
@@ -136,58 +144,70 @@
         flex-shrink: 0;
     }
 
-    /* Clean Calculation Row */
-    .calc-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 5px 0;
+    /* Summary Totals Table */
+    .totals-table {
+        width: 100%;
         font-size: 13.5px;
-        color: #475569;
     }
 
-    .calc-total-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0 0 0;
-        margin-top: 6px;
-        border-top: 1.5px solid #e2e8f0;
+    .totals-table td {
+        padding: 6px 0;
     }
 
-    .grand-total-amount {
-        font-size: 24px;
+    .totals-table .label {
+        color: #64748b;
+        text-align: left;
+    }
+
+    .totals-table .value {
+        text-align: right;
+        font-family: monospace;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .totals-table tr.grand-total td {
+        padding-top: 10px;
+        border-top: 1.5px solid #cbd5e1;
+    }
+
+    .totals-table tr.grand-total .label {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .totals-table tr.grand-total .value {
+        font-size: 22px;
         font-weight: 800;
         color: #198754;
-        font-family: monospace;
     }
 
-    /* QR Code Clean Layout */
+    /* QR Code Clean Box */
     .qr-frame {
         width: 72px;
         height: 72px;
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 3px;
+        border-radius: 6px;
+        padding: 2px;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
     }
 
-    /* Digital Verification Pill */
     .verified-stamp {
         background: #dcfce7;
         color: #15803d;
         padding: 2px 8px;
         border-radius: 4px;
-        font-size: 10.5px;
+        font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.5px;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 3px;
     }
 
     /* Action Buttons */
@@ -195,8 +215,8 @@
         background: #0f172a;
         color: #ffffff;
         border: none;
-        padding: 10px 24px;
-        border-radius: 8px;
+        padding: 10px 22px;
+        border-radius: 6px;
         font-weight: 600;
         font-size: 13.5px;
         transition: all 0.2s ease;
@@ -210,8 +230,8 @@
         background: #198754;
         color: #ffffff;
         border: none;
-        padding: 10px 24px;
-        border-radius: 8px;
+        padding: 10px 22px;
+        border-radius: 6px;
         font-weight: 600;
         font-size: 13.5px;
         transition: all 0.2s ease;
@@ -250,7 +270,7 @@
             padding: 15px 20px !important;
         }
 
-        .clean-table thead th {
+        .clean-invoice-table thead th {
             background: transparent !important;
             color: #0f172a !important;
             border-top: 1px solid #cbd5e1 !important;
@@ -263,34 +283,33 @@
     <div class="container">
         
         <!-- TOP SUCCESS HEADER (NO PRINT) -->
-        <div class="text-center mb-4 pb-2 btn-no-print">
+        <div class="text-center mb-4 pb-1 btn-no-print">
             <div class="success-icon-wrap">
                 <i class="bi bi-check-lg fs-2"></i>
             </div>
             <h4 class="fw-bold text-dark mb-1">ការបញ្ជាទិញទទួលបានជោគជ័យ!</h4>
-            <p class="text-secondary mb-0" style="font-size: 14px;">
-                ប្រព័ន្ធបានកត់ត្រាការកុម្ម៉ង់ទំនិញរបស់អ្នករួចរាល់ហើយ។ ខាងក្រោមនេះជាវិក្កយបត្រផ្លូវការរបស់អ្នក៖
+            <p class="text-secondary mb-0" style="font-size: 13.5px;">
+                ប្រព័ន្ធបានកត់ត្រាការកុម្ម៉ង់ទំនិញរបស់អ្នករួចរាល់ហើយ។ ខាងក្រោមនេះជាវិក្កយបត្រផ្លូវការ៖
             </p>
         </div>
 
         <div class="row justify-content-center">
             <div class="col-lg-10 col-xl-9">
                 
-                <!-- MAIN INVOICE CARD (CLEAN & MINIMALIST) -->
+                <!-- MAIN INVOICE CARD -->
                 <div class="invoice-card" id="invoiceCard">
                     <div class="invoice-card-body">
                         
-                        <!-- 1. HEADER ROW: BRAND & INVOICE NO -->
+                        <!-- 1. HEADER: BRAND & INVOICE NUMBER -->
                         <div class="d-flex flex-wrap justify-content-between align-items-center pb-4 mb-4 border-bottom gap-3">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="bg-white p-1 rounded-3 border d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                                <div class="bg-white p-1 rounded-2 border d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
                                     <img src="{% if store_settings.logo %}{{ store_settings.logo.url }}{% else %}{% static 'img/photologo.JPG' %}{% endif %}" 
                                          alt="{{ store_settings.store_name|default:'PNK SHOP' }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                                 </div>
                                 <div>
                                     <div class="invoice-brand-title">
-                                        <i class="bi bi-phone"></i>
-                                        <span>{{ store_settings.store_name|default:"PNK SHOP" }}</span>
+                                        {{ store_settings.store_name|default:"PNK SHOP" }}
                                     </div>
                                     <small class="text-muted" style="font-size: 12px;">ហាងលក់ទូរស័ព្ទដៃ និងគ្រឿងបន្លាស់ទំនើប</small>
                                 </div>
@@ -306,16 +325,16 @@
                             </div>
                         </div>
 
-                        <!-- 2. CUSTOMER & STORE DETAILS (CLEAN 2 COLUMNS, NO BOXED BORDERS) -->
+                        <!-- 2. CUSTOMER & PAYMENT DETAILS (STRUCTURED GRID) -->
                         <div class="row g-4 mb-3 pb-3 border-bottom">
-                            <!-- CUSTOMER DETAILS (BILL TO) -->
+                            <!-- CUSTOMER DETAILS (BILLED TO) -->
                             <div class="col-md-6">
-                                <div class="info-section-title">
+                                <div class="info-section-heading">
                                     <i class="bi bi-person-circle"></i> ព័ត៌មានអតិថិជន (Billed To)
                                 </div>
-                                <div class="info-item">
-                                    <span class="text-muted">ឈ្មោះអតិថិជន៖</span>
-                                    <strong class="ms-1">
+                                <div class="info-grid">
+                                    <span class="label">ឈ្មោះអតិថិជន៖</span>
+                                    <span class="value">
                                         {% if order.last_name or order.first_name %}
                                             {{ order.last_name }} {{ order.first_name }}
                                         {% elif order.user %}
@@ -323,83 +342,81 @@
                                         {% else %}
                                             Guest Customer
                                         {% endif %}
-                                    </strong>
-                                </div>
-                                <div class="info-item">
-                                    <span class="text-muted">លេខទូរស័ព្ទ៖</span>
-                                    <strong class="font-monospace ms-1">{{ order.phone }}</strong>
-                                </div>
-                                {% if order.email %}
-                                <div class="info-item">
-                                    <span class="text-muted">អ៊ីមែល៖</span>
-                                    <span class="text-dark ms-1">{{ order.email }}</span>
-                                </div>
-                                {% endif %}
-                                <div class="info-item">
-                                    <span class="text-muted">អាសយដ្ឋានដឹក៖</span>
-                                    <span class="text-dark fw-medium ms-1">{{ order.address_1 }}{% if order.address_2 %}, {{ order.address_2 }}{% endif %}, {{ order.city }}</span>
+                                    </span>
+
+                                    <span class="label">លេខទូរស័ព្ទ៖</span>
+                                    <span class="value font-monospace">{{ order.phone|default:"-" }}</span>
+
+                                    {% if order.email %}
+                                    <span class="label">អ៊ីមែល៖</span>
+                                    <span class="value" style="font-weight: 500;">{{ order.email }}</span>
+                                    {% endif %}
+
+                                    <span class="label">អាសយដ្ឋានដឹក៖</span>
+                                    <span class="value" style="font-weight: 500;">{{ order.address_1 }}{% if order.address_2 %}, {{ order.address_2 }}{% endif %}, {{ order.city }}</span>
                                 </div>
                             </div>
 
                             <!-- STORE & PAYMENT DETAILS -->
                             <div class="col-md-6">
-                                <div class="info-section-title">
-                                    <i class="bi bi-shop"></i> ព័ត៌មានការទូទាត់ (Payment & Store)
+                                <div class="info-section-heading">
+                                    <i class="bi bi-credit-card"></i> ព័ត៌មានការទូទាត់ (Payment & Store)
                                 </div>
-                                <div class="info-item">
-                                    <span class="text-muted">ហាងចេញវិក្កយបត្រ៖</span>
-                                    <strong class="ms-1">{{ store_settings.store_name|default:"PNK SHOP" }}</strong>
-                                </div>
-                                <div class="info-item">
-                                    <span class="text-muted">វិធីទូទាត់ប្រាក់៖</span>
-                                    {% if order.payment_method == 'khqr' or order.payment_method == 'online' %}
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-0.5 rounded-pill fw-semibold ms-1" style="font-size: 11px;">
-                                            <i class="bi bi-qr-code-scan me-0.5"></i> ស្កែន KHQR (ធនាគារ)
-                                        </span>
-                                    {% else %}
-                                        <span class="badge bg-secondary-subtle text-dark border px-2 py-0.5 rounded-pill fw-semibold ms-1" style="font-size: 11px;">
-                                            <i class="bi bi-cash-stack me-0.5"></i> បង់ប្រាក់ពេលទៅដល់ (COD)
-                                        </span>
-                                    {% endif %}
-                                </div>
-                                <div class="info-item">
-                                    <span class="text-muted">ស្ថានភាពការកុម្ម៉ង់៖</span>
-                                    {% if order.status == 'Pending' %}
-                                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning px-2 py-0.5 rounded-pill fw-semibold ms-1" style="font-size: 11px;">
-                                            <i class="bi bi-hourglass-split me-0.5"></i> កំពុងរង់ចាំពិនិត្យ (Pending)
-                                        </span>
-                                    {% elif order.status == 'Confirmed' or order.status == 'Processing' or order.status == 'Completed' %}
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-0.5 rounded-pill fw-semibold ms-1" style="font-size: 11px;">
-                                            <i class="bi bi-check-circle-fill me-0.5"></i> បានផ្ទៀងផ្ទាត់ ({{ order.status }})
-                                        </span>
-                                    {% else %}
-                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-0.5 rounded-pill fw-semibold ms-1" style="font-size: 11px;">
-                                            {{ order.status }}
-                                        </span>
-                                    {% endif %}
-                                </div>
-                                <div class="info-item">
-                                    <span class="text-muted">ទំនាក់ទំនងហាង៖</span>
-                                    <strong class="font-monospace ms-1">{{ store_settings.phone|default:"0977097547" }}</strong>
+                                <div class="info-grid">
+                                    <span class="label">ហាងចេញវិក្កយបត្រ៖</span>
+                                    <span class="value">{{ store_settings.store_name|default:"PNK SHOP" }}</span>
+
+                                    <span class="label">វិធីទូទាត់ប្រាក់៖</span>
+                                    <span class="value">
+                                        {% if order.payment_method == 'khqr' or order.payment_method == 'online' %}
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-0.5 rounded-pill fw-semibold" style="font-size: 11px;">
+                                                <i class="bi bi-qr-code-scan me-0.5"></i> ស្កែន KHQR (ធនាគារ)
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary-subtle text-dark border px-2 py-0.5 rounded-pill fw-semibold" style="font-size: 11px;">
+                                                <i class="bi bi-cash-stack me-0.5"></i> បង់ប្រាក់ពេលទៅដល់ (COD)
+                                            </span>
+                                        {% endif %}
+                                    </span>
+
+                                    <span class="label">ស្ថានភាព Order៖</span>
+                                    <span class="value">
+                                        {% if order.status == 'Pending' %}
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning px-2 py-0.5 rounded-pill fw-semibold" style="font-size: 11px;">
+                                                <i class="bi bi-hourglass-split me-0.5"></i> Pending (រង់ចាំ)
+                                            </span>
+                                        {% elif order.status == 'Confirmed' or order.status == 'Processing' or order.status == 'Completed' %}
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-0.5 rounded-pill fw-semibold" style="font-size: 11px;">
+                                                <i class="bi bi-check-circle-fill me-0.5"></i> {{ order.status }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-0.5 rounded-pill fw-semibold" style="font-size: 11px;">
+                                                {{ order.status }}
+                                            </span>
+                                        {% endif %}
+                                    </span>
+
+                                    <span class="label">ទំនាក់ទំនងហាង៖</span>
+                                    <span class="value font-monospace">{{ store_settings.phone|default:"0977097547" }}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 3. ITEMS TABLE (CLEAN & ELEGANT) -->
-                        <table class="clean-table">
+                        <!-- 3. ITEMS TABLE (PRECISE ALIGNMENT) -->
+                        <table class="clean-invoice-table">
                             <thead>
                                 <tr>
-                                    <th>មុខទំនិញ / Item</th>
-                                    <th class="text-center" style="width: 90px;">ចំនួន (Qty)</th>
-                                    <th class="text-center" style="width: 130px;">តម្លៃរាយ (Price)</th>
-                                    <th class="text-end" style="width: 140px;">សរុប (Subtotal)</th>
+                                    <th style="width: 50%;">មុខទំនិញ / Item Description</th>
+                                    <th style="width: 15%; text-align: center;">ចំនួន (Qty)</th>
+                                    <th style="width: 17%; text-align: right;">តម្លៃរាយ (Price)</th>
+                                    <th style="width: 18%; text-align: right;">សរុប (Amount)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for item in order.items.all %}
                                 <tr>
                                     <td>
-                                        <div class="d-flex align-items-center gap-3">
+                                        <div class="d-flex align-items-center gap-2.5">
                                             <div class="product-img-box">
                                                 {% if item.product.image %}
                                                 <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
@@ -409,25 +426,21 @@
                                                 {% endif %}
                                             </div>
                                             <div>
-                                                <div class="fw-bold text-dark fs-6">{{ item.product.name }}</div>
+                                                <div class="fw-bold text-dark" style="font-size: 13.5px;">{{ item.product.name }}</div>
                                                 {% if item.product.brand %}
-                                                <span class="badge bg-light text-secondary border px-2 py-0.5 rounded-pill" style="font-size: 10.5px;">
-                                                    {{ item.product.brand.name }}
-                                                </span>
+                                                <small class="text-muted" style="font-size: 11px;">{{ item.product.brand.name }}</small>
                                                 {% endif %}
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-light text-dark border px-2.5 py-1 font-monospace fw-bold" style="font-size: 12.5px;">
-                                            x{{ item.quantity }}
-                                        </span>
+                                    <td style="text-align: center; font-family: monospace; font-weight: 600;">
+                                        x{{ item.quantity }}
                                     </td>
-                                    <td class="text-center font-monospace fw-semibold text-secondary">
-                                        ${{ item.price }}
+                                    <td style="text-align: right; font-family: monospace; font-weight: 500; color: #475569;">
+                                        ${{ item.price|floatformat:2 }}
                                     </td>
-                                    <td class="text-end font-monospace fw-bold text-dark fs-6">
-                                        ${% widthratio item.price 1 item.quantity %}
+                                    <td style="text-align: right; font-family: monospace; font-weight: 700; color: #0f172a;">
+                                        ${% widthratio item.price 1 item.quantity as item_subtotal %}{{ item_subtotal|floatformat:2 }}
                                     </td>
                                 </tr>
                                 {% empty %}
@@ -440,7 +453,7 @@
                             </tbody>
                         </table>
 
-                        <!-- 4. TOTALS & QR CODE VERIFICATION ROW -->
+                        <!-- 4. TOTALS & QR CODE ROW -->
                         <div class="row align-items-center g-4 mb-4 pb-2">
                             <!-- QR CODE VERIFICATION -->
                             <div class="col-md-6">
@@ -461,31 +474,33 @@
                                 </div>
                             </div>
 
-                            <!-- TOTALS -->
+                            <!-- TOTALS TABLE -->
                             <div class="col-md-6">
                                 <div class="ps-md-4">
-                                    <div class="calc-row">
-                                        <span>តម្លៃទំនិញសរុប (Subtotal):</span>
-                                        <strong class="font-monospace text-dark">${{ order.total_amount }}</strong>
-                                    </div>
-                                    <div class="calc-row">
-                                        <span>សេវាដឹកជញ្ជូន (Delivery):</span>
-                                        <span class="text-success fw-bold">ឥតគិតថ្លៃ (Free)</span>
-                                    </div>
-                                    <div class="calc-total-row">
-                                        <span class="fw-bold text-dark fs-6">ទឹកប្រាក់សរុប (Total):</span>
-                                        <span class="grand-total-amount">${{ order.total_amount }}</span>
-                                    </div>
+                                    <table class="totals-table">
+                                        <tr>
+                                            <td class="label">តម្លៃទំនិញសរុប (Subtotal):</td>
+                                            <td class="value">${{ order.total_amount|floatformat:2 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label">សេវាដឹកជញ្ជូន (Delivery):</td>
+                                            <td class="value text-success">Free (ឥតគិតថ្លៃ)</td>
+                                        </tr>
+                                        <tr class="grand-total">
+                                            <td class="label">ទឹកប្រាក់សរុប (Total):</td>
+                                            <td class="value">${{ order.total_amount|floatformat:2 }}</td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 5. THANK YOU & FOOTER NOTE -->
                         <div class="text-center pt-3 border-top">
-                            <p class="fw-bold text-dark mb-1" style="font-size: 13.5px;">
+                            <p class="fw-bold text-dark mb-1" style="font-size: 13px;">
                                 🙏 សូមអរគុណសម្រាប់ការជឿទុកចិត្ត និងគាំទ្រហាង {{ store_settings.store_name|default:'PNK SHOP' }}!
                             </p>
-                            <small class="text-muted" style="font-size: 11.5px;">
+                            <small class="text-muted" style="font-size: 11px;">
                                 📍 អាសយដ្ឋាន៖ {{ store_settings.address|default:'ភូមិនិគមន៍លើ ខេត្តត្បូងឃ្មុំ, ព្រះរាជាណាចក្រកម្ពុជា' }} &nbsp;|&nbsp; 
                                 📞 ទូរស័ព្ទ៖ {{ store_settings.phone|default:'0977097547' }} &nbsp;|&nbsp; 
                                 ✉️ អ៊ីមែល៖ {{ store_settings.email|default:'dana267yue@gmail.com' }}
@@ -498,14 +513,14 @@
                 <!-- ACTION BUTTONS TOOLBAR (NO PRINT) -->
                 <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 mt-4 pt-2 btn-no-print">
                     <button type="button" class="btn btn-action-print d-inline-flex align-items-center gap-2" onclick="window.print()">
-                        <i class="bi bi-printer-fill fs-5"></i> បោះពុម្ពវិក្កយបត្រ (Print / Save PDF)
+                        <i class="bi bi-printer-fill fs-6"></i> បោះពុម្ពវិក្កយបត្រ (Print / Save PDF)
                     </button>
                     
                     <a href="{% url 'shop:shop' %}" class="btn btn-action-shop d-inline-flex align-items-center gap-2">
-                        <i class="bi bi-cart-plus-fill fs-5"></i> បន្តទិញទំនិញបន្ថែម
+                        <i class="bi bi-cart-plus-fill fs-6"></i> បន្តទិញទំនិញបន្ថែម
                     </a>
 
-                    <a href="{% url 'core:home' %}" class="btn btn-outline-secondary px-4 py-2 rounded-3 fw-semibold shadow-xs">
+                    <a href="{% url 'core:home' %}" class="btn btn-outline-secondary px-3.5 py-2 rounded-2 fw-semibold shadow-xs" style="font-size: 13.5px;">
                         <i class="bi bi-house-door-fill me-1"></i> ទំព័រដើម
                     </a>
                 </div>
