@@ -339,7 +339,7 @@
                     <i class="bi bi-lock input-icon"></i>
                     <input type="password" name="password" id="pass1" class="form-control" placeholder="••••••••" required />
                     <button class="toggle-pass-btn" type="button" onclick="togglePass('pass1', 'eye1')">
-                      <i class="bi bi-eye" id="eye1"></i>
+                      <i class="bi bi-eye-slash" id="eye1"></i>
                     </button>
                   </div>
                 </div>
@@ -349,7 +349,7 @@
                     <i class="bi bi-shield-lock input-icon"></i>
                     <input type="password" name="confirm_password" id="pass2" class="form-control" placeholder="••••••••" required />
                     <button class="toggle-pass-btn" type="button" onclick="togglePass('pass2', 'eye2')">
-                      <i class="bi bi-eye" id="eye2"></i>
+                      <i class="bi bi-eye-slash" id="eye2"></i>
                     </button>
                   </div>
                 </div>
@@ -382,10 +382,10 @@
         const eye = document.getElementById(eyeId);
         if (input.type === "password") {
           input.type = "text";
-          eye.className = "bi bi-eye-slash";
+          eye.className = "bi bi-eye";
         } else {
           input.type = "password";
-          eye.className = "bi bi-eye";
+          eye.className = "bi bi-eye-slash";
         }
       }
 

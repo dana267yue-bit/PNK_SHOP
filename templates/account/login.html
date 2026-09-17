@@ -400,7 +400,7 @@
                     required 
                   />
                   <button type="button" class="toggle-pass-btn" onclick="togglePasswordVisibility('id_password', 'toggleEyeIcon')" title="បង្ហាញ/លាក់លេខសម្ងាត់">
-                    <i class="bi bi-eye" id="toggleEyeIcon"></i>
+                    <i class="bi bi-eye-slash" id="toggleEyeIcon"></i>
                   </button>
                 </div>
               </div>
@@ -470,12 +470,12 @@
         
         if (passwordInput.type === "password") {
           passwordInput.type = "text";
-          toggleIcon.classList.remove("bi-eye");
-          toggleIcon.classList.add("bi-eye-slash");
-        } else {
-          passwordInput.type = "password";
           toggleIcon.classList.remove("bi-eye-slash");
           toggleIcon.classList.add("bi-eye");
+        } else {
+          passwordInput.type = "password";
+          toggleIcon.classList.remove("bi-eye");
+          toggleIcon.classList.add("bi-eye-slash");
         }
       }
     </script>
