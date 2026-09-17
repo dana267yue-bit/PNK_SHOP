@@ -300,7 +300,7 @@
           <tr class="hover-row">
             <!-- NO. -->
             <td class="text-center fw-bold text-muted small">
-              {{ forloop.counter }}
+              {% if products.start_index %}{{ products.start_index|add:forloop.counter0 }}{% elif page_obj.start_index %}{{ page_obj.start_index|add:forloop.counter0 }}{% else %}{{ forloop.counter }}{% endif %}
             </td>
 
             <!-- IMAGE -->
