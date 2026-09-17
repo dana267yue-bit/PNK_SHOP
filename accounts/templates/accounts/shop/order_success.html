@@ -6,7 +6,7 @@
 {% block content %}
 <style>
     /* ==========================================================================
-       🌿 ELEGANT & PERFECTLY STRUCTURED INVOICE
+       🌿 CLEAN, BORDERLESS & STRUCTURED INVOICE
        ========================================================================== */
     .invoice-page-bg {
         background-color: #f8fafc;
@@ -99,7 +99,7 @@
         gap: 6px;
     }
 
-    /* Clean Structured Table */
+    /* Clean Structured Table (No Lines) */
     .clean-invoice-table {
         width: 100%;
         border-collapse: collapse;
@@ -111,23 +111,18 @@
         color: #475569;
         font-weight: 700;
         font-size: 12.5px;
-        padding: 12px 14px;
-        border-top: 1px solid #e2e8f0;
-        border-bottom: 2px solid #cbd5e1;
+        padding: 10px 14px;
+        border: none;
         text-transform: uppercase;
         letter-spacing: 0.3px;
     }
 
     .clean-invoice-table tbody td {
-        padding: 14px;
+        padding: 12px 14px;
         vertical-align: middle;
-        border-bottom: 1px solid #f1f5f9;
+        border: none;
         font-size: 13.5px;
         color: #1e293b;
-    }
-
-    .clean-invoice-table tbody tr:last-child td {
-        border-bottom: 1.5px solid #cbd5e1;
     }
 
     /* Product Thumbnail */
@@ -136,7 +131,7 @@
         height: 42px;
         border-radius: 6px;
         background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        border: 1px solid #f1f5f9;
         padding: 2px;
         display: flex;
         align-items: center;
@@ -144,7 +139,7 @@
         flex-shrink: 0;
     }
 
-    /* Summary Totals Table */
+    /* Summary Totals Table (No Lines) */
     .totals-table {
         width: 100%;
         font-size: 13.5px;
@@ -152,6 +147,7 @@
 
     .totals-table td {
         padding: 6px 0;
+        border: none;
     }
 
     .totals-table .label {
@@ -168,7 +164,7 @@
 
     .totals-table tr.grand-total td {
         padding-top: 10px;
-        border-top: 1.5px solid #cbd5e1;
+        border: none;
     }
 
     .totals-table tr.grand-total .label {
@@ -271,10 +267,12 @@
         }
 
         .clean-invoice-table thead th {
-            background: transparent !important;
+            border: none !important;
             color: #0f172a !important;
-            border-top: 1px solid #cbd5e1 !important;
-            border-bottom: 2px solid #94a3b8 !important;
+        }
+
+        .clean-invoice-table tbody td {
+            border: none !important;
         }
     }
 </style>
@@ -296,12 +294,12 @@
         <div class="row justify-content-center">
             <div class="col-lg-10 col-xl-9">
                 
-                <!-- MAIN INVOICE CARD -->
+                <!-- MAIN INVOICE CARD (NO DISTRACTING LINES) -->
                 <div class="invoice-card" id="invoiceCard">
                     <div class="invoice-card-body">
                         
                         <!-- 1. HEADER: BRAND & INVOICE NUMBER -->
-                        <div class="d-flex flex-wrap justify-content-between align-items-center pb-4 mb-4 border-bottom gap-3">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center pb-4 mb-4 gap-3">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="bg-white p-1 rounded-2 border d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
                                     <img src="{% if store_settings.logo %}{{ store_settings.logo.url }}{% else %}{% static 'img/photologo.JPG' %}{% endif %}" 
@@ -325,8 +323,8 @@
                             </div>
                         </div>
 
-                        <!-- 2. CUSTOMER & PAYMENT DETAILS (STRUCTURED GRID) -->
-                        <div class="row g-4 mb-3 pb-3 border-bottom">
+                        <!-- 2. CUSTOMER & PAYMENT DETAILS (STRUCTURED GRID WITHOUT DIVIDER LINES) -->
+                        <div class="row g-4 mb-4 pb-2">
                             <!-- CUSTOMER DETAILS (BILLED TO) -->
                             <div class="col-md-6">
                                 <div class="info-section-heading">
@@ -402,7 +400,7 @@
                             </div>
                         </div>
 
-                        <!-- 3. ITEMS TABLE (PRECISE ALIGNMENT) -->
+                        <!-- 3. ITEMS TABLE (CLEAN, NO DIVIDER LINES) -->
                         <table class="clean-invoice-table">
                             <thead>
                                 <tr>
@@ -495,8 +493,8 @@
                             </div>
                         </div>
 
-                        <!-- 5. THANK YOU & FOOTER NOTE -->
-                        <div class="text-center pt-3 border-top">
+                        <!-- 5. THANK YOU & FOOTER NOTE (NO BORDER LINE) -->
+                        <div class="text-center pt-3">
                             <p class="fw-bold text-dark mb-1" style="font-size: 13px;">
                                 🙏 សូមអរគុណសម្រាប់ការជឿទុកចិត្ត និងគាំទ្រហាង {{ store_settings.store_name|default:'PNK SHOP' }}!
                             </p>
