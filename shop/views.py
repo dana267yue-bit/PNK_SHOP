@@ -58,7 +58,10 @@ def shop(request):
     if category_id:
         products = products.filter(category_id=category_id)
     if brand_id:
-        products = products.filter(brand_id=brand_id)
+        if str(brand_id).isdigit():
+            products = products.filter(brand_id=brand_id)
+        else:
+            products = products.filter(brand__name__iexact=brand_id)
     if search_query:
         products = products.filter(
             Q(name__icontains=search_query) |
