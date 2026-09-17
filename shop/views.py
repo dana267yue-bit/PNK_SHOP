@@ -179,7 +179,7 @@ def About(request):
 def product_list(request):
     from django.db.models import Q
     
-    product_qs = Product.objects.all().select_related('brand').order_by('id')
+    product_qs = Product.objects.all().select_related('brand').order_by('-id')
     
     total_count = product_qs.count()
     in_stock_count = product_qs.filter(stock__gt=0).count()
