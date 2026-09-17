@@ -106,6 +106,54 @@
 <!-- ==========================================
      FLOATING LIVE CUSTOMER SUPPORT CHAT WIDGET
      ========================================== -->
+<style>
+  [data-theme="dark"] #pnkChatWindow {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+  }
+  [data-theme="dark"] #chatMessagesLog {
+    background-color: #0f172a !important;
+    background-image: radial-gradient(#1e293b 1.2px, transparent 1.2px) !important;
+  }
+  [data-theme="dark"] #pnkChatWindow .bg-white {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+  }
+  [data-theme="dark"] #pnkChatWindow .quick-q-btn {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+  }
+  [data-theme="dark"] #pnkChatWindow .quick-q-btn:hover {
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+    border-color: #10b981 !important;
+  }
+  [data-theme="dark"] #pnkChatWindow .p-2\.5.bg-white {
+    background-color: #162032 !important;
+    border-top: 1px solid #334155 !important;
+  }
+  [data-theme="dark"] #chatMessageForm {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+  }
+  [data-theme="dark"] #chatInputText {
+    color: #f8fafc !important;
+  }
+  [data-theme="dark"] #customerEmojiPickerPopup {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6) !important;
+  }
+  [data-theme="dark"] #customerEmojiPickerPopup .card-header {
+    background-color: #162032 !important;
+    border-bottom: 1px solid #334155 !important;
+    color: #f8fafc !important;
+  }
+</style>
+
 <div id="pnk-live-chat-container" class="position-fixed bottom-0 end-0 m-3 m-md-4" style="z-index: 1080;">
   <!-- CHAT WINDOW (HIDDEN BY DEFAULT) -->
   <div id="pnkChatWindow" class="card shadow-lg border-0 rounded-4 overflow-hidden d-none mb-3" style="width: 350px; max-width: calc(100vw - 32px); height: 470px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
