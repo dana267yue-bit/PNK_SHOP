@@ -429,14 +429,13 @@
       <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3 justify-content-center">
         {% for brand in brands %}
         <div class="col">
-          <a href="{% url 'shop:shop' %}?brand={{ brand.id }}" class="text-decoration-none">
-            <div class="brand-pill-item d-flex align-items-center justify-content-center gap-2.5">
+          <a href="{% url 'shop:shop' %}?brand={{ brand.id }}" class="text-decoration-none" title="ទស្សនាទូរស័ព្ទម៉ាក {{ brand.name }}">
+            <div class="brand-pill-item d-flex align-items-center justify-content-center" style="height: 72px;">
               {% if brand.logo %}
-                <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" style="height: 30px; width: auto; max-width: 48px; object-fit: contain;">
+                <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" style="max-height: 38px; max-width: 100px; width: auto; object-fit: contain;">
               {% else %}
-                <i class="bi bi-phone fs-4 text-success"></i>
+                <span class="fw-bold text-dark fs-6"><i class="bi bi-phone text-success me-1"></i> {{ brand.name }}</span>
               {% endif %}
-              <span class="fw-bold text-dark fs-6">{{ brand.name }}</span>
             </div>
           </a>
         </div>
