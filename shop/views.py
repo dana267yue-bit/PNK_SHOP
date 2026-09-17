@@ -213,6 +213,11 @@ def product_list(request):
     page_number = request.GET.get('page', 1)
     products = paginator.get_page(page_number)
     
+    total_items = paginator.count
+    start_idx = products.start_index() if total_items > 0 else 1
+    for i, product in enumerate(products):
+        product.reverse_index = total_items - (start_idx + i - 1)
+    
     context = {
         'products': products,
         'page_obj': products,
