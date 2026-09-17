@@ -84,26 +84,8 @@ def get_filtered_orders(request):
     today = timezone.now().date()
     period_label = "All Time (គ្រប់ពេល)"
 
-    if date_filter != 'all' and not (start_date or end_date):
-        if date_filter == 'today':
-            orders_qs = orders_qs.filter(created_at__date=today)
-            period_label = "Today (ប្រចាំថ្ងៃ)"
-        elif date_filter == 'yesterday':
-            yesterday = today - timedelta(days=1)
-            orders_qs = orders_qs.filter(created_at__date=yesterday)
-            period_label = "Yesterday (ម្សិលមិញ)"
-        elif date_filter == 'week':
-            one_week_ago = today - timedelta(days=7)
-            orders_qs = orders_qs.filter(created_at__date__gte=one_week_ago)
-            period_label = "This Week (ប្រចាំសប្តាហ៍)"
-        elif date_filter == 'month':
-            one_month_ago = today - timedelta(days=30)
-            orders_qs = orders_qs.filter(created_at__date__gte=one_month_ago)
-            period_label = "This Month (ប្រចាំខែ)"
-        elif date_filter == 'year':
-            one_year_ago = today - timedelta(days=365)
-            orders_qs = orders_qs.filter(created_at__date__gte=one_year_ago)
-            period_label = "This Year (ប្រចាំឆ្នាំ)"
+    if date_filter == 'all':
+        period_label = "All Time (គ្រប់ពេល)"
     elif start_date or end_date:
         if start_date:
             try:
@@ -124,26 +106,25 @@ def get_filtered_orders(request):
             period_label = f"ចាប់ពី {start_date}"
         else:
             period_label = f"ត្រឹម {end_date}"
-    else:
-        if date_filter == 'today':
-            orders_qs = orders_qs.filter(created_at__date=today)
-            period_label = "Today (ប្រចាំថ្ងៃ)"
-        elif date_filter == 'yesterday':
-            yesterday = today - timedelta(days=1)
-            orders_qs = orders_qs.filter(created_at__date=yesterday)
-            period_label = "Yesterday (ម្សិលមិញ)"
-        elif date_filter == 'week':
-            one_week_ago = today - timedelta(days=7)
-            orders_qs = orders_qs.filter(created_at__date__gte=one_week_ago)
-            period_label = "This Week (ប្រចាំសប្តាហ៍)"
-        elif date_filter == 'month':
-            one_month_ago = today - timedelta(days=30)
-            orders_qs = orders_qs.filter(created_at__date__gte=one_month_ago)
-            period_label = "This Month (ប្រចាំខែ)"
-        elif date_filter == 'year':
-            one_year_ago = today - timedelta(days=365)
-            orders_qs = orders_qs.filter(created_at__date__gte=one_year_ago)
-            period_label = "This Year (ប្រចាំឆ្នាំ)"
+    elif date_filter == 'today':
+        orders_qs = orders_qs.filter(created_at__date=today)
+        period_label = "Today (ប្រចាំថ្ងៃ)"
+    elif date_filter == 'yesterday':
+        yesterday = today - timedelta(days=1)
+        orders_qs = orders_qs.filter(created_at__date=yesterday)
+        period_label = "Yesterday (ម្សិលមិញ)"
+    elif date_filter == 'week':
+        one_week_ago = today - timedelta(days=7)
+        orders_qs = orders_qs.filter(created_at__date__gte=one_week_ago)
+        period_label = "This Week (ប្រចាំសប្តាហ៍)"
+    elif date_filter == 'month':
+        one_month_ago = today - timedelta(days=30)
+        orders_qs = orders_qs.filter(created_at__date__gte=one_month_ago)
+        period_label = "This Month (ប្រចាំខែ)"
+    elif date_filter == 'year':
+        one_year_ago = today - timedelta(days=365)
+        orders_qs = orders_qs.filter(created_at__date__gte=one_year_ago)
+        period_label = "This Year (ប្រចាំឆ្នាំ)"
 
     orders_qs = orders_qs.distinct()
 
@@ -175,34 +156,6 @@ def get_filtered_orders(request):
     }
 
     return orders_qs, filters_dict
-
-@login_required
-@user_passes_test(is_admin)
-def export_orders_csv(request):
-    import csv
-    orders_qs, filters = get_filtered_orders(request)
-    
-    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
-    filename = f"orders_report_{filters['date_filter']}.csv"
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    
-    writer = csv.writer(response)
-    writer.writerow(['Order ID', 'Customer Name', 'Phone', 'Email', 'City', 'Total ($)', 'Payment Method', 'Status', 'Date'])
-    
-    for o in orders_qs:
-        writer.writerow([
-            f"#{o.id}",
-            f"{o.last_name} {o.first_name}".strip() or (o.user.username if o.user else "Guest"),
-            o.phone,
-            o.email,
-            o.city,
-            o.total_amount,
-            o.get_payment_method_display(),
-            o.status,
-            o.created_at.strftime('%Y-%m-%d %H:%M')
-        ])
-    log_activity(request.user, "ទាញយក CSV ការបញ្ជាទិញ", "Exported Order Report CSV", "bi-file-earmark-spreadsheet", "text-success")
-    return response
 
 @login_required
 @user_passes_test(is_admin)
@@ -748,10 +701,10 @@ def export_orders_csv(request):
 
     if HAS_OPENPYXL:
         count_all = orders_qs.count()
-        count_completed = orders_qs.filter(status='Completed').count()
-        count_pending = orders_qs.exclude(status='Completed').exclude(status='Rejected').count()
-        count_rejected = orders_qs.filter(status='Rejected').count()
-        total_revenue = orders_qs.filter(status='Completed').aggregate(total=Sum('total_amount'))['total'] or 0
+        count_completed = orders_qs.filter(status__iexact='Completed').count()
+        count_pending = orders_qs.exclude(status__iexact='Completed').exclude(status__iexact='Rejected').count()
+        count_rejected = orders_qs.filter(status__iexact='Rejected').count()
+        total_revenue = orders_qs.filter(status__iexact='Completed').aggregate(total=Sum('total_amount'))['total'] or 0
 
         wb = openpyxl.Workbook()
         ws = wb.active
