@@ -84,9 +84,7 @@ def get_filtered_orders(request):
     today = timezone.now().date()
     period_label = "All Time (គ្រប់ពេល)"
 
-    if date_filter == 'all':
-        period_label = "All Time (គ្រប់ពេល)"
-    elif start_date or end_date:
+    if start_date or end_date:
         if start_date:
             try:
                 s_d = datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -125,6 +123,8 @@ def get_filtered_orders(request):
         one_year_ago = today - timedelta(days=365)
         orders_qs = orders_qs.filter(created_at__date__gte=one_year_ago)
         period_label = "This Year (ប្រចាំឆ្នាំ)"
+    else:  # date_filter == 'all'
+        period_label = "All Time (គ្រប់ពេល)"
 
     orders_qs = orders_qs.distinct()
 
@@ -1481,90 +1481,6 @@ def report_page(request):
 
 @login_required
 @user_passes_test(is_admin)
-def export_top_products_csv(request):
-    import csv
-    from shop.models import Product
-    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
-    response['Content-Disposition'] = 'attachment; filename="top_selling_products.csv"'
-
-    writer = csv.writer(response)
-    writer.writerow(['Product Name', 'Category', 'Brand', 'Price ($)', 'Total Units Sold'])
-
-    top_products = Product.objects.annotate(
-        sales_count=Count('orderitem')
-    ).filter(sales_count__gt=0).order_by('-sales_count')
-
-    for p in top_products:
-        writer.writerow([
-            p.name,
-            p.category.name if p.category else '-',
-            p.brand.name if p.brand else '-',
-            p.price,
-            p.sales_count
-        ])
-    log_activity(request.user, "ទាញយក CSV ទូរស័ព្ទលក់ដាច់", "Exported Top Products CSV", "bi-file-earmark-spreadsheet", "text-success")
-    return response
-
-@login_required
-@user_passes_test(is_admin)
-def export_vip_customers_csv(request):
-    import csv
-    orders_qs, filters = get_filtered_orders(request)
-
-    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
-    filename = f"vip_customers_report_{filters['date_filter']}.csv"
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
-    writer = csv.writer(response)
-    writer.writerow(['Customer Name', 'Username', 'Phone', 'Email', 'Total Orders', 'Total Spent ($)'])
-
-    top_customers = (
-        orders_qs.filter(status__iexact='Completed')
-        .values('first_name', 'last_name', 'phone', 'email', 'user__username')
-        .annotate(total_spent=Sum('total_amount'), total_orders=Count('id'))
-        .order_by('-total_spent')
-    )
-
-    for c in top_customers:
-        writer.writerow([
-            f"{c['last_name']} {c['first_name']}".strip() or c['user__username'],
-            c['user__username'],
-            c['phone'] or '-',
-            c['email'] or '-',
-            c['total_orders'],
-            c['total_spent']
-        ])
-    log_activity(request.user, "ទាញយក CSV អតិថិជន VIP", "Exported VIP Customers CSV", "bi-file-earmark-spreadsheet", "text-success")
-    return response
-
-@login_required
-@user_passes_test(is_admin)
-def export_low_stock_csv(request):
-    import csv
-    from shop.models import Product
-    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
-    response['Content-Disposition'] = 'attachment; filename="low_stock_inventory.csv"'
-
-    writer = csv.writer(response)
-    writer.writerow(['Product Name', 'Category', 'Brand', 'Price ($)', 'Current Stock', 'Status'])
-
-    low_stock_products = Product.objects.filter(stock__lte=5).order_by('stock')
-
-    for p in low_stock_products:
-        status_str = "Out of Stock" if p.stock == 0 else "Low Stock"
-        writer.writerow([
-            p.name,
-            p.category.name if p.category else '-',
-            p.brand.name if p.brand else '-',
-            p.price,
-            p.stock,
-            status_str
-        ])
-    log_activity(request.user, "ទាញយក CSV របាយការណ៍ស្តុក", "Exported Low Stock CSV", "bi-file-earmark-spreadsheet", "text-warning")
-    return response
-
-@login_required
-@user_passes_test(is_admin)
 def upload_page(request):
     return render(request, 'accounts/dashboard/upload.html')
 
@@ -1728,6 +1644,7 @@ def export_orders_pdf(request):
     count_pending = orders_qs.exclude(status__iexact='Completed').exclude(status__iexact='Rejected').count()
     count_rejected = orders_qs.filter(status__iexact='Rejected').count()
     total_revenue = orders_qs.filter(status__iexact='Completed').aggregate(total=Sum('total_amount'))['total'] or 0
+    store_settings = StoreSetting.get_settings()
 
     context = {
         'orders': orders_qs,
@@ -1738,6 +1655,7 @@ def export_orders_pdf(request):
         'total_revenue': total_revenue,
         'period_label': filters['period_label'],
         'status_filter': filters['status_filter'],
+        'store_settings': store_settings,
         'generated_at': timezone.now(),
     }
     return render(request, 'accounts/dashboard/order_report_pdf.html', context)
@@ -1747,8 +1665,11 @@ def export_orders_pdf(request):
 @xframe_options_exempt
 def export_top_products_pdf(request):
     from shop.models import OrderItem
+    orders_qs, filters = get_filtered_orders(request)
+    completed_orders = orders_qs.filter(status__iexact='Completed')
+
     top_products_qs = (
-        OrderItem.objects.filter(order__status__iexact='Completed')
+        OrderItem.objects.filter(order__in=completed_orders)
         .values('product__id', 'product__name', 'product__brand__name', 'product__price')
         .annotate(
             total_qty=Sum('quantity'),
@@ -1759,12 +1680,15 @@ def export_top_products_pdf(request):
 
     total_items_sold = sum(p['total_qty'] or 0 for p in top_products_qs)
     total_revenue = sum(p['total_revenue'] or 0 for p in top_products_qs)
+    store_settings = StoreSetting.get_settings()
 
     context = {
         'top_products': top_products_qs,
         'total_top_products': len(top_products_qs),
         'total_items_sold': total_items_sold,
         'total_revenue': total_revenue,
+        'period_label': filters['period_label'],
+        'store_settings': store_settings,
         'generated_at': timezone.now(),
     }
     return render(request, 'accounts/dashboard/top_products_report_pdf.html', context)
@@ -1773,8 +1697,9 @@ def export_top_products_pdf(request):
 @user_passes_test(is_admin)
 @xframe_options_exempt
 def export_vip_customers_pdf(request):
+    orders_qs, filters = get_filtered_orders(request)
     vip_qs = (
-        Order.objects.filter(status__iexact='Completed')
+        orders_qs.filter(status__iexact='Completed')
         .values('first_name', 'last_name', 'email', 'phone', 'user__username')
         .annotate(
             total_spent=Sum('total_amount'),
@@ -1787,12 +1712,15 @@ def export_vip_customers_pdf(request):
     total_vips = len(vip_qs)
     total_vip_orders = sum(v['order_count'] or 0 for v in vip_qs)
     total_vip_spend = sum(v['total_spent'] or 0 for v in vip_qs)
+    store_settings = StoreSetting.get_settings()
 
     context = {
         'vip_customers': vip_qs,
         'total_vips': total_vips,
         'total_vip_orders': total_vip_orders,
         'total_vip_spend': total_vip_spend,
+        'period_label': filters['period_label'],
+        'store_settings': store_settings,
         'generated_at': timezone.now(),
     }
     return render(request, 'accounts/dashboard/vip_customers_report_pdf.html', context)
@@ -1806,12 +1734,14 @@ def export_low_stock_pdf(request):
     count_low = low_stock_qs.filter(stock__gt=0).count()
     count_zero = low_stock_qs.filter(stock=0).count()
     stock_value = sum(p.stock * float(p.price) for p in low_stock_qs)
+    store_settings = StoreSetting.get_settings()
 
     context = {
         'low_stock_products': low_stock_qs,
         'count_low': count_low,
         'count_zero': count_zero,
         'stock_value': stock_value,
+        'store_settings': store_settings,
         'generated_at': timezone.now(),
     }
     return render(request, 'accounts/dashboard/low_stock_report_pdf.html', context)
@@ -1820,8 +1750,11 @@ def export_low_stock_pdf(request):
 @user_passes_test(is_admin)
 def export_top_products_csv(request):
     from shop.models import OrderItem
+    orders_qs, filters = get_filtered_orders(request)
+    completed_orders = orders_qs.filter(status__iexact='Completed')
+
     top_products_qs = (
-        OrderItem.objects.filter(order__status__iexact='Completed')
+        OrderItem.objects.filter(order__in=completed_orders)
         .values('product__id', 'product__name', 'product__brand__name', 'product__price')
         .annotate(
             total_qty=Sum('quantity'),
@@ -2026,8 +1959,9 @@ def export_top_products_csv(request):
 @login_required
 @user_passes_test(is_admin)
 def export_vip_customers_csv(request):
+    orders_qs, filters = get_filtered_orders(request)
     vip_qs = (
-        Order.objects.filter(status__iexact='Completed')
+        orders_qs.filter(status__iexact='Completed')
         .values('first_name', 'last_name', 'email', 'phone', 'user__username')
         .annotate(
             total_spent=Sum('total_amount'),

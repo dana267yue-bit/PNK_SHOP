@@ -154,7 +154,7 @@
       <h4 class="fw-bold text-dark mb-0" style="letter-spacing: -0.3px; font-size: 1.25rem;">
         របាយការណ៍លក់ & វិភាគ 
       </h4>
-      <p class="text-muted small mb-0" style="font-size: 0.8rem;">របាយការណ៍ចំណូលសរុប តាមដានការលក់ និងវិភាគទិន្នន័យផលិតផល PNK Mobile</p>
+      <p class="text-muted small mb-0" style="font-size: 0.8rem;">របាយការណ៍ចំណូលសរុប តាមដានការលក់ និងវិភាគទិន្នន័យផលិតផល PNK_SHOP</p>
     </div>
 
     <div class="d-none d-sm-flex align-items-center gap-1.5 text-muted small" style="font-size: 0.8rem;">
@@ -894,18 +894,31 @@
       baseUrl = (format === 'pdf') ? "{% url 'accounts:export_low_stock_pdf' %}" : "{% url 'accounts:export_low_stock_csv' %}";
     }
 
+    const activePill = document.querySelector('#exportReportModal .quick-date-pill.active');
+    const activePeriod = activePill ? activePill.dataset.period : null;
+
     const params = new URLSearchParams({
       status: '{{ status_filter|default:"all" }}',
       search: '{{ search_query|default:"" }}',
       product: '{{ product_filter|default:"all" }}',
       brand: '{{ brand_filter|default:"all" }}',
       payment: '{{ payment_filter|default:"all" }}',
-      date: '{{ date_filter|default:"all" }}',
       sort: '{{ sort_by|default:"newest" }}'
     });
 
-    if (startDate) params.set('start_date', startDate);
-    if (endDate) params.set('end_date', endDate);
+    if (activePeriod === 'all') {
+      params.set('date', 'all');
+      params.delete('start_date');
+      params.delete('end_date');
+    } else {
+      if (startDate) params.set('start_date', startDate);
+      if (endDate) params.set('end_date', endDate);
+      if (activePeriod) {
+        params.set('date', activePeriod);
+      } else {
+        params.set('date', 'custom');
+      }
+    }
 
     const exportModalEl = document.getElementById('exportReportModal');
     if (exportModalEl) {
