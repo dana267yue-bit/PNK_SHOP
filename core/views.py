@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.db.models import F, Q
 from shop.models import Product, Brand, Category, Blog
 from accounts.models import Slideshow
 
@@ -8,10 +9,22 @@ def home(request):
     if not new_products.exists():
         new_products = Product.objects.filter(category__name__icontains='phone').order_by('-created_at')[:8]
     
-    # ២. ទាញយកផលិតផលទូរស័ព្ទបញ្ចុះតម្លៃសម្រាប់ Hot Discount (Smartphones only)
-    promotional_products = Product.objects.filter(category__slug__in=['smart-phone', 'smartphone', 'smartphones'], old_price__gt=0).order_by('-created_at')[:8]
+    # ២. ទាញយកផលិតផលបញ្ចុះតម្លៃចាប់ពី ១០% ឡើងទៅ (Discount >= 10%) សម្រាប់ Promotion Section
+    promotional_products = Product.objects.filter(
+        old_price__isnull=False,
+        old_price__gt=0,
+        price__lte=F('old_price') * 0.90
+    ).filter(
+        Q(category__slug__in=['smart-phone', 'smartphone', 'smartphones']) | 
+        Q(category__name__icontains='phone')
+    ).order_by('-created_at')[:8]
+    
     if not promotional_products.exists():
-        promotional_products = Product.objects.filter(category__name__icontains='phone', old_price__gt=0).order_by('-created_at')[:8]
+        promotional_products = Product.objects.filter(
+            old_price__isnull=False,
+            old_price__gt=0,
+            price__lte=F('old_price') * 0.90
+        ).order_by('-created_at')[:8]
     
     # ៣. ទាញយកគ្រឿងបន្លាស់ស្មាតហ្វូន (Accessories)
     accessory_products = Product.objects.filter(category__slug__in=['accessories', 'accessory']).order_by('-created_at')[:8]

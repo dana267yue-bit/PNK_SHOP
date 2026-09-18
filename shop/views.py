@@ -23,7 +23,7 @@ def home(request):
     slides = Slideshow.objects.filter(is_active=True)
     products = Product.objects.all().order_by('-created_at')[:8]
     new_products = Product.objects.order_by('-id')[:4] 
-    promotional_products = Product.objects.filter(old_price__gt=F('price'))[:4]
+    promotional_products = Product.objects.filter(old_price__isnull=False, old_price__gt=0, price__lte=F('old_price') * 0.90)[:4]
     
     context = {
         'slides': slides, 'products': products,
