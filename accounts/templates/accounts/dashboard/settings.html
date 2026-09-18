@@ -92,10 +92,7 @@
           <label class="form-label text-secondary fw-semibold small">រូបិយប័ណ្ណសំខាន់ </label>
           <div class="input-group">
             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-currency-dollar text-success"></i></span>
-            <select name="currency" class="form-select rounded-end-3">
               <option value="USD" {% if store_settings.currency == 'USD' or not store_settings.currency %}selected{% endif %}>USD ($) - ប្រាក់ដុល្លារ</option>
-              <option value="KHR" {% if store_settings.currency == 'KHR' %}selected{% endif %}>KHR (៛) - ប្រាក់រៀល</option>
-            </select>
           </div>
         </div>
       </div>
@@ -127,11 +124,22 @@
 
       <div class="mb-3 p-3 bg-light rounded-3 border d-flex align-items-center justify-content-between">
         <div>
-          <h6 class="fw-bold text-dark mb-1"><i class="bi bi-robot text-success me-1.5"></i> បើក/បិទ ការឆ្លើយតបស្វ័យប្រវត្តិ </h6>
-          <small class="text-muted">នៅពេលអតិថិជនផ្ញើសារតាម Website ប្រព័ន្ធនឹងផ្ញើសារឆ្លើយតបស្វ័យប្រវត្តិទៅកាន់គេ</small>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h6 class="fw-bold text-dark mb-0"><i class="bi bi-robot text-success me-1.5"></i> បើក/បិទ ការឆ្លើយតបស្វ័យប្រវត្តិ </h6>
+            <span id="autoReplyLiveBadge" class="badge {% if store_settings.enable_auto_reply %}bg-success-subtle text-success border border-success-subtle{% else %}bg-secondary-subtle text-secondary border{% endif %} px-2 py-0.5" style="font-size: 11px;">
+              {% if store_settings.enable_auto_reply %}🟢 កំពុងបើក{% else %}⚪ បានបិទ{% endif %}
+            </span>
+          </div>
+          <small class="text-muted d-block" id="autoReplyStatusDesc">
+            {% if store_settings.enable_auto_reply %}
+              នៅពេលអតិថិជនផ្ញើសារតាម Website ប្រព័ន្ធនឹងផ្ញើសារឆ្លើយតបស្វ័យប្រវត្តិទៅកាន់គេភ្លាមៗ។
+            {% else %}
+              មុខងារឆ្លើយតបស្វ័យប្រវត្តិត្រូវបានបិទ។ ប្រព័ន្ធនឹងមិនផ្ញើសារឆ្លើយតបស្វ័យប្រវត្តិឡើយ។
+            {% endif %}
+          </small>
         </div>
         <div class="form-check form-switch fs-4 mb-0">
-          <input class="form-check-input ms-0 shadow-none cursor-pointer" type="checkbox" name="enable_auto_reply" {% if store_settings.enable_auto_reply %}checked{% endif %}>
+          <input class="form-check-input ms-0 shadow-none cursor-pointer" type="checkbox" id="enableAutoReplySwitch" name="enable_auto_reply" {% if store_settings.enable_auto_reply %}checked{% endif %} onchange="handleAutoReplyToggleChange(this.checked)">
         </div>
       </div>
 
@@ -143,6 +151,82 @@
         </div>
         <div class="form-text small text-muted">
           សារនេះនឹងបង្ហាញស្វ័យប្រវត្តិទៅកាន់អតិថិជននៅពេលពួកគេផ្ញើសារតាមប្រអប់ Chat នៅលើ Website។
+        </div>
+      </div>
+
+      <!-- Quick Questions & Answers in Chat -->
+      <h6 class="fw-bold text-dark mb-3 pt-2 d-flex align-items-center gap-2">
+        <i class="bi bi-patch-question-fill text-warning fs-5"></i> កំណត់សំណួរ និងចម្លើយរហ័ស (Quick FAQ & Answers)
+      </h6>
+      <p class="text-muted small mb-3">អ្នកអាចកែប្រែសំណួរ និងខ្លឹមសារចម្លើយដែល Bot ឆ្លើយតបទៅកាន់អតិថិជនពេលគេចុចសួរ៖</p>
+
+      <div class="row g-3 mb-4">
+        <!-- 1. Trade-in -->
+        <div class="col-md-6">
+          <div class="card border rounded-3 p-3 h-100 bg-light bg-opacity-50">
+            <h6 class="fw-bold text-success mb-2 d-flex align-items-center gap-1.5 small">
+              <i class="bi bi-arrow-repeat"></i> ១. សេវាប្តូរចាស់យកថ្មី (Trade-In)
+            </h6>
+            <div class="mb-2">
+              <label class="form-label text-secondary small fw-semibold mb-1">ចំណងជើងប៊ូតុងសំណួរ</label>
+              <input type="text" name="chat_quick_tradein_q" class="form-control form-control-sm rounded-2" value="{{ store_settings.chat_quick_tradein_q|default:'🔄 សួរអំពីការប្តូរចាស់យកថ្មី (Trade-In)?' }}">
+            </div>
+            <div>
+              <label class="form-label text-secondary small fw-semibold mb-1">ខ្លឹមសារចម្លើយឆ្លើយតប</label>
+              <textarea name="chat_quick_tradein_a" class="form-control form-control-sm rounded-2" rows="3">{{ store_settings.chat_quick_tradein_a|default:'🔄 <strong>សេវាកម្ម ប្តូរចាស់យកថ្មី (Trade-In)</strong>៖<br>• វាយតម្លៃទូរស័ព្ទចាស់បានតម្លៃខ្ពស់សមរម្យ<br>• ថែមប្រាក់តិចតួចយកស៊េរីថ្មីភ្លាមៗ<br>👉 សូមផ្ញើ <strong>ម៉ូឌែលទូរស័ព្ទចាស់ + ស្ថានភាព (ស្អាត/ឆ្កូត)</strong> មកកាន់ទីនេះ ឬទាក់ទងមក Admin ដើម្បីវាយតម្លៃភ្លាមៗបាទ/ចាស! 📱✨' }}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Installment -->
+        <div class="col-md-6">
+          <div class="card border rounded-3 p-3 h-100 bg-light bg-opacity-50">
+            <h6 class="fw-bold text-success mb-2 d-flex align-items-center gap-1.5 small">
+              <i class="bi bi-credit-card-2-front"></i> ២. សេវាបង់រំលស់ (Installment)
+            </h6>
+            <div class="mb-2">
+              <label class="form-label text-secondary small fw-semibold mb-1">ចំណងជើងប៊ូតុងសំណួរ</label>
+              <input type="text" name="chat_quick_installment_q" class="form-control form-control-sm rounded-2" value="{{ store_settings.chat_quick_installment_q|default:'💳 សួរអំពីការបង់រំលស់ 5%?' }}">
+            </div>
+            <div>
+              <label class="form-label text-secondary small fw-semibold mb-1">ខ្លឹមសារចម្លើយឆ្លើយតប</label>
+              <textarea name="chat_quick_installment_a" class="form-control form-control-sm rounded-2" rows="3">{{ store_settings.chat_quick_installment_a|default:'💳 <strong>សេវាកម្ម បង់រំលស់ងាយៗ</strong>៖<br>• ការប្រាក់ចាប់ពី 0% ដល់ 5% ឯកសារងាយៗ<br>• អនុម័តរហ័សក្នុងរយៈពេល ១៥-៣០ នាទី<br>• ឯកសារ៖ អត្តសញ្ញាណប័ណ្ណ + សៀវភៅគ្រួសារ/ស្នាក់នៅ + លិខិតបញ្ជាក់ប្រាក់ខែ<br>👉 សូមផ្ញើ <strong>ម៉ូឌែលទូរស័ព្ទដែលចង់បាន</strong> មកកាន់ទីនេះដើម្បីឱ្យ Admin ជួយគណនាប្រាក់បង់ប្រចាំខែជូនបាទ/ចាស! 📱✨' }}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Store Working Hours -->
+        <div class="col-md-6">
+          <div class="card border rounded-3 p-3 h-100 bg-light bg-opacity-50">
+            <h6 class="fw-bold text-success mb-2 d-flex align-items-center gap-1.5 small">
+              <i class="bi bi-clock-history"></i> ៣. ម៉ោងបើកលក់ (Working Hours)
+            </h6>
+            <div class="mb-2">
+              <label class="form-label text-secondary small fw-semibold mb-1">ចំណងជើងប៊ូតុងសំណួរ</label>
+              <input type="text" name="chat_quick_hours_q" class="form-control form-control-sm rounded-2" value="{{ store_settings.chat_quick_hours_q|default:'🕒 តើហាងបើកលក់ម៉ោងប៉ុន្មាន?' }}">
+            </div>
+            <div>
+              <label class="form-label text-secondary small fw-semibold mb-1">ខ្លឹមសារចម្លើយឆ្លើយតប</label>
+              <textarea name="chat_quick_hours_a" class="form-control form-control-sm rounded-2" rows="3">{{ store_settings.chat_quick_hours_a|default:'ហាង <strong>PNK SHOP</strong> បើកបម្រើអតិថិជនរៀងរាល់ថ្ងៃ ពីម៉ោង <strong>7:30 ព្រឹក ដល់ 8:30 យប់</strong>! អាចអញ្ជើញមកផ្ទាល់ ឬកុម្មង់តាមអនឡាញបានរហ័ស។ 🕒' }}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Shipping -->
+        <div class="col-md-6">
+          <div class="card border rounded-3 p-3 h-100 bg-light bg-opacity-50">
+            <h6 class="fw-bold text-success mb-2 d-flex align-items-center gap-1.5 small">
+              <i class="bi bi-truck"></i> ៤. សេវាដឹកជញ្ជូន ២៤ ខេត្តក្រុង (Delivery)
+            </h6>
+            <div class="mb-2">
+              <label class="form-label text-secondary small fw-semibold mb-1">ចំណងជើងប៊ូតុងសំណួរ</label>
+              <input type="text" name="chat_quick_shipping_q" class="form-control form-control-sm rounded-2" value="{{ store_settings.chat_quick_shipping_q|default:'🚚 តើមានសេវាដឹកជញ្ជូន ២៤ ខេត្តក្រុងទេ?' }}">
+            </div>
+            <div>
+              <label class="form-label text-secondary small fw-semibold mb-1">ខ្លឹមសារចម្លើយឆ្លើយតប</label>
+              <textarea name="chat_quick_shipping_a" class="form-control form-control-sm rounded-2" rows="3">{{ store_settings.chat_quick_shipping_a|default:'យើងខ្ញុំមានសេវាដឹកជញ្ជូនរហ័សទាន់ចិត្ត និងសុវត្ថិភាព ដល់ដៃអតិថិជននៅគ្រប់ <strong>២៤ ខេត្តក្រុង</strong> ទូទាំងប្រទេសកម្ពុជា! 📦🚚' }}</textarea>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -178,4 +262,71 @@
   </div>
 
 </div>
+
+<!-- TOAST FOR INSTANT TOGGLE FEEDBACK -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+  <div id="settingsLiveToast" class="toast align-items-center text-white bg-dark border-0 shadow-lg rounded-3" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body d-flex align-items-center gap-2" id="settingsLiveToastBody">
+        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+        <span>បានកែប្រែការកំណត់ដោយជោគជ័យ!</span>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function handleAutoReplyToggleChange(isEnabled) {
+    const liveBadge = document.getElementById("autoReplyLiveBadge");
+    const statusDesc = document.getElementById("autoReplyStatusDesc");
+    const toastEl = document.getElementById("settingsLiveToast");
+    const toastBody = document.getElementById("settingsLiveToastBody");
+
+    if (liveBadge) {
+      if (isEnabled) {
+        liveBadge.className = "badge bg-success-subtle text-success border border-success-subtle px-2 py-0.5";
+        liveBadge.innerText = "🟢 កំពុងបើក";
+      } else {
+        liveBadge.className = "badge bg-secondary-subtle text-secondary border px-2 py-0.5";
+        liveBadge.innerText = "⚪ បានបិទ";
+      }
+    }
+
+    if (statusDesc) {
+      if (isEnabled) {
+        statusDesc.innerText = "នៅពេលអតិថិជនផ្ញើសារតាម Website ប្រព័ន្ធនឹងផ្ញើសារឆ្លើយតបស្វ័យប្រវត្តិទៅកាន់គេភ្លាមៗ។";
+      } else {
+        statusDesc.innerText = "មុខងារឆ្លើយតបស្វ័យប្រវត្តិត្រូវបានបិទ។ ប្រព័ន្ធនឹងមិនផ្ញើសារឆ្លើយតបស្វ័យប្រវត្តិឡើយ។";
+      }
+    }
+
+    // Save immediately via AJAX
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const msgText = document.querySelector('[name=chat_auto_reply]') ? document.querySelector('[name=chat_auto_reply]').value : '';
+
+    fetch("{% url 'accounts:update_auto_reply_settings_api' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": csrfToken
+      },
+      body: new URLSearchParams({
+        "enable_auto_reply": isEnabled ? "true" : "false",
+        "chat_auto_reply": msgText
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success" && toastEl) {
+        toastBody.innerHTML = isEnabled 
+          ? `<i class="bi bi-robot text-success fs-5"></i> <span>បានបើកការឆ្លើយតបស្វ័យប្រវត្តិរួចរាល់!</span>`
+          : `<i class="bi bi-slash-circle text-warning fs-5"></i> <span>បានបិទការឆ្លើយតបស្វ័យប្រវត្តិរួចរាល់!</span>`;
+        const bsToast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        bsToast.show();
+      }
+    })
+    .catch(err => console.error("Error updating auto reply:", err));
+  }
+</script>
 {% endblock %}

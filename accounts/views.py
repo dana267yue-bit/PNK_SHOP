@@ -1601,6 +1601,24 @@ def settings_page(request):
         if chat_auto_reply:
             store_settings.chat_auto_reply = chat_auto_reply
 
+        # Quick Chat Q&A
+        if 'chat_quick_tradein_q' in request.POST:
+            store_settings.chat_quick_tradein_q = request.POST.get('chat_quick_tradein_q', '').strip()
+        if 'chat_quick_tradein_a' in request.POST:
+            store_settings.chat_quick_tradein_a = request.POST.get('chat_quick_tradein_a', '').strip()
+        if 'chat_quick_installment_q' in request.POST:
+            store_settings.chat_quick_installment_q = request.POST.get('chat_quick_installment_q', '').strip()
+        if 'chat_quick_installment_a' in request.POST:
+            store_settings.chat_quick_installment_a = request.POST.get('chat_quick_installment_a', '').strip()
+        if 'chat_quick_hours_q' in request.POST:
+            store_settings.chat_quick_hours_q = request.POST.get('chat_quick_hours_q', '').strip()
+        if 'chat_quick_hours_a' in request.POST:
+            store_settings.chat_quick_hours_a = request.POST.get('chat_quick_hours_a', '').strip()
+        if 'chat_quick_shipping_q' in request.POST:
+            store_settings.chat_quick_shipping_q = request.POST.get('chat_quick_shipping_q', '').strip()
+        if 'chat_quick_shipping_a' in request.POST:
+            store_settings.chat_quick_shipping_a = request.POST.get('chat_quick_shipping_a', '').strip()
+
         # Handle logo upload
         if 'logo' in request.FILES:
             store_settings.logo = request.FILES['logo']
@@ -2523,7 +2541,7 @@ def send_chat_message_api(request):
         'user_id': user.id,
         'sender': msg.sender,
         'message': msg.message,
-        'created_at': msg.created_at.strftime('%H:%M')
+        'created_at': timezone.localtime(msg.created_at).strftime('%H:%M')
     })
 
 
@@ -2589,15 +2607,44 @@ def customer_send_chat_api(request):
         is_read=False
     )
 
-    return JsonResponse({
+    store_settings = StoreSetting.get_settings()
+    auto_reply_data = None
+
+    if store_settings.enable_auto_reply and store_settings.chat_auto_reply:
+        reply_text = store_settings.chat_auto_reply.strip()
+        if store_settings.telegram_link and store_settings.telegram_link not in reply_text:
+            if reply_text.endswith(':'):
+                reply_text = f"{reply_text} {store_settings.telegram_link}"
+            else:
+                reply_text = f"{reply_text}\n👉 Telegram: {store_settings.telegram_link}"
+
+        auto_msg = ChatMessage.objects.create(
+            user=user,
+            sender='admin',
+            message=reply_text,
+            is_read=True
+        )
+        auto_reply_data = {
+            'id': auto_msg.id,
+            'user_id': user.id,
+            'sender': auto_msg.sender,
+            'message': auto_msg.message,
+            'created_at': timezone.localtime(auto_msg.created_at).strftime('%H:%M')
+        }
+
+    resp = {
         'status': 'success',
         'id': msg.id,
         'user_id': user.id,
         'username': user.username,
         'sender': msg.sender,
         'message': msg.message,
-        'created_at': msg.created_at.strftime('%H:%M')
-    })
+        'created_at': timezone.localtime(msg.created_at).strftime('%H:%M')
+    }
+    if auto_reply_data:
+        resp['auto_reply'] = auto_reply_data
+
+    return JsonResponse(resp)
 
 
 def check_admin_online():
@@ -2633,7 +2680,7 @@ def get_customer_chat_history_api(request):
                 'id': m.id,
                 'sender': m.sender,
                 'message': m.message,
-                'created_at': m.created_at.strftime('%H:%M')
+                'created_at': timezone.localtime(m.created_at).strftime('%H:%M')
             })
             
     return JsonResponse({
@@ -2661,7 +2708,7 @@ def get_latest_messages_api(request):
                 'user_id': m.user.id,
                 'sender': m.sender,
                 'message': m.message,
-                'created_at': m.created_at.strftime('%H:%M')
+                'created_at': timezone.localtime(m.created_at).strftime('%H:%M')
             })
 
     latest_overall_msg = ChatMessage.objects.filter(sender='customer', id__gt=last_msg_id).order_by('-id').first()
@@ -2672,7 +2719,7 @@ def get_latest_messages_api(request):
             'user_id': latest_overall_msg.user.id,
             'username': latest_overall_msg.user.username,
             'message': latest_overall_msg.message,
-            'created_at': latest_overall_msg.created_at.strftime('%H:%M')
+            'created_at': timezone.localtime(latest_overall_msg.created_at).strftime('%H:%M')
         }
 
     total_unread = ChatMessage.objects.filter(sender='customer', is_read=False).count()

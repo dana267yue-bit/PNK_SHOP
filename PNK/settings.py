@@ -259,9 +259,9 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'dana267yue@gmail.com'
 
-EMAIL_HOST_PASSWORD = 'dubkkndupqukpmzh'
+EMAIL_HOST_PASSWORD = 'ffaf htfc ayng bags'.replace(' ', '')
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = f'PNK_SHOP <{EMAIL_HOST_USER}>'
 
 
 # =========================================

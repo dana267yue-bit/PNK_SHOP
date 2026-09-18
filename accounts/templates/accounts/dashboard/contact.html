@@ -475,7 +475,7 @@
         <!-- CHAT THREAD CONVERSATION WINDOW -->
         <div class="p-3 chat-thread-box flex-grow-1" id="chatThreadBox">
           {% for msg in messages_list %}
-          <div class="msg-bubble-wrapper {% if msg.sender == 'admin' %}admin{% else %}customer{% endif %}">
+          <div class="msg-bubble-wrapper {% if msg.sender == 'admin' %}admin{% else %}customer{% endif %}" data-msg-id="{{ msg.id }}">
             {% if msg.sender != 'admin' %}
               {% if active_user.profile and active_user.profile.image %}
                 <img src="{{ active_user.profile.image.url }}" class="rounded-circle flex-shrink-0" style="width: 32px; height: 32px; object-fit: cover;">
@@ -718,11 +718,7 @@
     if (!userId || !message) return;
 
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    // Immediately render optimism bubble on chat screen
-    appendBubble('admin', message, 'ឥឡូវនេះ');
     inputEl.value = '';
-    scrollToBottom();
 
     // AJAX POST request to backend API
     fetch("{% url 'accounts:send_chat_message_api' %}", {
@@ -739,22 +735,33 @@
     })
     .then(res => res.json())
     .then(data => {
-      if (data.status !== "success") {
+      if (data.status === "success" && data.id) {
+        if (data.id > lastMessageId) lastMessageId = data.id;
+        if (data.id > lastOverallMsgId) lastOverallMsgId = data.id;
+        appendBubble('admin', data.message, data.created_at, data.id);
+      } else {
         console.error("Error sending message:", data);
       }
     })
     .catch(err => console.error("API error:", err));
   }
 
-  function appendBubble(sender, messageText, timeStr) {
+  function appendBubble(sender, messageText, timeStr, msgId) {
     const threadBox = document.getElementById("chatThreadBox");
-    if (!threadBox) return;
+    if (!threadBox) return null;
+
+    if (msgId && threadBox.querySelector(`[data-msg-id="${msgId}"]`)) {
+      return null; // Already displayed, skip duplicate
+    }
 
     const activeUsername = "{{ active_user.username|default:'U' }}";
     const initials = activeUsername.slice(0, 2).toUpperCase();
 
     const wrapper = document.createElement("div");
     wrapper.className = `msg-bubble-wrapper ${sender}`;
+    if (msgId) {
+      wrapper.setAttribute("data-msg-id", msgId);
+    }
 
     if (sender === "admin") {
       const adminAvatarUrl = "{% if request.user.profile and request.user.profile.image %}{{ request.user.profile.image.url }}{% elif store_settings.logo %}{{ store_settings.logo.url }}{% endif %}";
@@ -786,15 +793,23 @@
 
     threadBox.appendChild(wrapper);
     scrollToBottom();
+    return wrapper;
   }
 
   function escapeHtml(text) {
-    const div = document.createElement("div");
-    div.innerText = text;
-    return div.innerHTML;
+    if (!text) return "";
+    let safe = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    safe = safe.replace(
+      /(https?:\/\/[^\s]+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-decoration-underline fw-bold">$1</a>'
+    );
+    return safe.replace(/\n/g, "<br>");
   }
 
-  // Live polling for new incoming customer messages every 4 seconds
+  // Live polling for new incoming customer messages every 3.5 seconds
   let lastMessageId = parseInt("{{ messages_list.last.id|default:0 }}", 10) || 0;
   let lastOverallMsgId = lastMessageId;
   setInterval(pollNewMessages, 3500);
@@ -812,8 +827,10 @@
                 lastMessageId = msg.id;
                 if (msg.id > lastOverallMsgId) lastOverallMsgId = msg.id;
                 if (msg.sender === "customer") {
-                  appendBubble("customer", msg.message, msg.created_at);
+                  appendBubble("customer", msg.message, msg.created_at, msg.id);
                   showToastNotification("🔔 សារថ្មីពីអតិថិជន!", msg.message);
+                } else if (msg.sender === "admin") {
+                  appendBubble("admin", msg.message, msg.created_at, msg.id);
                 }
               }
             });

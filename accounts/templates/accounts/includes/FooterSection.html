@@ -189,16 +189,16 @@
         <small class="text-muted fw-bold d-block mb-1.5" style="font-size: 0.75rem;">💡 សំណួរញឹកញាប់៖</small>
         <div class="d-flex flex-column gap-1.5">
           <button type="button" class="btn btn-outline-success btn-sm rounded-pill text-start px-3 py-1.5 bg-white shadow-xs text-dark hover-success quick-q-btn" data-q="tradein">
-            🔄 សួរអំពីការប្តូរចាស់យកថ្មី (Trade-In)?
+            {{ store_settings.chat_quick_tradein_q|default:'🔄 សួរអំពីការប្តូរចាស់យកថ្មី (Trade-In)?' }}
           </button>
           <button type="button" class="btn btn-outline-success btn-sm rounded-pill text-start px-3 py-1.5 bg-white shadow-xs text-dark hover-success quick-q-btn" data-q="installment">
-            💳 សួរអំពីការបង់រំលស់ 0%?
+            {{ store_settings.chat_quick_installment_q|default:'💳 សួរអំពីការបង់រំលស់ 5%?' }}
           </button>
           <button type="button" class="btn btn-outline-success btn-sm rounded-pill text-start px-3 py-1.5 bg-white shadow-xs text-dark hover-success quick-q-btn" data-q="hours">
-            🕒 តើហាងបើកលក់ម៉ោងប៉ុន្មាន?
+            {{ store_settings.chat_quick_hours_q|default:'🕒 តើហាងបើកលក់ម៉ោងប៉ុន្មាន?' }}
           </button>
           <button type="button" class="btn btn-outline-success btn-sm rounded-pill text-start px-3 py-1.5 bg-white shadow-xs text-dark hover-success quick-q-btn" data-q="shipping">
-            🚚 តើមានសេវាដឹកជញ្ជូន ២៤ ខេត្តក្រុងទេ?
+            {{ store_settings.chat_quick_shipping_q|default:'🚚 តើមានសេវាដឹកជញ្ជូន ២៤ ខេត្តក្រុងទេ?' }}
           </button>
           <a href="{{ store_settings.telegram_link|default:'https://t.me/pnkmobile' }}" target="_blank" class="btn btn-success btn-sm rounded-pill text-start px-3 py-1.5 text-white shadow-xs d-inline-flex align-items-center gap-1.5 fw-bold" style="background: linear-gradient(135deg, #10b981, #059669); border: none;">
             <i class="bi bi-telegram fs-6 text-warning"></i> ឆាតផ្ទាល់តាម Telegram
@@ -274,17 +274,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const chatInput = document.getElementById("chatInputText");
 
   const answersMap = {
-    tradein: "🔄 <strong>សេវាកម្ម ប្តូរចាស់យកថ្មី (Trade-In)</strong>៖<br>• វាយតម្លៃទូរស័ព្ទចាស់បានតម្លៃខ្ពស់សមរម្យ<br>• ថែមប្រាក់តិចតួចយកស៊េរីថ្មីភ្លាមៗ<br>👉 សូមផ្ញើ <strong>ម៉ូឌែលទូរស័ព្ទចាស់ + ស្ថានភាព (ស្អាត/ឆ្កូត)</strong> មកកាន់ទីនេះ ឬទាក់ទងមក Admin ដើម្បីវាយតម្លៃភ្លាមៗបាទ/ចាស! 📱✨",
-    installment: "💳 <strong>សេវាកម្ម បង់រំលស់ងាយៗ 0%</strong>៖<br>• ការប្រាក់ចាប់ពី 0% ឯកសារងាយៗ<br>• អនុម័តរហ័សក្នុងរយៈពេល ១៥-៣០ នាទី<br>• ឯកសារ៖ អត្តសញ្ញាណប័ណ្ណ + សៀវភៅគ្រួសារ/ស្នាក់នៅ + លិខិតបញ្ជាក់ប្រាក់ខែ<br>👉 សូមផ្ញើ <strong>ម៉ូឌែលទូរស័ព្ទដែលចង់បាន</strong> មកកាន់ទីនេះដើម្បីឱ្យ Admin ជួយគណនាប្រាក់បង់ប្រចាំខែជូនបាទ/ចាស! 📱✨",
-    hours: "ហាង <strong>PNK SHOP</strong> បើកបម្រើអតិថិជនរៀងរាល់ថ្ងៃ ពីម៉ោង <strong>7:30 ព្រឹក ដល់ 8:30 យប់</strong>! អាចអញ្ជើញមកផ្ទាល់ ឬកុម្មង់តាមអនឡាញបានរហ័ស។ 🕒",
-    shipping: "យើងខ្ញុំមានសេវាដឹកជញ្ជូនរហ័សទាន់ចិត្ត និងសុវត្ថិភាព ដល់ដៃអតិថិជននៅគ្រប់ <strong>២៤ ខេត្តក្រុង</strong> ទូទាំងប្រទេសកម្ពុជា! 📦🚚"
+    tradein: "{{ store_settings.chat_quick_tradein_a|default:'🔄 <strong>សេវាកម្ម ប្តូរចាស់យកថ្មី (Trade-In)</strong>៖<br>• វាយតម្លៃទូរស័ព្ទចាស់បានតម្លៃខ្ពស់សមរម្យ<br>• ថែមប្រាក់តិចតួចយកស៊េរីថ្មីភ្លាមៗ<br>👉 សូមផ្ញើ <strong>ម៉ូឌែលទូរស័ព្ទចាស់ + ស្ថានភាព (ស្អាត/ឆ្កូត)</strong> មកកាន់ទីនេះ ឬទាក់ទងមក Admin ដើម្បីវាយតម្លៃភ្លាមៗបាទ/ចាស! 📱✨'|safe|escapejs }}",
+    installment: "{{ store_settings.chat_quick_installment_a|default:'💳 <strong>សេវាកម្ម បង់រំលស់ងាយៗ</strong>៖<br>• ការប្រាក់ចាប់ពី 0% ដល់ 5% ឯកសារងាយៗ<br>• អនុម័តរហ័សក្នុងរយៈពេល ១៥-៣០ នាទី<br>• ឯកសារ៖ អត្តសញ្ញាណប័ណ្ណ + សៀវភៅគ្រួសារ/ស្នាក់នៅ + លិខិតបញ្ជាក់ប្រាក់ខែ<br>👉 សូមផ្ញើ <strong>ម៉ូឌែលទូរស័ព្ទដែលចង់បាន</strong> មកកាន់ទីនេះដើម្បីឱ្យ Admin ជួយគណនាប្រាក់បង់ប្រចាំខែជូនបាទ/ចាស! 📱✨'|safe|escapejs }}",
+    hours: "{{ store_settings.chat_quick_hours_a|default:'ហាង <strong>PNK SHOP</strong> បើកបម្រើអតិថិជនរៀងរាល់ថ្ងៃ ពីម៉ោង <strong>7:30 ព្រឹក ដល់ 8:30 យប់</strong>! អាចអញ្ជើញមកផ្ទាល់ ឬកុម្មង់តាមអនឡាញបានរហ័ស។ 🕒'|safe|escapejs }}",
+    shipping: "{{ store_settings.chat_quick_shipping_a|default:'យើងខ្ញុំមានសេវាដឹកជញ្ជូនរហ័សទាន់ចិត្ត និងសុវត្ថិភាព ដល់ដៃអតិថិជននៅគ្រប់ <strong>២៤ ខេត្តក្រុង</strong> ទូទាំងប្រទេសកម្ពុជា! 📦🚚'|safe|escapejs }}"
   };
 
   const questionLabelsMap = {
-    tradein: "🔄 សួរអំពីការប្តូរចាស់យកថ្មី (Trade-In)",
-    installment: "💳 សួរអំពីការបង់រំលស់ 0%",
-    hours: "🕒 តើហាងបើកលក់ម៉ោងប៉ុន្មាន?",
-    shipping: "🚚 តើមានសេវាដឹកជញ្ជូន ២៤ ខេត្តក្រុងទេ?"
+    tradein: "{{ store_settings.chat_quick_tradein_q|default:'🔄 សួរអំពីការប្តូរចាស់យកថ្មី (Trade-In)?'|escapejs }}",
+    installment: "{{ store_settings.chat_quick_installment_q|default:'💳 សួរអំពីការបង់រំលស់ 5%?'|escapejs }}",
+    hours: "{{ store_settings.chat_quick_hours_q|default:'🕒 តើហាងបើកលក់ម៉ោងប៉ុន្មាន?'|escapejs }}",
+    shipping: "{{ store_settings.chat_quick_shipping_q|default:'🚚 តើមានសេវាដឹកជញ្ជូន ២៤ ខេត្តក្រុងទេ?'|escapejs }}"
   };
 
   let loadedHistory = false;
@@ -406,6 +406,19 @@ document.addEventListener("DOMContentLoaded", function () {
     scrollToBottom();
   }
 
+  function formatChatMessage(text) {
+    if (!text) return "";
+    let safe = text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    safe = safe.replace(
+      /(https?:\/\/[^\s]+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-success fw-bold text-decoration-underline">$1</a>'
+    );
+    return safe.replace(/\n/g, "<br>");
+  }
+
   function appendAdminReplyMsg(text, timeStr) {
     const div = document.createElement("div");
     div.className = "d-flex align-items-start gap-2 mb-3 dynamic-chat-msg";
@@ -414,7 +427,7 @@ document.addEventListener("DOMContentLoaded", function () {
     div.innerHTML = `
       <img src="${adminAvatarUrl}" class="rounded-circle border border-success border-2 flex-shrink-0 shadow-sm mt-1" style="width: 32px; height: 32px; object-fit: cover; background: white;" alt="Admin Avatar">
       <div class="bg-white border text-dark lh-base position-relative" style="width: fit-content; max-width: 78%; font-size: 0.88rem; line-height: 1.65; padding: 10px 14px 8px 14px; border-color: #e2e8f0 !important; border-radius: 18px 18px 18px 4px !important; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
-        <div style="word-break: break-word;">${text}</div>
+        <div style="word-break: break-word;">${formatChatMessage(text)}</div>
         <small class="text-muted float-end ms-2 mt-1" style="font-size: 9.5px;">${timeStr || 'ឥឡូវនេះ'}</small>
       </div>
     `;
@@ -482,6 +495,14 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(data => {
       if (data.status === "success" && data.id) {
         if (data.id > maxCustomerMsgId) maxCustomerMsgId = data.id;
+        if (data.auto_reply) {
+          if (data.auto_reply.id > maxCustomerMsgId) {
+            maxCustomerMsgId = data.auto_reply.id;
+          }
+          setTimeout(() => {
+            appendAdminReplyMsg(data.auto_reply.message, data.auto_reply.created_at);
+          }, 450);
+        }
       }
     })
     .catch(err => console.error("Error saving customer chat:", err));
