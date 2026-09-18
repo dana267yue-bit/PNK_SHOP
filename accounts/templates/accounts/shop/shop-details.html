@@ -454,12 +454,24 @@
           <div class="p-3 bg-light rounded-4 border shadow-xs transition-all">
             <div class="d-flex justify-content-between align-items-start mb-2">
               <div class="d-flex align-items-center gap-2.5">
-                <div class="avatar-circle bg-success text-white fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 14px;">
-                  {{ r.user.username|slice:":1"|upper|default:"U" }}
+                {% if r.user.profile and r.user.profile.image %}
+                <img src="{{ r.user.profile.image.url }}" alt="{% if r.user.last_name or r.user.first_name %}{{ r.user.last_name }} {{ r.user.first_name }}{% else %}{{ r.user.username }}{% endif %}" class="rounded-circle shadow-xs border border-2 border-white flex-shrink-0" style="width: 42px; height: 42px; object-fit: cover;">
+                {% else %}
+                <div class="avatar-circle text-white fw-bold rounded-circle d-flex align-items-center justify-content-center shadow-xs flex-shrink-0" style="width: 42px; height: 42px; font-size: 14px; background: linear-gradient(135deg, #198754, #20c997);">
+                  {% if r.user.last_name %}{{ r.user.last_name|slice:":1"|upper }}{% elif r.user.first_name %}{{ r.user.first_name|slice:":1"|upper }}{% else %}{{ r.user.username|slice:":1"|upper|default:"U" }}{% endif %}
                 </div>
+                {% endif %}
                 <div>
                   <h6 class="fw-bold text-dark mb-0 small d-flex align-items-center gap-1.5">
-                    {{ r.user.username|default:"អតិថិជន PNK" }}
+                    {% if r.user.last_name and r.user.first_name %}
+                      {{ r.user.last_name }} {{ r.user.first_name }}
+                    {% elif r.user.first_name %}
+                      {{ r.user.first_name }}
+                    {% elif r.user.last_name %}
+                      {{ r.user.last_name }}
+                    {% else %}
+                      {{ r.user.username|default:"អតិថិជន PNK" }}
+                    {% endif %}
                     <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5" style="font-size: 9px;">
                       <i class="bi bi-check-circle-fill me-0.5"></i> ទិញរួចរាល់ (Verified Purchaser)
                     </span>

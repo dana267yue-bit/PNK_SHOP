@@ -113,7 +113,7 @@ def shop(request):
 def ShopDetails(request, id):
     product = get_object_or_404(Product, id=id)
     related_products = Product.objects.filter(brand=product.brand).exclude(id=id)[:4]
-    reviews = product.reviews.all()
+    reviews = product.reviews.select_related('user', 'user__profile').all()
     avg_rating = reviews.aggregate(Avg('rating'))['rating__avg'] if reviews.exists() else 4.9
     return render(request, 'accounts/shop/shop-details.html', {
         'product': product,
